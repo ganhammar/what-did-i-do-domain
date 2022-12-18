@@ -1,0 +1,10 @@
+version = 0.1
+[default]
+[default.deploy]
+[default.deploy.parameters]
+stack_name = "what-did-i-do"
+s3_bucket = "aws-sam-cli-managed-default-samclisourcebucket-1mx0oflcrhpf7"
+s3_prefix = "what-did-i-do"
+region = "eu-north-1"
+capabilities = "CAPABILITY_IAM"
+image_repositories = []
