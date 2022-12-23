@@ -2,14 +2,17 @@ name: CI-CD
 
 on:
   workflow_dispatch:
+  push:
 
 permissions:
   id-token: write
   contents: read
 
 jobs:
-  test-oidc:
+  deploy:
+    name: Deploy
     runs-on: ubuntu-latest
+    if: ${{ github.ref == 'refs/heads/main' }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -25,6 +28,6 @@ jobs:
           role-to-assume: ${{ secrets.DEPLOY_ROLE }}
           role-session-name: OIDCSession
 
-      - name: Deploy
+      - name: SAM Deploy
         run: sam deploy --template-file template.yml --stack-name what-did-i-do
         shell: bash
