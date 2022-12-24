@@ -45,6 +45,9 @@ jobs:
           role-to-assume: ${{ secrets.DEPLOY_ROLE }}
           role-session-name: OIDCSession
 
+      - name: SAM Build
+        run: sam build --template-file template.yml --parameter-overrides LambdaArchitecture=arm64
+        shell: bash
       - name: SAM Deploy
-        run: sam deploy --template-file template.yml --stack-name what-did-i-do --no-fail-on-empty-changeset
+        run: sam deploy --template-file template.yml --stack-name what-did-i-do --no-fail-on-empty-changeset --no-confirm-changeset --capabilities CAPABILITY_IAM --parameter-overrides LambdaArchitecture=arm64
         shell: bash
