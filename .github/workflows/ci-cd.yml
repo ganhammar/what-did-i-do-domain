@@ -9,6 +9,22 @@ permissions:
   contents: read
 
 jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup .NET Core SDKs
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: |
+            6.0.x
+      - name: Restore
+        run: |
+          dotnet restore
+      - name: Build
+        run: |
+          dotnet build --no-restore
+
   deploy:
     name: Deploy
     runs-on: ubuntu-latest
