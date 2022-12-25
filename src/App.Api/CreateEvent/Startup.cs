@@ -1,26 +1,26 @@
 using System.Reflection;
 using Amazon.DynamoDBv2;
-using Amazon.Lambda.Annotations;
-using Amazon.Lambda.Core;
-using Amazon.Lambda.Serialization.SystemTextJson;
+using Amazon.XRay.Recorder.Core;
 using Amazon.XRay.Recorder.Handlers.AwsSdk;
 using App.Api.Shared.Infrastructure;
 using MediatR;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-[assembly: LambdaSerializer(typeof(SourceGeneratorLambdaJsonSerializer<ApiGatewayProxyJsonSerializerContext>))]
-
 namespace App.Api.CreateEvent;
 
-[LambdaStartup]
 public class Startup
 {
-    public IConfiguration Configuration = FunctionConfiguration.Get();
+    public static IConfiguration Configuration = FunctionConfiguration.Get();
 
-    public void ConfigureServices(IServiceCollection services)
+    public static IServiceCollection ConfigureServices()
     {
+        var services = new ServiceCollection();
+
         AWSSDKHandler.RegisterXRayForAllServices();
+#if DEBUG
+        AWSXRayRecorder.Instance.XRayOptions.IsXRayTracingDisabled = true;
+#endif
 
         var dynamoDbConfig = Configuration.GetSection("DynamoDB");
 
@@ -31,5 +31,7 @@ public class Startup
                 ServiceURL = dynamoDbConfig["ServiceUrl"],
             }));
         services.AddMediatR(Assembly.GetCallingAssembly());
+
+        return services;
     }
 }
