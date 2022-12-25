@@ -16,7 +16,7 @@ Resources:
   CreateEventFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: ./src/App.Api/CreateEvent/
+      CodeUri: ./src/App.Api/CreateEvent
       Handler: CreateEvent::App.Api.CreateEvent.Function::FunctionHandler
       Events:
         Api:
