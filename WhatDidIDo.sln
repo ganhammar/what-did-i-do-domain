@@ -11,6 +11,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CreateEvent", "src\App.Api\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shared", "src\Shared\Shared.csproj", "{3879CF0E-F5E9-410E-9BB7-0577203E4371}"
 EndProject
+Project("{256F33F1-59FE-4982-AAEE-8F9EBD3D0D1A}") = "templates", "templates", "{CCAC85DE-06C8-4E55-92D3-F257F8A41F5C}"
+	ProjectSection(SolutionItems) = preProject
+		template.yaml = template.yaml
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
