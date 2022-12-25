@@ -3,7 +3,7 @@ using System.Text.Json;
 using Amazon.Lambda.APIGatewayEvents;
 using Amazon.Lambda.Core;
 using Amazon.Lambda.Serialization.SystemTextJson;
-// using App.Api.Shared.Models;
+using App.Api.Shared.Models;
 using Microsoft.Extensions.DependencyInjection;
 
 [assembly: LambdaSerializer(typeof(DefaultLambdaJsonSerializer))]
@@ -12,9 +12,9 @@ namespace App.Api.CreateEvent;
 
 public class Function
 {
-    // private static readonly IServiceProvider _serviceProvider = Startup
-    //     .ConfigureServices()
-    //     .BuildServiceProvider();
+    private static readonly IServiceProvider _serviceProvider = Startup
+        .ConfigureServices()
+        .BuildServiceProvider();
 
     public Task<APIGatewayHttpApiV2ProxyResponse> FunctionHandler(
         APIGatewayHttpApiV2ProxyRequest apiGatewayProxyRequest,
@@ -50,15 +50,5 @@ public class Function
                 StatusCode = (int)HttpStatusCode.InternalServerError,
             });
         }
-    }
-    
-    public class Event
-    {
-        public Event(string title)
-        {
-            Title = title;
-        }
-
-        public string Title { get; set; }
     }
 }
