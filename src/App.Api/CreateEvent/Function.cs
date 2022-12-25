@@ -3,11 +3,10 @@ using System.Text.Json;
 using Amazon.Lambda.APIGatewayEvents;
 using Amazon.Lambda.Core;
 using Amazon.Lambda.Serialization.SystemTextJson;
-using App.Api.Shared.Infrastructure;
 using App.Api.Shared.Models;
 using Microsoft.Extensions.DependencyInjection;
 
-[assembly: LambdaSerializer(typeof(SourceGeneratorLambdaJsonSerializer<ApiGatewayProxyJsonSerializerContext>))]
+[assembly: LambdaSerializer(typeof(DefaultLambdaJsonSerializer))]
 
 namespace App.Api.CreateEvent;
 
@@ -18,10 +17,10 @@ public class Function
         .BuildServiceProvider();
 
     public Task<APIGatewayHttpApiV2ProxyResponse> FunctionHandler(
-        APIGatewayHttpApiV2ProxyRequest apigProxyEvent,
+        APIGatewayHttpApiV2ProxyRequest apiGatewayProxyRequest,
         ILambdaContext context)
     {
-        if (!apigProxyEvent.RequestContext.Http.Method.Equals(HttpMethod.Post.Method))
+        if (!apiGatewayProxyRequest.RequestContext.Http.Method.Equals(HttpMethod.Post.Method))
         {
             return Task.FromResult(new APIGatewayHttpApiV2ProxyResponse
             {
@@ -32,7 +31,7 @@ public class Function
 
         try
         {
-            var data = JsonSerializer.Deserialize<Event>(apigProxyEvent.Body);
+            var data = JsonSerializer.Deserialize<Event>(apiGatewayProxyRequest.Body);
 
             return Task.FromResult(new APIGatewayHttpApiV2ProxyResponse
             {
