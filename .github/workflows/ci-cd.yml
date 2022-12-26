@@ -80,5 +80,6 @@ jobs:
         uses: aws-actions/setup-sam@v2
       
       - name: Publish SAM
+        working-directory: ./.output
         run: sam deploy --template-file template.yml --stack-name what-did-i-do --no-fail-on-empty-changeset --no-confirm-changeset --capabilities CAPABILITY_IAM
         shell: bash
