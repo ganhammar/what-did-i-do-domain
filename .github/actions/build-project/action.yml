@@ -1,0 +1,24 @@
+name: Build Project
+inputs:
+  project-path:
+    required: true
+    description: The path to the project to build
+
+runs:
+  using: composite
+  steps:
+    - name: Setup .NET Core SDKs
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: |
+          6.0.x
+    - name: Install Lambda Tools
+      run: dotnet tool install -g Amazon.Lambda.Tools
+      shell: bash
+    - name: Set Project Name
+      id: set-project-name
+      run: echo "project-name=$(basename ${{ inputs.project-path }})" >> $GITHUB_OUTPUT
+      shell: bash
+    - name: Build
+      run: dotnet lambda package --configuration Release --project-location ${{ inputs.project-path }} --function-architecture arm64 --output-package ./.build/${{ steps.set-project-name.outputs.project-name }}
+      shell: bash
