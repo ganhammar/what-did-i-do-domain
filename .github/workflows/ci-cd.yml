@@ -8,6 +8,10 @@ permissions:
   id-token: write
   contents: read
 
+defaults:
+  run:
+    shell: bash
+
 jobs:
   build:
     name: Build & Test
@@ -36,11 +40,9 @@ jobs:
         uses: actions/checkout@v3
       - name: Install Lambda Tools
         run: dotnet tool install -g Amazon.Lambda.Tools
-        shell: bash
 
       - name: Copy Template
         run: rm -rf .output &&  mkdir .output && cp template.yml .output/template.yml
-        shell: bash
       - name: Package Project
         uses: ./.github/actions/package-project
         with:
@@ -71,15 +73,15 @@ jobs:
           aws-region: eu-north-1
           role-to-assume: ${{ secrets.DEPLOY_ROLE }}
           role-session-name: OIDCSession
-      
-      - name: Install Python 3.8
-        uses: actions/setup-python@v3
+
+      - name: Install node
+        uses: actions/setup-node@v3
         with:
-          python-version: 3.8
-      - name: Setup SAM
-        uses: aws-actions/setup-sam@v2
-      
-      - name: Publish SAM
-        working-directory: ./.output
-        run: sam deploy --template-file template.yml --stack-name what-did-i-do --no-fail-on-empty-changeset --no-confirm-changeset --capabilities CAPABILITY_IAM
-        shell: bash
+          node-version: 16
+      - name: Setup CDK
+        run: npm install -g aws-cdk
+
+      - name: CDK Synth
+        run: cdk synth
+      - name: CDK Deploy
+        run: cdk deploy

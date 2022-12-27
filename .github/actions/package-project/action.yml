@@ -1,4 +1,5 @@
 name: Build Project
+description: Build Lambda Project
 inputs:
   project-path:
     required: true
