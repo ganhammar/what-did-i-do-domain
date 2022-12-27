@@ -41,8 +41,6 @@ jobs:
       - name: Install Lambda Tools
         run: dotnet tool install -g Amazon.Lambda.Tools
 
-      - name: Copy Template
-        run: rm -rf .output &&  mkdir .output && cp template.yml .output/template.yml
       - name: Package Project
         uses: ./.github/actions/package-project
         with:
