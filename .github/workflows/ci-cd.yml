@@ -81,7 +81,7 @@ jobs:
       - name: Setup CDK
         run: npm install -g aws-cdk
 
-      - name: CDK Synth
-        run: cdk synth
+      - name: CDK Bootstrap
+        run: cdk bootstrap
       - name: CDK Deploy
-        run: cdk deploy
+        run: cdk deploy --require-approval never
