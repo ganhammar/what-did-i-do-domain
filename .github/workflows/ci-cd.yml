@@ -51,6 +51,8 @@ jobs:
         with:
           name: ${{ github.run_id }}
           path: |
+            ./cdk.json
+            ./src/App.Stack/**/*
             ./.output
           retention-days: 1
 
