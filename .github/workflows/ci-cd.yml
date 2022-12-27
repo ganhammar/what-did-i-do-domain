@@ -65,7 +65,7 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: ${{ github.run_id }}
-          path: ./.output
+          path: ./
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
