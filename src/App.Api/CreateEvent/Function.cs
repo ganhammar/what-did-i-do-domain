@@ -17,10 +17,10 @@ public class Function
         .BuildServiceProvider();
 
     public Task<APIGatewayHttpApiV2ProxyResponse> FunctionHandler(
-        APIGatewayHttpApiV2ProxyRequest apiGatewayProxyRequest,
+        APIGatewayProxyRequest apiGatewayProxyRequest,
         ILambdaContext context)
     {
-        if (!apiGatewayProxyRequest.RequestContext.Http.Method.Equals(HttpMethod.Post.Method))
+        if (!apiGatewayProxyRequest.RequestContext.HttpMethod.Equals(HttpMethod.Post.Method))
         {
             return Task.FromResult(new APIGatewayHttpApiV2ProxyResponse
             {
