@@ -32,6 +32,7 @@ public class AppStack : Stack
         var createEventFunction = new Function(this, "CreateEventFunction", new FunctionProps
         {
             Runtime = Runtime.DOTNET_6,
+            Architecture = Architecture.ARM_64,
             Handler = "CreateEvent::App.Api.CreateEvent.Function::FunctionHandler",
             Code = Code.FromAsset("./.output/CreateEvent.zip"),
             Timeout = Duration.Minutes(1),
