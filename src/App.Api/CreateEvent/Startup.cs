@@ -3,6 +3,8 @@ using Amazon.DynamoDBv2;
 using Amazon.XRay.Recorder.Core;
 using Amazon.XRay.Recorder.Handlers.AwsSdk;
 using App.Api.Shared.Infrastructure;
+using App.Api.Shared.Models;
+using FluentValidation;
 using MediatR;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -31,6 +33,11 @@ public class Startup
                 ServiceURL = dynamoDbConfig["ServiceUrl"],
             }));
         services.AddMediatR(Assembly.GetCallingAssembly());
+        services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationPipeline<,>));
+
+        services.AddTransient<IResponse<Event>, Response<Event>>();
+        services.AddTransient<IRequestHandler<CreateEventCommand.Command, IResponse<Event>>, CreateEventCommand.CommandHandler>();
+        services.AddTransient<IValidator<CreateEventCommand.Command>, CreateEventCommand.CommandValidator>();
 
         return services;
     }

@@ -15,7 +15,10 @@ public class FunctionTests
     {
         var function = new Function();
         var context = new TestLambdaContext();
-        var data = new Event("Testing Testing");
+        var data = new Event
+        {
+            Title = "Testing Testing",
+        };
         var request = new APIGatewayProxyRequest
         {
             HttpMethod = HttpMethod.Post.Method,
