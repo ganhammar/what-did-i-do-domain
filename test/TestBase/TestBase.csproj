@@ -4,10 +4,10 @@
     <TargetFramework>net6.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <PublishWithAspNetCoreTargetManifest>false</PublishWithAspNetCoreTargetManifest>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="AWSSDK.Core" Version="3.7.103.6" />
     <PackageReference Include="AWSSDK.DynamoDBv2" Version="3.7.101.14" />
     <PackageReference Include="xunit" Version="2.4.2" />
   </ItemGroup>
