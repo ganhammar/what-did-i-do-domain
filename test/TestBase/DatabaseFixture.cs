@@ -14,11 +14,7 @@ public class DatabaseFixture : IDisposable
     {
         SetEnvironment();
 
-        _client = new AmazonDynamoDBClient(
-            new AmazonDynamoDBConfig
-            {
-                ServiceURL = Environment.GetEnvironmentVariable(_serviceUrlKey),
-            });
+        _client = new AmazonDynamoDBClient();
 
         CreateTable().GetAwaiter().GetResult();
         var tables = _client.ListTablesAsync().GetAwaiter().GetResult();

@@ -28,10 +28,7 @@ public class Startup
 
         services
             .AddDefaultAWSOptions(Configuration.GetAWSOptions())
-            .AddSingleton<IAmazonDynamoDB>(_ => new AmazonDynamoDBClient(new AmazonDynamoDBConfig
-            {
-                ServiceURL = dynamoDbConfig["ServiceUrl"],
-            }));
+            .AddSingleton<IAmazonDynamoDB>(_ => new AmazonDynamoDBClient());
         services.AddMediatR(Assembly.GetCallingAssembly());
         services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationPipeline<,>));
 

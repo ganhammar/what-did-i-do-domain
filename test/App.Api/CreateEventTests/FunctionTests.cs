@@ -9,7 +9,8 @@ using Xunit;
 
 namespace CreateEventTests;
 
-public class FunctionTests : IClassFixture<DatabaseFixture>
+[Collection(Constants.DatabaseCollection)]
+public class FunctionTests
 {
     [Fact]
     public async Task Should_ReturnEvent_When_InputIsValid()
