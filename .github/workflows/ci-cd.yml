@@ -22,8 +22,9 @@ jobs:
       - name: Setup .NET Core SDKs
         uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: |
-            6.0.x
+          dotnet-version: 6.0.x
+      - name: Setup DynamoDB Local
+        run: docker run -d -p 8000:8000 amazon/dynamodb-local
 
       - name: Restore
         run: dotnet restore

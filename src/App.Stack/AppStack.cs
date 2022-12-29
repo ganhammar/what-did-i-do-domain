@@ -11,9 +11,10 @@ public class AppStack : Stack
     internal AppStack(Construct scope, string id, IStackProps props)
         : base(scope, id, props)
     {
+        var tableName = "what-did-i-do";
         var applicationTable = new Table(this, "ApplicationTable", new TableProps
         {
-            TableName = "what-did-i-do",
+            TableName = tableName,
             RemovalPolicy = RemovalPolicy.DESTROY, //Delete DynamoDB table on CDK destroy
             PartitionKey = new Amazon.CDK.AWS.DynamoDB.Attribute
             {
@@ -37,6 +38,10 @@ public class AppStack : Stack
             Code = Code.FromAsset("./.output/CreateEvent.zip"),
             Timeout = Duration.Minutes(1),
             MemorySize = 128,
+            Environment = new Dictionary<string, string>
+            {
+                { "TABLE_NAME", tableName },
+            }
         });
         applicationTable.GrantWriteData(createEventFunction);
 

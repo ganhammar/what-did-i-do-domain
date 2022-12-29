@@ -1,3 +1,5 @@
+using Amazon.DynamoDBv2;
+using Amazon.DynamoDBv2.DataModel;
 using App.Api.Shared.Infrastructure;
 using App.Api.Shared.Models;
 using FluentValidation;
@@ -7,9 +9,12 @@ namespace App.Api.CreateEvent;
 
 public class CreateEventCommand
 {
-    public class Command : IRequest<IResponse<Event>>
+    public class Command : IRequest<IResponse<EventDto>>
     {
         public string? Title { get; set; }
+        public string? Description { get; set; }
+        public DateTime? Date { get; set; }
+        public string[]? Tags { get; set; }
     }
 
     public class CommandValidator : AbstractValidator<Command>
@@ -21,18 +26,32 @@ public class CreateEventCommand
         }
     }
 
-    public class CommandHandler : Handler<Command, IResponse<Event>>
+    public class CommandHandler : Handler<Command, IResponse<EventDto>>
     {
-        public override Task<IResponse<Event>> Handle(Command request, CancellationToken cancellationToken)
+        private readonly DynamoDBContext _client;
+
+        public CommandHandler(IAmazonDynamoDB database)
         {
-            IResponse<Event> response = new Response<Event>
+            var tableName = Environment.GetEnvironmentVariable("TABLE_NAME");
+            var tables = database.ListTablesAsync().GetAwaiter().GetResult();
+            _client = new DynamoDBContext(database);
+        }
+
+        public override async Task<IResponse<EventDto>> Handle(Command request, CancellationToken cancellationToken)
+        {
+            var item = new EventDto
             {
-                Result = new Event
-                {
-                    Title = request.Title,
-                },
+                Title = request.Title,
+                Description = request.Description,
+                Date = request.Date?.ToUniversalTime() ?? DateTime.UtcNow,
+                Tags = request.Tags,
             };
-            return Task.FromResult(response);
+            await _client.SaveAsync(EventMapper.FromDto(item), new()
+            {
+                OverrideTableName = Environment.GetEnvironmentVariable("TABLE_NAME"),
+            }, cancellationToken);
+
+            return Response(item);
         }
     }
 }

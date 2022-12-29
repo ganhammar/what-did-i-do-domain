@@ -4,18 +4,19 @@ using Amazon.Lambda.APIGatewayEvents;
 using Amazon.Lambda.TestUtilities;
 using App.Api.CreateEvent;
 using App.Api.Shared.Models;
+using TestBase;
 using Xunit;
 
 namespace CreateEventTests;
 
-public class FunctionTests
+public class FunctionTests : IClassFixture<DatabaseFixture>
 {
     [Fact]
     public async Task Should_ReturnEvent_When_InputIsValid()
     {
         var function = new Function();
         var context = new TestLambdaContext();
-        var data = new Event
+        var data = new CreateEventCommand.Command
         {
             Title = "Testing Testing",
         };
@@ -28,7 +29,7 @@ public class FunctionTests
 
         Assert.Equal((int)HttpStatusCode.OK, response.StatusCode);
 
-        var body = JsonSerializer.Deserialize<Event>(response.Body);
+        var body = JsonSerializer.Deserialize<EventDto>(response.Body);
 
         Assert.NotNull(body);
         Assert.Equal(data.Title, body!.Title);

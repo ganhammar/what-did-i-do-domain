@@ -35,8 +35,8 @@ public class Startup
         services.AddMediatR(Assembly.GetCallingAssembly());
         services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationPipeline<,>));
 
-        services.AddTransient<IResponse<Event>, Response<Event>>();
-        services.AddTransient<IRequestHandler<CreateEventCommand.Command, IResponse<Event>>, CreateEventCommand.CommandHandler>();
+        services.AddTransient<IResponse<EventDto>, Response<EventDto>>();
+        services.AddTransient<IRequestHandler<CreateEventCommand.Command, IResponse<EventDto>>, CreateEventCommand.CommandHandler>();
         services.AddTransient<IValidator<CreateEventCommand.Command>, CreateEventCommand.CommandValidator>();
 
         return services;

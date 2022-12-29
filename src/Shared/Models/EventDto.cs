@@ -1,9 +1,7 @@
 namespace App.Api.Shared.Models;
 
-public class Event
+public class EventDto
 {
-    public string? PartitionKey { get; set; }
-    public string? SortKey { get; set; }
     public Guid Id { get; set; }
     public string? Title { get; set; }
     public string? Description { get; set; }
