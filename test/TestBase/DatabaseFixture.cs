@@ -66,6 +66,17 @@ public class DatabaseFixture : IDisposable
                 },
             },
         });
+
+        var created = false;
+        while (!created)
+        {
+            var table = await _client.DescribeTableAsync(_tableName);
+
+            if (table.Table.TableStatus == TableStatus.ACTIVE)
+            {
+                created = true;
+            }
+        }
     }
 
     public void Dispose()
