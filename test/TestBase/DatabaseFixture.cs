@@ -72,6 +72,8 @@ public class DatabaseFixture : IDisposable
             {
                 created = true;
             }
+
+            await Task.Delay(100);
         }
     }
 

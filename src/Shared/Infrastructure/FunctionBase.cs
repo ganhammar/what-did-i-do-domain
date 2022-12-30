@@ -10,6 +10,14 @@ namespace App.Api.Shared.Infrastructure;
 public abstract class FunctionBase
 {
     private readonly IServiceProvider _serviceProvider;
+    private readonly APIGatewayHttpApiV2ProxyResponse _noBodyResponse = new APIGatewayHttpApiV2ProxyResponse
+    {
+        Body = JsonSerializer.Serialize(new[]
+        {
+            new ValidationFailure("Body", "Invalid request"),
+        }),
+        StatusCode = (int)HttpStatusCode.BadRequest,
+    };
 
     public FunctionBase(IServiceProvider serviceProvider)
     {
@@ -20,14 +28,7 @@ public abstract class FunctionBase
     {
         if (request == default)
         {
-            return new APIGatewayHttpApiV2ProxyResponse
-            {
-                Body = JsonSerializer.Serialize(new[]
-                {
-                    new ValidationFailure("Body", "Invalid request"),
-                }),
-                StatusCode = (int)HttpStatusCode.BadRequest,
-            };
+            return _noBodyResponse;
         }
 
         var mediator = _serviceProvider.GetRequiredService<IMediator>();
@@ -43,11 +44,35 @@ public abstract class FunctionBase
             };
         }
 
-        return new APIGatewayHttpApiV2ProxyResponse
+        return HandleErrorResponse(response);
+    }
+
+    public async Task<APIGatewayHttpApiV2ProxyResponse> Respond(IRequest<IResponse>? request)
+    {
+        if (request == default)
+        {
+            return _noBodyResponse;
+        }
+
+        var mediator = _serviceProvider.GetRequiredService<IMediator>();
+        var response = await mediator.Send(request);
+
+        if (response.IsValid)
+        {
+            return new APIGatewayHttpApiV2ProxyResponse
+            {
+                StatusCode = (int)HttpStatusCode.NoContent,
+            };
+        }
+
+        return HandleErrorResponse(response);
+    }
+
+    private APIGatewayHttpApiV2ProxyResponse HandleErrorResponse(IResponse response)
+        => new APIGatewayHttpApiV2ProxyResponse
         {
             StatusCode = (int)HttpStatusCode.BadRequest,
             Body = JsonSerializer.Serialize(response.Errors),
             Headers = new Dictionary<string, string> {{"Content-Type", "application/json"}}
         };
-    }
 }

@@ -32,8 +32,6 @@ public class CreateEventCommand
 
         public CommandHandler(IAmazonDynamoDB database)
         {
-            var tableName = Environment.GetEnvironmentVariable("TABLE_NAME");
-            var tables = database.ListTablesAsync().GetAwaiter().GetResult();
             _client = new DynamoDBContext(database);
         }
 
