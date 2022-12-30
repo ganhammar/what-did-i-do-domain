@@ -1,7 +1,7 @@
 using Amazon.CDK;
 using Amazon.CDK.AWS.APIGateway;
 using Amazon.CDK.AWS.DynamoDB;
-using Amazon.CDK.AWS.Lambda;
+using AppStack.Constructs;
 using Constructs;
 
 namespace AppStack;
@@ -30,20 +30,18 @@ public class AppStack : Stack
             BillingMode = BillingMode.PAY_PER_REQUEST,
         });
 
-        var createEventFunction = new Function(this, "CreateEventFunction", new FunctionProps
-        {
-            Runtime = Runtime.DOTNET_6,
-            Architecture = Architecture.ARM_64,
-            Handler = "CreateEvent::App.Api.CreateEvent.Function::FunctionHandler",
-            Code = Code.FromAsset("./.output/CreateEvent.zip"),
-            Timeout = Duration.Minutes(1),
-            MemorySize = 128,
-            Environment = new Dictionary<string, string>
-            {
-                { "TABLE_NAME", tableName },
-            }
-        });
+        var createEventFunction = new AppFunction(this, "CreateEvent", new AppFunction.Props(
+            "CreateEvent::App.Api.CreateEvent.Function::FunctionHandler",
+            tableName
+        ));
         applicationTable.GrantWriteData(createEventFunction);
+
+        var deleteEventFunction = new AppFunction(this, "DeleteEvent", new AppFunction.Props(
+            "DeleteEvent::App.Api.DeleteEvent.Function::FunctionHandler",
+            tableName
+        ));
+        applicationTable.GrantReadData(deleteEventFunction);
+        applicationTable.GrantWriteData(deleteEventFunction);
 
         var apiGateway = new RestApi(this, "what-did-i-do", new RestApiProps
         {
@@ -52,6 +50,7 @@ public class AppStack : Stack
 
         var eventResource = apiGateway.Root.AddResource("event");
         eventResource.AddMethod("POST", new LambdaIntegration(createEventFunction));
+        eventResource.AddMethod("DELETE", new LambdaIntegration(deleteEventFunction));
 
         new CfnOutput(this, "APIGWEndpoint", new CfnOutputProps
         {
