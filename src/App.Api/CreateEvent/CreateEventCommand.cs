@@ -37,19 +37,19 @@ public class CreateEventCommand
 
     public override async Task<IResponse<EventDto>> Handle(Command request, CancellationToken cancellationToken)
     {
-      var item = new EventDto
+      var item = EventMapper.FromDto(new EventDto
       {
         Title = request.Title,
         Description = request.Description,
         Date = request.Date?.ToUniversalTime() ?? DateTime.UtcNow,
         Tags = request.Tags,
-      };
-      await _client.SaveAsync(EventMapper.FromDto(item), new()
+      });
+      await _client.SaveAsync(item, new()
       {
         OverrideTableName = Environment.GetEnvironmentVariable("TABLE_NAME"),
       }, cancellationToken);
 
-      return Response(item);
+      return Response(EventMapper.ToDto(item));
     }
   }
 }

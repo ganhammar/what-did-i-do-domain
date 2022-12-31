@@ -35,6 +35,7 @@ public class FunctionTests
 
     Assert.NotNull(body);
     Assert.Equal(data.Title, body!.Title);
+    Assert.NotNull(body!.Id);
   }
 
   [Fact]

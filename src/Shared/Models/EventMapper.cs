@@ -16,11 +16,11 @@ public static class EventMapper
   public static Event FromDto(EventDto instance) => new()
   {
     PartitionKey = instance.Id != default
-          ? GetKeys(instance.Id)[0]
-          : instance.Date?.ToString("o", CultureInfo.InvariantCulture),
+      ? GetKeys(instance.Id)[0]
+      : instance.Date?.ToString("o", CultureInfo.InvariantCulture),
     SortKey = instance.Id != default
-          ? GetKeys(instance.Id)[1]
-          : $"{instance.Title?.UrlFriendly()}-{Guid.NewGuid()}",
+      ? GetKeys(instance.Id)[1]
+      : $"{instance.Title?.UrlFriendly()}-{Guid.NewGuid()}",
     Date = instance.Date,
     Title = instance.Title,
     Description = instance.Description,
