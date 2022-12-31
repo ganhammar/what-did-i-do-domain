@@ -1,4 +1,4 @@
-using System.Text.Json;
+﻿using System.Text.Json;
 using Amazon.Lambda.APIGatewayEvents;
 using Amazon.Lambda.Core;
 using Amazon.Lambda.Serialization.SystemTextJson;
@@ -11,18 +11,18 @@ namespace App.Api.DeleteEvent;
 
 public class Function : FunctionBase
 {
-    private static readonly IServiceProvider _serviceProvider = Startup
-        .ConfigureServices()
-        .BuildServiceProvider();
+  private static readonly IServiceProvider _serviceProvider = Startup
+      .ConfigureServices()
+      .BuildServiceProvider();
 
-    public Function() : base (_serviceProvider) { }
+  public Function() : base(_serviceProvider) { }
 
-    public async Task<APIGatewayHttpApiV2ProxyResponse> FunctionHandler(
-        APIGatewayProxyRequest apiGatewayProxyRequest,
-        ILambdaContext context)
-    {
-        var command = JsonSerializer.Deserialize<DeleteEventCommand.Command>(apiGatewayProxyRequest.Body);
+  public async Task<APIGatewayHttpApiV2ProxyResponse> FunctionHandler(
+    APIGatewayProxyRequest apiGatewayProxyRequest,
+    ILambdaContext context)
+  {
+    var command = JsonSerializer.Deserialize<DeleteEventCommand.Command>(apiGatewayProxyRequest.Body);
 
-        return await Respond(command);
-    }
+    return await Respond(command);
+  }
 }

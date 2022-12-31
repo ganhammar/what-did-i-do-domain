@@ -1,4 +1,4 @@
-using TestBase;
+﻿using TestBase;
 using Xunit;
 
 namespace CreateEventTests;

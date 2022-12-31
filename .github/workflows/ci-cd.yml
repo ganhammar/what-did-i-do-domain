@@ -35,6 +35,8 @@ jobs:
         run: dotnet restore
       - name: Build
         run: dotnet build --no-restore
+      - name: Lint
+        run: dotnet format --verify-no-changes --no-restore
       - name: Test
         run: dotnet test --no-build
 

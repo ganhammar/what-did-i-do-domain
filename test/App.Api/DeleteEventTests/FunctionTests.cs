@@ -1,4 +1,4 @@
-using System.Net;
+﻿using System.Net;
 using System.Text.Json;
 using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.DataModel;
@@ -15,83 +15,83 @@ namespace CreateEventTests;
 [Collection(Constants.DatabaseCollection)]
 public class FunctionTests
 {
-    [Fact]
-    public async Task Should_ReturnSuccessfully_When_InputIsValid()
+  [Fact]
+  public async Task Should_ReturnSuccessfully_When_InputIsValid()
+  {
+    var tableName = Environment.GetEnvironmentVariable("TABLE_NAME");
+    var item = EventMapper.FromDto(new EventDto
     {
-        var tableName = Environment.GetEnvironmentVariable("TABLE_NAME");
-        var item = EventMapper.FromDto(new EventDto
-        {
-            Date = DateTime.UtcNow,
-            Title = "Testing Testing",
-        });
-        var client = new AmazonDynamoDBClient();
-        var dbContext = new DynamoDBContext(client);
-        dbContext.SaveAsync(item, new()
-        {
-            OverrideTableName = tableName,
-        }, CancellationToken.None).GetAwaiter().GetResult();
-
-        var context = new TestLambdaContext();
-        var data = new DeleteEventCommand.Command
-        {
-            Id = EventMapper.ToDto(item).Id,
-        };
-        var request = new APIGatewayProxyRequest
-        {
-            HttpMethod = HttpMethod.Post.Method,
-            Body = JsonSerializer.Serialize(data),
-        };
-
-        var function = new Function();
-        var response = await function.FunctionHandler(request, context);
-
-        Assert.Equal((int)HttpStatusCode.NoContent, response.StatusCode);
-    }
-
-    [Fact]
-    public async Task Should_ReturnBadRequest_When_InputIsNotValid()
+      Date = DateTime.UtcNow,
+      Title = "Testing Testing",
+    });
+    var client = new AmazonDynamoDBClient();
+    var dbContext = new DynamoDBContext(client);
+    dbContext.SaveAsync(item, new()
     {
-        var function = new Function();
-        var context = new TestLambdaContext();
-        var data = new DeleteEventCommand.Command();
-        var request = new APIGatewayProxyRequest
-        {
-            HttpMethod = HttpMethod.Post.Method,
-            Body = JsonSerializer.Serialize(data),
-        };
-        var response = await function.FunctionHandler(request, context);
+      OverrideTableName = tableName,
+    }, CancellationToken.None).GetAwaiter().GetResult();
 
-        Assert.Equal((int)HttpStatusCode.BadRequest, response.StatusCode);
-
-        var errors = JsonSerializer.Deserialize<List<ValidationFailure>>(response.Body);
-
-        Assert.NotNull(errors);
-        Assert.Contains(errors, error => error.PropertyName == nameof(DeleteEventCommand.Command.Id)
-                && error.ErrorCode == "NotEmptyValidator");
-    }
-
-    [Fact]
-    public async Task Should_ReturnBadRequest_When_IdIsNotValid()
+    var context = new TestLambdaContext();
+    var data = new DeleteEventCommand.Command
     {
-        var function = new Function();
-        var context = new TestLambdaContext();
-        var data = new DeleteEventCommand.Command
-        {
-            Id = "not-the-real-deal",
-        };
-        var request = new APIGatewayProxyRequest
-        {
-            HttpMethod = HttpMethod.Post.Method,
-            Body = JsonSerializer.Serialize(data),
-        };
-        var response = await function.FunctionHandler(request, context);
+      Id = EventMapper.ToDto(item).Id,
+    };
+    var request = new APIGatewayProxyRequest
+    {
+      HttpMethod = HttpMethod.Post.Method,
+      Body = JsonSerializer.Serialize(data),
+    };
 
-        Assert.Equal((int)HttpStatusCode.BadRequest, response.StatusCode);
+    var function = new Function();
+    var response = await function.FunctionHandler(request, context);
 
-        var errors = JsonSerializer.Deserialize<List<ValidationFailure>>(response.Body);
+    Assert.Equal((int)HttpStatusCode.NoContent, response.StatusCode);
+  }
 
-        Assert.NotNull(errors);
-        Assert.Contains(errors, error => error.PropertyName == nameof(DeleteEventCommand.Command.Id)
-                && error.ErrorCode == DeleteEventCommand.InvalidId);
-    }
+  [Fact]
+  public async Task Should_ReturnBadRequest_When_InputIsNotValid()
+  {
+    var function = new Function();
+    var context = new TestLambdaContext();
+    var data = new DeleteEventCommand.Command();
+    var request = new APIGatewayProxyRequest
+    {
+      HttpMethod = HttpMethod.Post.Method,
+      Body = JsonSerializer.Serialize(data),
+    };
+    var response = await function.FunctionHandler(request, context);
+
+    Assert.Equal((int)HttpStatusCode.BadRequest, response.StatusCode);
+
+    var errors = JsonSerializer.Deserialize<List<ValidationFailure>>(response.Body);
+
+    Assert.NotNull(errors);
+    Assert.Contains(errors, error => error.PropertyName == nameof(DeleteEventCommand.Command.Id)
+      && error.ErrorCode == "NotEmptyValidator");
+  }
+
+  [Fact]
+  public async Task Should_ReturnBadRequest_When_IdIsNotValid()
+  {
+    var function = new Function();
+    var context = new TestLambdaContext();
+    var data = new DeleteEventCommand.Command
+    {
+      Id = "not-the-real-deal",
+    };
+    var request = new APIGatewayProxyRequest
+    {
+      HttpMethod = HttpMethod.Post.Method,
+      Body = JsonSerializer.Serialize(data),
+    };
+    var response = await function.FunctionHandler(request, context);
+
+    Assert.Equal((int)HttpStatusCode.BadRequest, response.StatusCode);
+
+    var errors = JsonSerializer.Deserialize<List<ValidationFailure>>(response.Body);
+
+    Assert.NotNull(errors);
+    Assert.Contains(errors, error => error.PropertyName == nameof(DeleteEventCommand.Command.Id)
+      && error.ErrorCode == DeleteEventCommand.InvalidId);
+  }
 }

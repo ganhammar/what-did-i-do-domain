@@ -1,15 +1,15 @@
-using Amazon.CDK;
+﻿using Amazon.CDK;
 
 namespace AppStack;
 
 public class Program
 {
-    static void Main(string[] args)
-    {
-        var app = new App(null);
+  static void Main(string[] args)
+  {
+    var app = new App(null);
 
-        new AppStack(app, "what-did-i-do-stack", new StackProps());
+    new AppStack(app, "what-did-i-do-stack", new StackProps());
 
-        app.Synth();
-    }
+    app.Synth();
+  }
 }

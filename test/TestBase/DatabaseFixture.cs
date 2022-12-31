@@ -5,37 +5,38 @@ namespace TestBase;
 
 public class DatabaseFixture : IDisposable
 {
-    private bool _disposed;
-    private readonly string _tableName = Guid.NewGuid().ToString();
-    private readonly string _serviceUrlKey = "DynamoDB__ServiceUrl";
-    private readonly AmazonDynamoDBClient _client;
+  private bool _disposed;
+  private readonly string _tableName = Guid.NewGuid().ToString();
+  private readonly string _serviceUrlKey = "DynamoDB__ServiceUrl";
+  private readonly AmazonDynamoDBClient _client;
 
-    public DatabaseFixture()
+  public DatabaseFixture()
+  {
+    SetEnvironment();
+
+    _client = new AmazonDynamoDBClient();
+
+    CreateTable().GetAwaiter().GetResult();
+    var tables = _client.ListTablesAsync().GetAwaiter().GetResult();
+  }
+
+  private void SetEnvironment()
+  {
+    Environment.SetEnvironmentVariable("TABLE_NAME", _tableName);
+
+    if (Environment.GetEnvironmentVariable(_serviceUrlKey) == default)
     {
-        SetEnvironment();
-
-        _client = new AmazonDynamoDBClient();
-
-        CreateTable().GetAwaiter().GetResult();
-        var tables = _client.ListTablesAsync().GetAwaiter().GetResult();
+      Environment.SetEnvironmentVariable(_serviceUrlKey, "http://localhost:8000");
     }
+  }
 
-    private void SetEnvironment()
+  private async Task CreateTable()
+  {
+    await _client.CreateTableAsync(new CreateTableRequest
     {
-        Environment.SetEnvironmentVariable("TABLE_NAME", _tableName);
-
-        if (Environment.GetEnvironmentVariable(_serviceUrlKey) == default) {
-            Environment.SetEnvironmentVariable(_serviceUrlKey, "http://localhost:8000");
-        }
-    }
-
-    private async Task CreateTable()
-    {
-        await _client.CreateTableAsync(new CreateTableRequest
-        {
-            TableName = _tableName,
-            BillingMode = BillingMode.PAY_PER_REQUEST,
-            KeySchema = new List<KeySchemaElement>
+      TableName = _tableName,
+      BillingMode = BillingMode.PAY_PER_REQUEST,
+      KeySchema = new List<KeySchemaElement>
             {
                 new KeySchemaElement
                 {
@@ -48,7 +49,7 @@ public class DatabaseFixture : IDisposable
                     KeyType = KeyType.RANGE,
                 },
             },
-            AttributeDefinitions = new List<AttributeDefinition>
+      AttributeDefinitions = new List<AttributeDefinition>
             {
                 new AttributeDefinition
                 {
@@ -61,31 +62,31 @@ public class DatabaseFixture : IDisposable
                     AttributeType = ScalarAttributeType.S,
                 },
             },
-        });
+    });
 
-        var created = false;
-        while (!created)
-        {
-            var table = await _client.DescribeTableAsync(_tableName);
-
-            if (table.Table.TableStatus == TableStatus.ACTIVE)
-            {
-                created = true;
-            }
-
-            await Task.Delay(100);
-        }
-    }
-
-    public void Dispose()
+    var created = false;
+    while (!created)
     {
-        if (_disposed)
-        {
-            return;
-        }
+      var table = await _client.DescribeTableAsync(_tableName);
 
-        _client.DeleteTableAsync(_tableName).GetAwaiter().GetResult();
-        _client.Dispose();
-        _disposed = true;
+      if (table.Table.TableStatus == TableStatus.ACTIVE)
+      {
+        created = true;
+      }
+
+      await Task.Delay(100);
     }
+  }
+
+  public void Dispose()
+  {
+    if (_disposed)
+    {
+      return;
+    }
+
+    _client.DeleteTableAsync(_tableName).GetAwaiter().GetResult();
+    _client.Dispose();
+    _disposed = true;
+  }
 }

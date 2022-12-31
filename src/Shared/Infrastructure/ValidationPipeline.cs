@@ -1,4 +1,4 @@
-using FluentValidation;
+﻿using FluentValidation;
 using MediatR;
 
 namespace App.Api.Shared.Infrastructure;
@@ -7,29 +7,29 @@ public class ValidationPipeline<TRequest, TResponse> : IPipelineBehavior<TReques
     where TRequest : IRequest<TResponse>
     where TResponse : IResponse
 {
-    private readonly IEnumerable<IValidator<TRequest>> _validators;
-    private TResponse _response;
+  private readonly IEnumerable<IValidator<TRequest>> _validators;
+  private TResponse _response;
 
-    public ValidationPipeline(IEnumerable<IValidator<TRequest>> validators, TResponse response)
+  public ValidationPipeline(IEnumerable<IValidator<TRequest>> validators, TResponse response)
+  {
+    _validators = validators;
+    _response = response;
+  }
+
+  public Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
+  {
+    var failures = _validators
+        .Select(v => v.ValidateAsync(request).Result)
+        .SelectMany(result => result.Errors)
+        .Where(f => f != null)
+        .ToList();
+
+    if (failures.Any())
     {
-        _validators = validators;
-        _response = response;
+      _response.Errors = failures;
+      return Task.FromResult(_response);
     }
 
-    public Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
-    {
-        var failures = _validators
-            .Select(v => v.ValidateAsync(request).Result)
-            .SelectMany(result => result.Errors)
-            .Where(f => f != null)
-            .ToList();
-
-        if (failures.Any())
-        {
-            _response.Errors = failures;
-            return Task.FromResult(_response);
-        }
-
-        return next();
-    }
+    return next();
+  }
 }
