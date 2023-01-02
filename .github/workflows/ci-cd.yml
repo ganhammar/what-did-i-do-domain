@@ -67,6 +67,7 @@ jobs:
         with:
           name: ${{ github.run_id }}
           path: |
+            ./Directory.Build.props
             ./cdk.json
             ./src/App.Stack/**/*
             ./.output
