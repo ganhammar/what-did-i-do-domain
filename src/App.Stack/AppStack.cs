@@ -43,6 +43,12 @@ public class AppStack : Stack
     applicationTable.GrantReadData(deleteEventFunction);
     applicationTable.GrantWriteData(deleteEventFunction);
 
+    var listEventsFunction = new AppFunction(this, "ListEvents", new AppFunction.Props(
+        "ListEvents::App.Api.ListEvents.Function::FunctionHandler",
+        tableName
+    ));
+    applicationTable.GrantReadData(listEventsFunction);
+
     var apiGateway = new RestApi(this, "what-did-i-do", new RestApiProps
     {
       RestApiName = "what-did-i-do",
@@ -51,6 +57,7 @@ public class AppStack : Stack
     var eventResource = apiGateway.Root.AddResource("event");
     eventResource.AddMethod("POST", new LambdaIntegration(createEventFunction));
     eventResource.AddMethod("DELETE", new LambdaIntegration(deleteEventFunction));
+    eventResource.AddMethod("GET", new LambdaIntegration(listEventsFunction));
 
     new CfnOutput(this, "APIGWEndpoint", new CfnOutputProps
     {
