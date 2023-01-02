@@ -55,6 +55,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+      - name: Install Lambda Tools
+        run: dotnet tool install -g Amazon.Lambda.Tools
 
       - name: Package Project
         uses: ./.github/actions/package-project
