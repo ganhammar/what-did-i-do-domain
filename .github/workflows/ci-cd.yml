@@ -51,6 +51,7 @@ jobs:
         project:
           - ./src/App.Api/CreateEvent
           - ./src/App.Api/DeleteEvent
+          - ./src/App.Api/ListEvents
     steps:
       - name: Checkout
         uses: actions/checkout@v3

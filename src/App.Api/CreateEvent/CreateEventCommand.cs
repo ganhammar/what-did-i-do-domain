@@ -11,6 +11,7 @@ public class CreateEventCommand
 {
   public class Command : IRequest<IResponse<EventDto>>
   {
+    public Guid AccountId { get; set; }
     public string? Title { get; set; }
     public string? Description { get; set; }
     public DateTime? Date { get; set; }
@@ -21,6 +22,9 @@ public class CreateEventCommand
   {
     public CommandValidator()
     {
+      RuleFor(x => x.AccountId)
+        .NotEmpty();
+
       RuleFor(x => x.Title)
         .NotEmpty();
     }

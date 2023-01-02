@@ -8,23 +8,31 @@ public static class EventMapper
   public static EventDto ToDto(Event instance) => new()
   {
     Id = $"{instance.PartitionKey}#{instance.SortKey}".To64(),
+    AccountId = GetAccountId(instance),
     Date = instance.Date,
     Title = instance.Title,
     Description = instance.Description,
+    Tags = instance.Tags,
   };
 
   public static Event FromDto(EventDto instance) => new()
   {
     PartitionKey = instance.Id != default
       ? GetKeys(instance.Id)[0]
-      : instance.Date?.ToString("o", CultureInfo.InvariantCulture),
+      : GetPartitionKey(instance.AccountId),
     SortKey = instance.Id != default
       ? GetKeys(instance.Id)[1]
-      : $"{instance.Title?.UrlFriendly()}-{Guid.NewGuid()}",
+      : instance.Date?.ToString("o", CultureInfo.InvariantCulture),
     Date = instance.Date,
     Title = instance.Title,
     Description = instance.Description,
   };
+
+  public static Guid GetAccountId(Event instance)
+    => Guid.Parse(instance.PartitionKey!.Split("&")[1]);
+
+  public static string GetPartitionKey(Guid accountId)
+    => $"{ModelType.Event.ToString()}&{accountId}";
 
   public static string[] GetKeys(string? id)
   {
@@ -33,6 +41,6 @@ public static class EventMapper
       return Array.Empty<string>();
     }
 
-    return id.From64()?.Split('#') ?? Array.Empty<string>();
+    return id.From64()?.Split('#', 2) ?? Array.Empty<string>();
   }
 }

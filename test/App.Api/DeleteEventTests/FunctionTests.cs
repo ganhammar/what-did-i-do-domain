@@ -1,13 +1,12 @@
 ﻿using System.Net;
 using System.Text.Json;
-using Amazon.DynamoDBv2;
-using Amazon.DynamoDBv2.DataModel;
 using Amazon.Lambda.APIGatewayEvents;
 using Amazon.Lambda.TestUtilities;
 using App.Api.DeleteEvent;
 using App.Api.Shared.Models;
 using FluentValidation.Results;
 using TestBase;
+using TestBase.Helpers;
 using Xunit;
 
 namespace CreateEventTests;
@@ -18,18 +17,12 @@ public class FunctionTests
   [Fact]
   public async Task Should_ReturnSuccessfully_When_InputIsValid()
   {
-    var tableName = Environment.GetEnvironmentVariable("TABLE_NAME");
-    var item = EventMapper.FromDto(new EventDto
+    var item = EventHelpers.CreateEvent(new()
     {
-      Date = DateTime.UtcNow,
+      AccountId = Guid.NewGuid(),
       Title = "Testing Testing",
+      Date = DateTime.UtcNow,
     });
-    var client = new AmazonDynamoDBClient();
-    var dbContext = new DynamoDBContext(client);
-    dbContext.SaveAsync(item, new()
-    {
-      OverrideTableName = tableName,
-    }, CancellationToken.None).GetAwaiter().GetResult();
 
     var context = new TestLambdaContext();
     var data = new DeleteEventCommand.Command

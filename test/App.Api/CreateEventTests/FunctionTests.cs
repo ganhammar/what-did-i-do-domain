@@ -20,6 +20,7 @@ public class FunctionTests
     var context = new TestLambdaContext();
     var data = new CreateEventCommand.Command
     {
+      AccountId = Guid.NewGuid(),
       Title = "Testing Testing",
     };
     var request = new APIGatewayProxyRequest
@@ -39,11 +40,14 @@ public class FunctionTests
   }
 
   [Fact]
-  public async Task Should_ReturnBadRequest_When_InputIsNotValid()
+  public async Task Should_ReturnBadRequest_When_TitleIsNotSet()
   {
     var function = new Function();
     var context = new TestLambdaContext();
-    var data = new CreateEventCommand.Command();
+    var data = new CreateEventCommand.Command
+    {
+      AccountId = Guid.NewGuid(),
+    };
     var request = new APIGatewayProxyRequest
     {
       HttpMethod = HttpMethod.Post.Method,
@@ -57,6 +61,31 @@ public class FunctionTests
 
     Assert.NotNull(errors);
     Assert.Contains(errors, error => error.PropertyName == nameof(CreateEventCommand.Command.Title)
+      && error.ErrorCode == "NotEmptyValidator");
+  }
+
+  [Fact]
+  public async Task Should_ReturnBadRequest_When_AccountIdIsNotSet()
+  {
+    var function = new Function();
+    var context = new TestLambdaContext();
+    var data = new CreateEventCommand.Command
+    {
+      Title = "Testing Testing",
+    };
+    var request = new APIGatewayProxyRequest
+    {
+      HttpMethod = HttpMethod.Post.Method,
+      Body = JsonSerializer.Serialize(data),
+    };
+    var response = await function.FunctionHandler(request, context);
+
+    Assert.Equal((int)HttpStatusCode.BadRequest, response.StatusCode);
+
+    var errors = JsonSerializer.Deserialize<List<ValidationFailure>>(response.Body);
+
+    Assert.NotNull(errors);
+    Assert.Contains(errors, error => error.PropertyName == nameof(CreateEventCommand.Command.AccountId)
       && error.ErrorCode == "NotEmptyValidator");
   }
 }
