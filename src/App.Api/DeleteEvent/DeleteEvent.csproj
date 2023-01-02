@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>$(TargetFramework)</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
@@ -9,16 +9,21 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Amazon.Lambda.Core" Version="2.1.0" />
-    <PackageReference Include="Amazon.Lambda.APIGatewayEvents" Version="2.5.0" />
-    <PackageReference Include="Amazon.Lambda.Serialization.SystemTextJson" Version="2.3.0" />
-    <PackageReference Include="AWSSDK.DynamoDBv2" Version="3.7.101.14" />
-    <PackageReference Include="AWSSDK.Extensions.NETCore.Setup" Version="3.7.2" />
-    <PackageReference Include="AWSXRayRecorder.Core" Version="2.13.0" />
-    <PackageReference Include="AWSXRayRecorder.Handlers.AwsSdk" Version="2.11.0" />
-    <PackageReference Include="FluentValidation" Version="11.4.0" />
-    <PackageReference Include="MediatR" Version="11.1.0" />
-    <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="11.0.0" />
+    <PackageReference Include="Amazon.Lambda.Core" Version="$(AmazonLambdaCoreVersion)" />
+    <PackageReference Include="Amazon.Lambda.APIGatewayEvents"
+      Version="$(AmazonLambdaAPIGatewayEventsVersion)" />
+    <PackageReference Include="Amazon.Lambda.Serialization.SystemTextJson"
+      Version="$(AmazonLambdaSerializationSystemTextJsonVersion)" />
+    <PackageReference Include="AWSSDK.DynamoDBv2" Version="$(AWSSDKDynamoDBv2Version)" />
+    <PackageReference Include="AWSSDK.Extensions.NETCore.Setup"
+      Version="$(AWSSDKExtensionsNETCoreSetupVersion)" />
+    <PackageReference Include="AWSXRayRecorder.Core" Version="$(AWSXRayRecorderCoreVersion)" />
+    <PackageReference Include="AWSXRayRecorder.Handlers.AwsSdk"
+      Version="$(AWSXRayRecorderHandlersAwsSdkVersion)" />
+    <PackageReference Include="FluentValidation" Version="$(FluentValidationVersion)" />
+    <PackageReference Include="MediatR" Version="$(MediatRVersion)" />
+    <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection"
+      Version="$(MediatRExtensionsMicrosoftDependencyInjectionVersion)" />
   </ItemGroup>
 
   <ItemGroup>
@@ -32,4 +37,3 @@
   </ItemGroup>
 
 </Project>
-    

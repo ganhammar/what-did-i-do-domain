@@ -1,0 +1,32 @@
+<Project>
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <AmazonCDKLibVersion>2.57.0</AmazonCDKLibVersion>
+    <AmazonLambdaCoreVersion>2.1.0</AmazonLambdaCoreVersion>
+    <AmazonLambdaAPIGatewayEventsVersion>2.5.0</AmazonLambdaAPIGatewayEventsVersion>
+    <AmazonLambdaSerializationSystemTextJsonVersion>2.3.0</AmazonLambdaSerializationSystemTextJsonVersion>
+    <AmazonLambdaTestUtilitiesVersion>2.0.0</AmazonLambdaTestUtilitiesVersion>
+    <AWSSDKDynamoDBv2Version>3.7.101.14</AWSSDKDynamoDBv2Version>
+    <AWSSDKExtensionsNETCoreSetupVersion>3.7.2</AWSSDKExtensionsNETCoreSetupVersion>
+    <AWSXRayRecorderCoreVersion>2.13.0</AWSXRayRecorderCoreVersion>
+    <AWSXRayRecorderHandlersAwsSdkVersion>2.11.0</AWSXRayRecorderHandlersAwsSdkVersion>
+    <ConstructsVersion>10.1.203</ConstructsVersion>
+    <FluentValidationVersion>11.4.0</FluentValidationVersion>
+    <MediatRVersion>11.1.0</MediatRVersion>
+    <MediatRExtensionsMicrosoftDependencyInjectionVersion>11.0.0</MediatRExtensionsMicrosoftDependencyInjectionVersion>
+    <MicrosoftExtensionsConfigurationBinderVersion>7.0.1</MicrosoftExtensionsConfigurationBinderVersion>
+    <MicrosoftExtensionsConfigurationEnvironmentVariablesVersion>7.0.0</MicrosoftExtensionsConfigurationEnvironmentVariablesVersion>
+    <MicrosoftExtensionsConfigurationFileExtensionsVersion>7.0.0</MicrosoftExtensionsConfigurationFileExtensionsVersion>
+    <MicrosoftExtensionsConfigurationJsonVersion>7.0.0</MicrosoftExtensionsConfigurationJsonVersion>
+    <MicrosoftExtensionsDependencyInjectionVersion>7.0.0</MicrosoftExtensionsDependencyInjectionVersion>
+    <MicrosoftNETTestSdkVersion>17.4.1</MicrosoftNETTestSdkVersion>
+    <XunitVersion>2.4.2</XunitVersion>
+    <XunitRunnerVisualstudioVersion>2.4.5</XunitRunnerVisualstudioVersion>
+    <CoverletCollectorVersion>3.2.0</CoverletCollectorVersion>
+  </PropertyGroup>
+
+</Project>

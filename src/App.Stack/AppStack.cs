@@ -9,7 +9,7 @@ namespace AppStack;
 public class AppStack : Stack
 {
   internal AppStack(Construct scope, string id, IStackProps props)
-      : base(scope, id, props)
+    : base(scope, id, props)
   {
     var tableName = "what-did-i-do";
     var applicationTable = new Table(this, "ApplicationTable", new TableProps
