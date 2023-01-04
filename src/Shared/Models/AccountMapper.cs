@@ -1,4 +1,4 @@
-using System.Globalization;
+﻿using System.Globalization;
 using Amazon.DynamoDBv2.DataModel;
 using Amazon.DynamoDBv2.DocumentModel;
 using App.Api.Shared.Extensions;

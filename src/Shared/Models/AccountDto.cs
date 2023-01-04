@@ -1,4 +1,4 @@
-namespace App.Api.Shared.Models;
+﻿namespace App.Api.Shared.Models;
 
 public class AccountDto
 {
