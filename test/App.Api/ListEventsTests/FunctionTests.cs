@@ -17,7 +17,7 @@ public class FunctionTests
   [Fact]
   public async Task Should_ReturnList_When_InputIsValid()
   {
-    var accountId = Guid.NewGuid();
+    var accountId = Guid.NewGuid().ToString();
     EventHelpers.CreateEvent(new()
     {
       AccountId = accountId,
@@ -49,7 +49,7 @@ public class FunctionTests
   [Fact]
   public async Task Should_ReturnEmptyList_When_ThereIsNoEventsBetweenFromAndTo()
   {
-    var accountId = Guid.NewGuid();
+    var accountId = Guid.NewGuid().ToString();
     EventHelpers.CreateEvent(new()
     {
       AccountId = accountId,
@@ -108,7 +108,7 @@ public class FunctionTests
     var context = new TestLambdaContext();
     var data = new ListEventsCommand.Command
     {
-      AccountId = Guid.NewGuid(),
+      AccountId = Guid.NewGuid().ToString(),
       FromDate = DateTime.UtcNow,
     };
     var request = new APIGatewayProxyRequest
@@ -134,7 +134,7 @@ public class FunctionTests
     var context = new TestLambdaContext();
     var data = new ListEventsCommand.Command
     {
-      AccountId = Guid.NewGuid(),
+      AccountId = Guid.NewGuid().ToString(),
       ToDate = DateTime.UtcNow,
     };
     var request = new APIGatewayProxyRequest
@@ -160,7 +160,7 @@ public class FunctionTests
     var context = new TestLambdaContext();
     var data = new ListEventsCommand.Command
     {
-      AccountId = Guid.NewGuid(),
+      AccountId = Guid.NewGuid().ToString(),
       ToDate = DateTime.UtcNow.AddDays(-1),
       FromDate = DateTime.UtcNow,
     };

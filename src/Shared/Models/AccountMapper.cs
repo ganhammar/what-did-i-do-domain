@@ -16,18 +16,21 @@ public static class AccountMapper
 
   public static Account FromDto(AccountDto instance) => new()
   {
-    PartitionKey = instance.Id,
+    PartitionKey = GetAccountId(instance.Id!),
     SortKey = instance.CreateDate.ToString("o", CultureInfo.InvariantCulture),
     CreateDate = instance.CreateDate,
     Name = instance.Name,
   };
 
   public static string GetId(string partitionKey)
-    => partitionKey.Split('&')[1];
+    => partitionKey.Split('#')[1];
+
+  public static string GetAccountId(string id)
+    => $"ACCOUNT#{id}";
 
   public static async Task<string> GetUniqueId(string name, DynamoDBContext context, CancellationToken cancellationToken)
   {
-    var baseKey = $"{ModelType.Account.ToString()}&{name.UrlFriendly()}";
+    var baseKey = GetAccountId(name.UrlFriendly());
     var suffix = 0;
     var key = baseKey;
     var exits = true;

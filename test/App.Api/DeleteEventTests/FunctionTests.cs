@@ -19,7 +19,7 @@ public class FunctionTests
   {
     var item = EventHelpers.CreateEvent(new()
     {
-      AccountId = Guid.NewGuid(),
+      AccountId = Guid.NewGuid().ToString(),
       Title = "Testing Testing",
       Date = DateTime.UtcNow,
     });

@@ -13,6 +13,8 @@ public class StringExtensionsTests
   [InlineData("wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww", "wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww")]
   [InlineData("", "")]
   [InlineData("UPPER CASE", "upper-case")]
+  [InlineData("amp&ersand", "ampersand")]
+  [InlineData("hash#tag", "hashtag")]
   public void Should_ReturnExpectedString_When_TransformingToUrlFriendly(
       string input, string expected)
   {

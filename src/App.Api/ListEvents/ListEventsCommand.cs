@@ -12,7 +12,7 @@ public class ListEventsCommand
 {
   public class Command : IRequest<IResponse<List<EventDto>>>
   {
-    public Guid AccountId { get; set; }
+    public string? AccountId { get; set; }
     public DateTime? FromDate { get; set; }
     public DateTime? ToDate { get; set; }
   }
@@ -62,7 +62,7 @@ public class ListEventsCommand
             ExpressionStatement = "PartitionKey = :partitionKey AND SortKey BETWEEN :fromDate and :toDate",
             ExpressionAttributeValues = new Dictionary<string, DynamoDBEntry>
             {
-              { ":partitionKey", EventMapper.GetPartitionKey(request.AccountId) },
+              { ":partitionKey", EventMapper.GetPartitionKey(request.AccountId!) },
               { ":fromDate", fromDate },
               { ":toDate", toDate },
             }
