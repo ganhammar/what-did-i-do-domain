@@ -9,6 +9,7 @@
   <ItemGroup>
     <PackageReference Include="Amazon.Lambda.APIGatewayEvents"
       Version="$(AmazonLambdaAPIGatewayEventsVersion)" />
+    <PackageReference Include="AWSSDK.DynamoDBv2" Version="$(AWSSDKDynamoDBv2Version)" />
     <PackageReference Include="FluentValidation" Version="$(FluentValidationVersion)" />
     <PackageReference Include="MediatR" Version="$(MediatRVersion)" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Binder"

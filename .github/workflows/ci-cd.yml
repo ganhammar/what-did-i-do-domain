@@ -49,6 +49,7 @@ jobs:
       fail-fast: true
       matrix:
         project:
+          - ./src/App.Api/CreateAccount
           - ./src/App.Api/CreateEvent
           - ./src/App.Api/DeleteEvent
           - ./src/App.Api/ListEvents

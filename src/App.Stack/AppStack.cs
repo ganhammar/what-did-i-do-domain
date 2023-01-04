@@ -30,6 +30,13 @@ public class AppStack : Stack
       BillingMode = BillingMode.PAY_PER_REQUEST,
     });
 
+    var createAccountFunction = new AppFunction(this, "CreateAccount", new AppFunction.Props(
+        "CreateAccount::App.Api.CreateAccount.Function::FunctionHandler",
+        tableName
+    ));
+    applicationTable.GrantReadData(createAccountFunction);
+    applicationTable.GrantWriteData(createAccountFunction);
+
     var createEventFunction = new AppFunction(this, "CreateEvent", new AppFunction.Props(
         "CreateEvent::App.Api.CreateEvent.Function::FunctionHandler",
         tableName
@@ -53,6 +60,9 @@ public class AppStack : Stack
     {
       RestApiName = "what-did-i-do",
     });
+
+    var accountResource = apiGateway.Root.AddResource("account");
+    accountResource.AddMethod("POST", new LambdaIntegration(createAccountFunction));
 
     var eventResource = apiGateway.Root.AddResource("event");
     eventResource.AddMethod("POST", new LambdaIntegration(createEventFunction));
