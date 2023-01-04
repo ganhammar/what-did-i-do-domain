@@ -16,5 +16,11 @@ runs:
       run: echo "project-name=$(basename ${{ inputs.project-path }})" >> $GITHUB_OUTPUT
       shell: bash
     - name: Build
-      run: dotnet lambda package --framework net6.0 --configuration Release --project-location ${{ inputs.project-path }} --function-architecture arm64 --output-package ${{ inputs.output-directory }}/${{ steps.set-project-name.outputs.project-name }}.zip
+      run: |
+        dotnet lambda package \
+          --framework net6.0 \
+          --configuration Release \
+          --project-location ${{ inputs.project-path }} \
+          --function-architecture arm64 \
+          --output-package ${{ inputs.output-directory }}/${{ steps.set-project-name.outputs.project-name }}.zip
       shell: bash
