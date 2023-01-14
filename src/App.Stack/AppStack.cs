@@ -30,7 +30,7 @@ public class AppStack : Stack
       BillingMode = BillingMode.PAY_PER_REQUEST,
     });
 
-    var loginFunction = new AppFunction(this, "Login", new AppFunction.Props(
+    var loginFunction = new AppFunction(this, "App.Login", new AppFunction.Props(
       "Login::App.Login.LambdaEntryPoint::FunctionHandlerAsync",
       tableName
     ));
@@ -65,8 +65,6 @@ public class AppStack : Stack
     {
       RestApiName = "what-did-i-do",
     });
-
-    var loginResource = apiGateway.Root.AddResource("login");
 
     var accountResource = apiGateway.Root.AddResource("account");
     accountResource.AddMethod("POST", new LambdaIntegration(createAccountFunction));
