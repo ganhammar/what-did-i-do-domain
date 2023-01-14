@@ -16,21 +16,21 @@ public class AppFunction : Function
       Timeout = Duration.Minutes(1),
       MemorySize = 128,
       Environment = new Dictionary<string, string>
-    {
-      { "TABLE_NAME", props.TableName },
-    }
+      {
+        { "TABLE_NAME", props.TableName ?? "" },
+      }
     })
   { }
 
   public class Props
   {
-    public Props(string handler, string tableName)
+    public Props(string handler, string? tableName = default)
     {
       Handler = handler;
       TableName = tableName;
     }
 
     public string Handler { get; set; }
-    public string TableName { get; set; }
+    public string? TableName { get; set; }
   }
 }

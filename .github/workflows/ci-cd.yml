@@ -53,6 +53,7 @@ jobs:
           - ./src/App.Api/CreateEvent
           - ./src/App.Api/DeleteEvent
           - ./src/App.Api/ListEvents
+          - ./src/App.Login
     steps:
       - name: Checkout
         uses: actions/checkout@v3

@@ -7,7 +7,6 @@ public class DatabaseFixture : IDisposable
 {
   private bool _disposed;
   private readonly string _tableName = Guid.NewGuid().ToString();
-  private readonly string _serviceUrlKey = "DynamoDB__ServiceUrl";
   private readonly AmazonDynamoDBClient _client;
 
   public DatabaseFixture()
@@ -23,11 +22,6 @@ public class DatabaseFixture : IDisposable
   private void SetEnvironment()
   {
     Environment.SetEnvironmentVariable("TABLE_NAME", _tableName);
-
-    if (Environment.GetEnvironmentVariable(_serviceUrlKey) == default)
-    {
-      Environment.SetEnvironmentVariable(_serviceUrlKey, "http://localhost:8000");
-    }
   }
 
   private async Task CreateTable()
@@ -37,31 +31,31 @@ public class DatabaseFixture : IDisposable
       TableName = _tableName,
       BillingMode = BillingMode.PAY_PER_REQUEST,
       KeySchema = new List<KeySchemaElement>
-            {
-                new KeySchemaElement
-                {
-                    AttributeName = "PartitionKey",
-                    KeyType = KeyType.HASH,
-                },
-                new KeySchemaElement
-                {
-                    AttributeName = "SortKey",
-                    KeyType = KeyType.RANGE,
-                },
-            },
+      {
+        new KeySchemaElement
+        {
+          AttributeName = "PartitionKey",
+          KeyType = KeyType.HASH,
+        },
+        new KeySchemaElement
+        {
+          AttributeName = "SortKey",
+          KeyType = KeyType.RANGE,
+        },
+      },
       AttributeDefinitions = new List<AttributeDefinition>
-            {
-                new AttributeDefinition
-                {
-                    AttributeName = "PartitionKey",
-                    AttributeType = ScalarAttributeType.S,
-                },
-                new AttributeDefinition
-                {
-                    AttributeName = "SortKey",
-                    AttributeType = ScalarAttributeType.S,
-                },
-            },
+      {
+        new AttributeDefinition
+        {
+          AttributeName = "PartitionKey",
+          AttributeType = ScalarAttributeType.S,
+        },
+        new AttributeDefinition
+        {
+          AttributeName = "SortKey",
+          AttributeType = ScalarAttributeType.S,
+        },
+      },
     });
 
     var created = false;
@@ -74,7 +68,7 @@ public class DatabaseFixture : IDisposable
         created = true;
       }
 
-      await Task.Delay(100);
+      await Task.Delay(TimeSpan.FromSeconds(1));
     }
   }
 

@@ -30,29 +30,34 @@ public class AppStack : Stack
       BillingMode = BillingMode.PAY_PER_REQUEST,
     });
 
+    var loginFunction = new AppFunction(this, "Login", new AppFunction.Props(
+      "Login::App.Login.LambdaEntryPoint::FunctionHandlerAsync",
+      tableName
+    ));
+
     var createAccountFunction = new AppFunction(this, "CreateAccount", new AppFunction.Props(
-        "CreateAccount::App.Api.CreateAccount.Function::FunctionHandler",
-        tableName
+      "CreateAccount::App.Api.CreateAccount.Function::FunctionHandler",
+      tableName
     ));
     applicationTable.GrantReadData(createAccountFunction);
     applicationTable.GrantWriteData(createAccountFunction);
 
     var createEventFunction = new AppFunction(this, "CreateEvent", new AppFunction.Props(
-        "CreateEvent::App.Api.CreateEvent.Function::FunctionHandler",
-        tableName
+      "CreateEvent::App.Api.CreateEvent.Function::FunctionHandler",
+      tableName
     ));
     applicationTable.GrantWriteData(createEventFunction);
 
     var deleteEventFunction = new AppFunction(this, "DeleteEvent", new AppFunction.Props(
-        "DeleteEvent::App.Api.DeleteEvent.Function::FunctionHandler",
-        tableName
+      "DeleteEvent::App.Api.DeleteEvent.Function::FunctionHandler",
+      tableName
     ));
     applicationTable.GrantReadData(deleteEventFunction);
     applicationTable.GrantWriteData(deleteEventFunction);
 
     var listEventsFunction = new AppFunction(this, "ListEvents", new AppFunction.Props(
-        "ListEvents::App.Api.ListEvents.Function::FunctionHandler",
-        tableName
+      "ListEvents::App.Api.ListEvents.Function::FunctionHandler",
+      tableName
     ));
     applicationTable.GrantReadData(listEventsFunction);
 
@@ -60,6 +65,8 @@ public class AppStack : Stack
     {
       RestApiName = "what-did-i-do",
     });
+
+    var loginResource = apiGateway.Root.AddResource("login");
 
     var accountResource = apiGateway.Root.AddResource("account");
     accountResource.AddMethod("POST", new LambdaIntegration(createAccountFunction));
