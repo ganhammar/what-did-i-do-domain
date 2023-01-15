@@ -59,13 +59,12 @@ public class Startup
         builder.SetAccessTokenLifetime(TimeSpan.FromMinutes(30));
         builder.SetRefreshTokenLifetime(TimeSpan.FromDays(1));
 
-        // TODO: Fix production certificates
-        // if (Environment.IsDevelopment())
-        // {
-        builder
-          .AddDevelopmentEncryptionCertificate()
-          .AddDevelopmentSigningCertificate();
-        // }
+        if (Environment.IsDevelopment())
+        {
+          builder
+            .AddDevelopmentEncryptionCertificate()
+            .AddDevelopmentSigningCertificate();
+        }
 
         var aspNetCoreBuilder = builder
           .UseAspNetCore()
