@@ -16,4 +16,10 @@
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Include="*.pfx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+   </Content>
+  </ItemGroup>
+
 </Project>
