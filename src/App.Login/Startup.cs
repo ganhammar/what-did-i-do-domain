@@ -62,9 +62,9 @@ public class Startup
         // TODO: Fix production certificates
         // if (Environment.IsDevelopment())
         // {
-          builder
-            .AddDevelopmentEncryptionCertificate()
-            .AddDevelopmentSigningCertificate();
+        builder
+          .AddDevelopmentEncryptionCertificate()
+          .AddDevelopmentSigningCertificate();
         // }
 
         var aspNetCoreBuilder = builder
