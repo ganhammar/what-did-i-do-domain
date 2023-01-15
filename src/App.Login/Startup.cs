@@ -1,4 +1,5 @@
-﻿using Amazon.DynamoDBv2;
+﻿using System.Security.Cryptography.X509Certificates;
+using Amazon.DynamoDBv2;
 using App.Login.Infrastructure;
 using Microsoft.AspNetCore.CookiePolicy;
 using Microsoft.IdentityModel.Logging;
@@ -64,6 +65,12 @@ public class Startup
           builder
             .AddDevelopmentEncryptionCertificate()
             .AddDevelopmentSigningCertificate();
+        }
+        else
+        {
+          builder
+            .AddSigningCertificate(new X509Certificate2("./signing-certificate.pfx"))
+            .AddEncryptionCertificate(new X509Certificate2("./encryption-certificate.pfx"));
         }
 
         var aspNetCoreBuilder = builder
