@@ -40,7 +40,7 @@ public class AppStack : Stack
     // Login
     var loginResource = apiGateway.Root.AddResource("login");
     var loginFunction = new AppFunction(this, "App.Login", new AppFunction.Props(
-      "Login::App.Login.LambdaEntryPoint::FunctionHandlerAsync",
+      "App.Login::App.Login.LambdaEntryPoint::FunctionHandlerAsync",
       tableName
     ));
     var proxy = loginResource.AddProxy();
