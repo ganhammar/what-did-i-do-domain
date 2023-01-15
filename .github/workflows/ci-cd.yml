@@ -66,14 +66,14 @@ jobs:
           fileName: 'signing-certificate.pfx'
           fileDir: './src/App.Login'
           encodedString: ${{ secrets.LOGIN_SIGNING_CERTIFICATE }}
-        if: ${{ matrix.project == "./src/App.Login" }}
+        if: ${{ matrix.project == './src/App.Login' }}
       - name: Create Encryption Certificate
         uses: timheuer/base64-to-file@v1.2
         with:
           fileName: 'encryption-certificate.pfx'
           fileDir: './src/App.Login'
           encodedString: ${{ secrets.LOGIN_ENCRYPTION_CERTIFICATE }}
-        if: ${{ matrix.project == "./src/App.Login" }}
+        if: ${{ matrix.project == './src/App.Login' }}
 
       - name: Package Project
         uses: ./.github/actions/package-project
