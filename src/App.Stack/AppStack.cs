@@ -11,6 +11,7 @@ public class AppStack : Stack
   internal AppStack(Construct scope, string id, IStackProps props)
     : base(scope, id, props)
   {
+    // DynamoDB
     var tableName = "what-did-i-do";
     var applicationTable = new Table(this, "ApplicationTable", new TableProps
     {
@@ -30,50 +31,62 @@ public class AppStack : Stack
       BillingMode = BillingMode.PAY_PER_REQUEST,
     });
 
+    // API Gateway
+    var apiGateway = new RestApi(this, "what-did-i-do", new RestApiProps
+    {
+      RestApiName = "what-did-i-do",
+    });
+
+    // Login
+    var loginResource = apiGateway.Root.AddResource("login");
     var loginFunction = new AppFunction(this, "App.Login", new AppFunction.Props(
       "Login::App.Login.LambdaEntryPoint::FunctionHandlerAsync",
       tableName
     ));
+    var proxy = loginResource.AddProxy();
+    proxy.AddMethod("ANY", new LambdaIntegration(loginFunction));
 
+    // Resource: Account
+    var accountResource = apiGateway.Root.AddResource("account");
+
+    // Create
     var createAccountFunction = new AppFunction(this, "CreateAccount", new AppFunction.Props(
       "CreateAccount::App.Api.CreateAccount.Function::FunctionHandler",
       tableName
     ));
     applicationTable.GrantReadData(createAccountFunction);
     applicationTable.GrantWriteData(createAccountFunction);
+    accountResource.AddMethod("POST", new LambdaIntegration(createAccountFunction));
 
+    // Resource: Event
+    var eventResource = apiGateway.Root.AddResource("event");
+
+    // Create
     var createEventFunction = new AppFunction(this, "CreateEvent", new AppFunction.Props(
       "CreateEvent::App.Api.CreateEvent.Function::FunctionHandler",
       tableName
     ));
     applicationTable.GrantWriteData(createEventFunction);
+    eventResource.AddMethod("POST", new LambdaIntegration(createEventFunction));
 
+    // Delete
     var deleteEventFunction = new AppFunction(this, "DeleteEvent", new AppFunction.Props(
       "DeleteEvent::App.Api.DeleteEvent.Function::FunctionHandler",
       tableName
     ));
     applicationTable.GrantReadData(deleteEventFunction);
     applicationTable.GrantWriteData(deleteEventFunction);
+    eventResource.AddMethod("DELETE", new LambdaIntegration(deleteEventFunction));
 
+    // List
     var listEventsFunction = new AppFunction(this, "ListEvents", new AppFunction.Props(
       "ListEvents::App.Api.ListEvents.Function::FunctionHandler",
       tableName
     ));
     applicationTable.GrantReadData(listEventsFunction);
-
-    var apiGateway = new RestApi(this, "what-did-i-do", new RestApiProps
-    {
-      RestApiName = "what-did-i-do",
-    });
-
-    var accountResource = apiGateway.Root.AddResource("account");
-    accountResource.AddMethod("POST", new LambdaIntegration(createAccountFunction));
-
-    var eventResource = apiGateway.Root.AddResource("event");
-    eventResource.AddMethod("POST", new LambdaIntegration(createEventFunction));
-    eventResource.AddMethod("DELETE", new LambdaIntegration(deleteEventFunction));
     eventResource.AddMethod("GET", new LambdaIntegration(listEventsFunction));
 
+    // Output
     new CfnOutput(this, "APIGWEndpoint", new CfnOutputProps
     {
       Value = apiGateway.Url,
