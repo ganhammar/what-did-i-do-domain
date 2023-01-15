@@ -43,7 +43,10 @@ public class AppStack : Stack
       "App.Login::App.Login.LambdaEntryPoint::FunctionHandlerAsync",
       tableName
     ));
-    var proxy = loginResource.AddProxy();
+    var proxy = loginResource.AddProxy(new ProxyResourceOptions
+    {
+      AnyMethod = false,
+    });
     proxy.AddMethod("ANY", new LambdaIntegration(loginFunction));
 
     // Resource: Account
