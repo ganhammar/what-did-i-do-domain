@@ -4,5 +4,5 @@ repos:
       - id: dotnet-format
         name: dotnet-format
         language: system
-        entry: dotnet format --include
+        entry: dotnet format --verify-no-changes --include
         types_or: ["c#"]
