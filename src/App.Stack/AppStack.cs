@@ -45,9 +45,9 @@ public class AppStack : Stack
     ));
     var proxy = loginResource.AddProxy(new ProxyResourceOptions
     {
-      AnyMethod = false,
+      AnyMethod = true,
+      DefaultIntegration = new LambdaIntegration(loginFunction),
     });
-    proxy.AddMethod("ANY", new LambdaIntegration(loginFunction));
 
     // Resource: Account
     var accountResource = apiGateway.Root.AddResource("account");

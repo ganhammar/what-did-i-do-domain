@@ -18,7 +18,7 @@ public class AppFunction : Function
       Environment = new Dictionary<string, string>
       {
         { "TABLE_NAME", props.TableName ?? "" },
-      }
+      },
     })
   { }
 
