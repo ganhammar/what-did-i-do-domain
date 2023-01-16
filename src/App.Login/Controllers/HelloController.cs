@@ -3,7 +3,7 @@
 namespace App.Login.Controllers;
 
 [ApiController]
-[Route("[controller]")]
+[Route("login/[controller]")]
 public class HelloController : ControllerBase
 {
   private readonly ILogger<HelloController> _logger;
