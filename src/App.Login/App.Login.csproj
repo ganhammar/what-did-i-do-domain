@@ -9,6 +9,8 @@
   <ItemGroup>
     <PackageReference Include="Amazon.Lambda.AspNetCoreServer" Version="7.3.0" />
     <PackageReference Include="AspNetCore.Identity.AmazonDynamoDB" Version="1.0.0" />
+    <PackageReference Include="AWS.Lambda.Powertools.Logging" Version="0.0.1-preview.1" />
+    <PackageReference Include="AWS.Lambda.Powertools.Tracing" Version="0.0.1-preview.1" />
     <PackageReference Include="AWSSDK.DynamoDBv2" Version="3.7.101.24" />
     <PackageReference Include="AWSSDK.Extensions.NETCore.Setup" Version="3.7.2" />
     <PackageReference Include="Community.OpenIddict.AmazonDynamoDB" Version="1.0.0" />

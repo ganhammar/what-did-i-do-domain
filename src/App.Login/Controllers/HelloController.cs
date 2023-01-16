@@ -13,7 +13,7 @@ public class HelloController : ControllerBase
     _logger = logger;
   }
 
-  [HttpGet(Name = "Hello")]
+  [HttpGet]
   public string Get()
   {
     return "world";
