@@ -139,7 +139,7 @@ jobs:
         with:
           dotnet-version: 6.0.x
       - name: Ensure 3rd Party Tables is Created
-        run: dotnet run App.Login.EnsureInitialized/App.Login.EnsureInitialized.dll
+        run: dotnet App.Login.EnsureInitialized/App.Login.EnsureInitialized.dll
 
       - name: Install node
         uses: actions/setup-node@v3
