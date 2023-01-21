@@ -40,17 +40,6 @@ jobs:
       - name: Test
         run: dotnet test --no-build
 
-      - name: Upload Needed Deploy Artifacts
-        uses: actions/upload-artifact@v3
-        with:
-          name: ${{ github.run_id }}
-          path: |
-            ./Directory.Build.props
-            ./cdk.json
-            ./src/App.Stack/**/*
-            ./src/Helpers/App.Login.EnsureInitialized/**/*
-          retention-days: 1
-
   package:
     name: Package
     runs-on: ubuntu-latest
@@ -96,7 +85,12 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: ${{ github.run_id }}
-          path: ./.output
+          path: |
+            ./Directory.Build.props
+            ./cdk.json
+            ./src/App.Stack/**/*
+            ./src/Helpers/App.Login.EnsureInitialized/**/*
+            ./.output
           retention-days: 1
 
   deploy:
@@ -116,6 +110,14 @@ jobs:
           aws-region: eu-north-1
           role-to-assume: ${{ secrets.DEPLOY_ROLE }}
           role-session-name: OIDCSession
+
+      - name: Setup .NET Core SDKs
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: 6.0.x
+      - name: Ensure 3rd Party Tables is Created
+        working-directory: ./src/Helpers/App.Login.EnsureInitialized
+        run: dotnet run
 
       - name: Install node
         uses: actions/setup-node@v3
