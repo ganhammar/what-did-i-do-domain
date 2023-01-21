@@ -40,6 +40,17 @@ jobs:
       - name: Test
         run: dotnet test --no-build
 
+      - name: Upload Needed Deploy Artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{ github.run_id }}
+          path: |
+            ./Directory.Build.props
+            ./cdk.json
+            ./src/App.Stack/**/*
+            ./src/Helpers/App.Login.EnsureInitialized/**/*
+          retention-days: 1
+
   package:
     name: Package
     runs-on: ubuntu-latest
@@ -85,11 +96,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: ${{ github.run_id }}
-          path: |
-            ./Directory.Build.props
-            ./cdk.json
-            ./src/App.Stack/**/*
-            ./.output
+          path: ./.output
           retention-days: 1
 
   deploy:
