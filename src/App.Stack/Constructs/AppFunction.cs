@@ -12,7 +12,7 @@ public class AppFunction : Function
       Runtime = Runtime.DOTNET_6,
       Architecture = Architecture.ARM_64,
       Handler = props.Handler,
-      Code = Code.FromAsset($"./.output/{id}.zip"),
+      Code = Code.FromAsset($"./{id}.zip"),
       Timeout = Duration.Minutes(1),
       MemorySize = 128,
       Environment = new Dictionary<string, string>

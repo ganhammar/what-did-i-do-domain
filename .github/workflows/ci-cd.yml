@@ -84,9 +84,8 @@ jobs:
       - name: Upload Artifact
         uses: actions/upload-artifact@v3
         with:
-          name: ${{ github.run_id }}-projects
-          path: |
-            ./.output
+          name: ${{ github.run_id }}
+          path: ./.output
           retention-days: 1
 
   package-dependencies:
@@ -106,7 +105,7 @@ jobs:
       - name: Upload Artifact
         uses: actions/upload-artifact@v3
         with:
-          name: ${{ github.run_id }}-dep
+          name: ${{ github.run_id }}
           path: |
             ./Directory.Build.props
             ./cdk.json
@@ -121,15 +120,10 @@ jobs:
       - package-projects
       - package-dependencies
     steps:
-      - name: Download Project Package
+      - name: Download package
         uses: actions/download-artifact@v3
         with:
-          name: ${{ github.run_id }}-projects
-          path: ./
-      - name: Download Dependencies Package
-        uses: actions/download-artifact@v3
-        with:
-          name: ${{ github.run_id }}-dep
+          name: ${{ github.run_id }}
           path: ./
 
       - name: Configure AWS Credentials
