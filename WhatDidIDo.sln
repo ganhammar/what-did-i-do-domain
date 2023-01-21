@@ -39,6 +39,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Helpers", "Helpers", "{5D94
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "App.Login.GenerateCertificates", "src\Helpers\App.Login.GenerateCertificates\App.Login.GenerateCertificates.csproj", "{530A5FD4-FBB1-4256-85CC-851369872DDB}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "App.Login.EnsureInitialized", "src\Helpers\App.Login.EnsureInitialized\App.Login.EnsureInitialized.csproj", "{72560D22-8335-4D67-91BE-6E853A958591}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -100,6 +102,10 @@ Global
 		{530A5FD4-FBB1-4256-85CC-851369872DDB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{530A5FD4-FBB1-4256-85CC-851369872DDB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{530A5FD4-FBB1-4256-85CC-851369872DDB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{72560D22-8335-4D67-91BE-6E853A958591}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{72560D22-8335-4D67-91BE-6E853A958591}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{72560D22-8335-4D67-91BE-6E853A958591}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{72560D22-8335-4D67-91BE-6E853A958591}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{AE640D57-62E6-4313-A3E1-0AF6D7375B60} = {0B802D78-5EDA-444F-9C9E-BA6EEA17E3FC}
@@ -118,5 +124,6 @@ Global
 		{B7F31376-0747-406F-BDBB-FA075AB72B0C} = {0B802D78-5EDA-444F-9C9E-BA6EEA17E3FC}
 		{5D943DF2-6AD2-4A40-9CB9-36410FB17A45} = {0B802D78-5EDA-444F-9C9E-BA6EEA17E3FC}
 		{530A5FD4-FBB1-4256-85CC-851369872DDB} = {5D943DF2-6AD2-4A40-9CB9-36410FB17A45}
+		{72560D22-8335-4D67-91BE-6E853A958591} = {5D943DF2-6AD2-4A40-9CB9-36410FB17A45}
 	EndGlobalSection
 EndGlobal

@@ -1,9 +1,7 @@
-﻿using System.Security.Cryptography.X509Certificates;
-using Amazon.DynamoDBv2;
+﻿using Amazon.DynamoDBv2;
 using App.Login.Infrastructure;
 using Microsoft.AspNetCore.CookiePolicy;
 using Microsoft.IdentityModel.Logging;
-using static OpenIddict.Abstractions.OpenIddictConstants;
 
 namespace App.Login;
 
@@ -31,66 +29,7 @@ public class Startup
 
     services.AddIdentity();
     services.AddCors();
-
-    services
-      .AddOpenIddict()
-      .AddCore(builder =>
-      {
-        builder.UseDynamoDb();
-      })
-      .AddServer(builder =>
-      {
-        builder
-          .SetAuthorizationEndpointUris("/connect/authorize")
-          .SetLogoutEndpointUris("/connect/logout")
-          .SetIntrospectionEndpointUris("/connect/introspect")
-          .SetUserinfoEndpointUris("/connect/userinfo")
-          .SetTokenEndpointUris("/connect/token");
-
-        builder.AllowImplicitFlow();
-        builder.AllowRefreshTokenFlow();
-        builder.AllowClientCredentialsFlow();
-        builder.AllowAuthorizationCodeFlow();
-
-        builder.UseReferenceAccessTokens();
-        builder.UseReferenceRefreshTokens();
-
-        builder.RegisterScopes(Scopes.Email, Scopes.Profile, Scopes.Roles);
-
-        builder.SetAccessTokenLifetime(TimeSpan.FromMinutes(30));
-        builder.SetRefreshTokenLifetime(TimeSpan.FromDays(1));
-
-        if (Environment.IsDevelopment())
-        {
-          builder
-            .AddDevelopmentEncryptionCertificate()
-            .AddDevelopmentSigningCertificate();
-        }
-        else
-        {
-          builder
-            .AddSigningCertificate(new X509Certificate2("./signing-certificate.pfx"))
-            .AddEncryptionCertificate(new X509Certificate2("./encryption-certificate.pfx"));
-        }
-
-        var aspNetCoreBuilder = builder
-          .UseAspNetCore()
-          .EnableAuthorizationEndpointPassthrough()
-          .EnableLogoutEndpointPassthrough()
-          .EnableUserinfoEndpointPassthrough()
-          .EnableStatusCodePagesIntegration()
-          .EnableTokenEndpointPassthrough();
-
-        if (Environment.IsDevelopment())
-        {
-          aspNetCoreBuilder.DisableTransportSecurityRequirement();
-        }
-      })
-      .AddValidation(builder =>
-      {
-        builder.UseLocalServer();
-        builder.UseAspNetCore();
-      });
+    services.AddOpenIddict(Environment.IsDevelopment());
 
     services
       .ConfigureApplicationCookie(options =>
