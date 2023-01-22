@@ -32,6 +32,10 @@ public class FunctionTests
     {
       HttpMethod = HttpMethod.Post.Method,
       Body = JsonSerializer.Serialize(data),
+      RequestContext = new APIGatewayProxyRequest.ProxyRequestContext
+      {
+        RequestId = Guid.NewGuid().ToString(),
+      },
     };
 
     var function = new Function();
@@ -50,6 +54,10 @@ public class FunctionTests
     {
       HttpMethod = HttpMethod.Post.Method,
       Body = JsonSerializer.Serialize(data),
+      RequestContext = new APIGatewayProxyRequest.ProxyRequestContext
+      {
+        RequestId = Guid.NewGuid().ToString(),
+      },
     };
     var response = await function.FunctionHandler(request, context);
 
@@ -75,6 +83,10 @@ public class FunctionTests
     {
       HttpMethod = HttpMethod.Post.Method,
       Body = JsonSerializer.Serialize(data),
+      RequestContext = new APIGatewayProxyRequest.ProxyRequestContext
+      {
+        RequestId = Guid.NewGuid().ToString(),
+      },
     };
     var response = await function.FunctionHandler(request, context);
 

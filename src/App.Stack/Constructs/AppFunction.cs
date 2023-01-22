@@ -14,7 +14,7 @@ public class AppFunction : Function
       Handler = props.Handler,
       Code = Code.FromAsset($"./{id}.zip"),
       Timeout = Duration.Minutes(1),
-      MemorySize = 128,
+      MemorySize = 256,
       Environment = new Dictionary<string, string>
       {
         { "TABLE_NAME", props.TableName ?? "" },
