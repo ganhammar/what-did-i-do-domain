@@ -42,6 +42,13 @@ jobs:
       - name: Test
         run: dotnet test --no-build /p:CollectCoverage=true /p:CoverletOutput=TestResults/ /p:CoverletOutputFormat=lcov
 
+      - name: Publish Code Coverage
+        uses: codecov/codecov-action@v3
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: test/**/*/TestResults/coverage.info
+          fail_ci_if_error: false
+
   package-projects:
     name: Package Projects
     runs-on: ubuntu-latest
@@ -145,7 +152,7 @@ jobs:
       - name: Install node
         uses: actions/setup-node@v3
         with:
-          node-version: 16
+          node-version: 18
       - name: Setup CDK
         run: npm install -g aws-cdk
 
