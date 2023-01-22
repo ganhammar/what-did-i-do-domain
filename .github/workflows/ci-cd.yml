@@ -48,6 +48,7 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: test/**/*/TestResults/coverage.info
           fail_ci_if_error: false
+          gcov_ignore: test/**/*
 
   package-projects:
     name: Package Projects
