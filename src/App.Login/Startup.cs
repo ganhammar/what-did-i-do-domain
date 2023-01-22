@@ -1,4 +1,5 @@
 ﻿using Amazon.DynamoDBv2;
+using App.Login.Features.Email;
 using App.Login.Infrastructure;
 using Microsoft.AspNetCore.CookiePolicy;
 using Microsoft.IdentityModel.Logging;
@@ -31,6 +32,7 @@ public class Startup
     services.AddCors();
     services.AddOpenIddict(Environment.IsDevelopment());
     services.AddMediatR();
+    services.AddSingleton<IEmailSender, EmailSender>();
 
     services
       .ConfigureApplicationCookie(options =>

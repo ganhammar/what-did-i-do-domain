@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace App.Login.Features.User;
 
+[Route($"{Constants.BasePath}/[controller]/[action]")]
 public class UserController : ApiControllerBase
 {
   private readonly IMediator _mediator;
@@ -21,7 +22,7 @@ public class UserController : ApiControllerBase
 
   [HttpGet]
   [AllowAnonymous]
-  [Route("[controller]/confirm")]
+  [Route($"{Constants.BasePath}/[controller]/confirm")]
   public async Task<IActionResult> ConfirmEmail([FromQuery] ConfirmEmailCommand.Command command)
   {
     var result = await _mediator.Send(command);
