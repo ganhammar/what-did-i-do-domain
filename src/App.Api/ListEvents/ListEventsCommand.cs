@@ -3,6 +3,7 @@ using Amazon.DynamoDBv2.DataModel;
 using Amazon.DynamoDBv2.DocumentModel;
 using App.Api.Shared.Infrastructure;
 using App.Api.Shared.Models;
+using AWS.Lambda.Powertools.Logging;
 using FluentValidation;
 using MediatR;
 
@@ -51,9 +52,12 @@ public class ListEventsCommand
     public override async Task<IResponse<List<EventDto>>> Handle(Command request, CancellationToken cancellationToken)
     {
       var fromDate = request.FromDate.HasValue
-        ? request.FromDate : DateTime.UtcNow.Date;
+        ? request.FromDate.Value : DateTime.UtcNow.Date;
       var toDate = request.ToDate.HasValue
-        ? request.ToDate : DateTime.UtcNow.AddDays(1).Date;
+        ? request.ToDate.Value : DateTime.UtcNow.AddDays(1).Date;
+
+      Logger.LogInformation($"Listing Events between {fromDate.ToString("o")} and {toDate.ToString("o")} for account {request.AccountId}");
+
       var search = _client.FromQueryAsync<Event>(
         new()
         {
@@ -73,6 +77,8 @@ public class ListEventsCommand
           OverrideTableName = Environment.GetEnvironmentVariable("TABLE_NAME"),
         });
       var events = await search.GetRemainingAsync(cancellationToken);
+
+      Logger.LogInformation($"Found {events.Count} Event(s)");
 
       return Response(events.Select(x => EventMapper.ToDto(x)).ToList());
     }

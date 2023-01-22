@@ -2,6 +2,7 @@
 using Amazon.DynamoDBv2.DataModel;
 using App.Api.Shared.Infrastructure;
 using App.Api.Shared.Models;
+using AWS.Lambda.Powertools.Logging;
 using FluentValidation;
 using MediatR;
 
@@ -41,6 +42,8 @@ public class CreateEventCommand
 
     public override async Task<IResponse<EventDto>> Handle(Command request, CancellationToken cancellationToken)
     {
+      Logger.LogInformation("Attempting to create Event");
+
       var item = EventMapper.FromDto(new EventDto
       {
         Title = request.Title,
@@ -53,6 +56,7 @@ public class CreateEventCommand
         OverrideTableName = Environment.GetEnvironmentVariable("TABLE_NAME"),
       }, cancellationToken);
 
+      Logger.LogInformation("Event created");
       return Response(EventMapper.ToDto(item));
     }
   }

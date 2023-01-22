@@ -2,6 +2,7 @@
 using Amazon.DynamoDBv2.DataModel;
 using App.Api.Shared.Infrastructure;
 using App.Api.Shared.Models;
+using AWS.Lambda.Powertools.Logging;
 using FluentValidation;
 using MediatR;
 
@@ -43,6 +44,8 @@ public class DeleteEventCommand
 
     public override async Task<IResponse> Handle(Command request, CancellationToken cancellationToken)
     {
+      Logger.LogInformation("Attempting to delete Event");
+
       var tableName = Environment.GetEnvironmentVariable("TABLE_NAME");
       var keys = EventMapper.GetKeys(request.Id);
       var item = await _client.LoadAsync<Event>(keys[0], keys[1], new()
@@ -52,10 +55,15 @@ public class DeleteEventCommand
 
       if (item != default)
       {
+        Logger.LogInformation("Matching Event found, deleting");
         await _client.DeleteAsync(item, new()
         {
           OverrideTableName = tableName,
         }, cancellationToken);
+      }
+      else
+      {
+        Logger.LogWarning($"Could not find a matching Event for id {request.Id}");
       }
 
       return Response();

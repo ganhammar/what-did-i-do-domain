@@ -36,7 +36,7 @@ public class CreateAccountCommand
     public override async Task<IResponse<AccountDto>> Handle(
       Command request, CancellationToken cancellationToken)
     {
-      Logger.LogInformation($"Attempting to create Account with name {request.Name}");
+      Logger.LogInformation("Attempting to create Account");
 
       var id = await AccountMapper.GetUniqueId(request.Name!, _client, cancellationToken);
       Logger.LogInformation($"The unique Id for the account is {id}");
@@ -52,7 +52,7 @@ public class CreateAccountCommand
         OverrideTableName = Environment.GetEnvironmentVariable("TABLE_NAME"),
       }, cancellationToken);
 
-      Logger.LogInformation($"Account created");
+      Logger.LogInformation("Account created");
       return Response(AccountMapper.ToDto(item));
     }
   }
