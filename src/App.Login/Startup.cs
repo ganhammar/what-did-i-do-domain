@@ -59,10 +59,8 @@ public class Startup
   }
 
   public void Configure(
-    IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory)
+    IApplicationBuilder app, IWebHostEnvironment env)
   {
-    loggerFactory.AddLambdaLogger(Configuration.GetLambdaLoggerOptions());
-
     app.UseForwardedHeaders();
 
     if (Environment.IsDevelopment())
