@@ -52,14 +52,14 @@ public static class ServiceCollectionExtensions
       .AddServer(builder =>
       {
         builder
-          .SetAuthorizationEndpointUris($"/{Constants.BasePath}/connect/authorize")
-          .SetLogoutEndpointUris($"/{Constants.BasePath}/connect/logout")
-          .SetIntrospectionEndpointUris($"/{Constants.BasePath}/connect/introspect")
-          .SetUserinfoEndpointUris($"/{Constants.BasePath}/connect/userinfo")
-          .SetTokenEndpointUris($"/{Constants.BasePath}/connect/token")
-          .SetIntrospectionEndpointUris($"/{Constants.BasePath}/connect/introspect")
-          .SetCryptographyEndpointUris($"/{Constants.BasePath}/.well-known/jwks")
-          .SetConfigurationEndpointUris($"/{Constants.BasePath}/.well-known/openid-configuration");
+          .SetAuthorizationEndpointUris($"{Constants.BasePath}/connect/authorize")
+          .SetLogoutEndpointUris($"{Constants.BasePath}/connect/logout")
+          .SetIntrospectionEndpointUris($"{Constants.BasePath}/connect/introspect")
+          .SetUserinfoEndpointUris($"{Constants.BasePath}/connect/userinfo")
+          .SetTokenEndpointUris($"{Constants.BasePath}/connect/token")
+          .SetIntrospectionEndpointUris($"{Constants.BasePath}/connect/introspect")
+          .SetCryptographyEndpointUris($"/prod/{Constants.BasePath}/.well-known/jwks")
+          .SetConfigurationEndpointUris($"{Constants.BasePath}/.well-known/openid-configuration");
 
         builder.AllowImplicitFlow();
         builder.AllowRefreshTokenFlow();
