@@ -10,6 +10,7 @@ namespace CreateAccountTests;
 [Collection(Constants.DatabaseCollection)]
 public class AccountMapperTests
 {
+  [Fact]
   public async Task Should_AddSuffixToId_When_NameIsAlreadyTaken()
   {
     var name = "Microsoft";
@@ -24,6 +25,15 @@ public class AccountMapperTests
     var dbContext = new DynamoDBContext(client);
     var id = await AccountMapper.GetUniqueId(name, dbContext, CancellationToken.None);
 
-    Assert.Equal($"{name}-1", id);
+    Assert.Equal($"{name.UrlFriendly()}-1", id);
+  }
+
+  [Fact]
+  public void Should_ReturnTheId_When_Requesting()
+  {
+    var key = "ACCOUNT#test";
+    var id = AccountMapper.GetId(key);
+
+    Assert.Equal("test", id);
   }
 }

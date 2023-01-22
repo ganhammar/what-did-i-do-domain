@@ -24,8 +24,12 @@ public class Function : FunctionBase
     ILambdaContext context)
   {
     AppendLookup(apiGatewayProxyRequest);
-    var command = JsonSerializer.Deserialize<CreateAccountCommand.Command>(apiGatewayProxyRequest.Body);
 
-    return await Respond(command);
+    return await Respond(JsonSerializer.Deserialize<CreateAccountCommand.Command>(
+      apiGatewayProxyRequest.Body,
+      new JsonSerializerOptions
+      {
+        PropertyNameCaseInsensitive = true,
+      }));
   }
 }

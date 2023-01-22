@@ -66,6 +66,6 @@ public static class AccountMapper
       }
     }
 
-    return key;
+    return GetId(key);
   }
 }
