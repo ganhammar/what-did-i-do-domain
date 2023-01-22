@@ -14,6 +14,10 @@
     <PackageReference Include="AWSSDK.DynamoDBv2" Version="$(AWSSDKDynamoDBv2Version)" />
     <PackageReference Include="Community.OpenIddict.AmazonDynamoDB"
       Version="$(CommunityOpenIddictAmazonDynamoDBVersion)" />
+    <PackageReference Include="coverlet.msbuild" Version="$(CoverletMsbuildVersion)">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
     <PackageReference Include="FluentValidation" Version="$(FluentValidationVersion)" />
     <PackageReference Include="MediatR" Version="$(MediatRVersion)" />
     <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection"
@@ -24,10 +28,6 @@
     <PackageReference Include="xunit" Version="$(XunitVersion)" />
     <PackageReference Include="xunit.runner.visualstudio"
       Version="$(XunitRunnerVisualstudioVersion)">
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-      <PrivateAssets>all</PrivateAssets>
-    </PackageReference>
-    <PackageReference Include="coverlet.collector" Version="$(CoverletCollectorVersion)">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
