@@ -3,6 +3,7 @@ using Amazon.Lambda.APIGatewayEvents;
 using Amazon.Lambda.Core;
 using Amazon.Lambda.Serialization.SystemTextJson;
 using App.Api.Shared.Infrastructure;
+using AWS.Lambda.Powertools.Logging;
 using Microsoft.Extensions.DependencyInjection;
 
 [assembly: LambdaSerializer(typeof(DefaultLambdaJsonSerializer))]
@@ -17,10 +18,12 @@ public class Function : FunctionBase
 
   public Function() : base(_serviceProvider) { }
 
+  [Logging(LogEvent = true)]
   public async Task<APIGatewayHttpApiV2ProxyResponse> FunctionHandler(
     APIGatewayProxyRequest apiGatewayProxyRequest,
     ILambdaContext context)
   {
+    AppendLookup(apiGatewayProxyRequest);
     var command = JsonSerializer.Deserialize<CreateAccountCommand.Command>(apiGatewayProxyRequest.Body);
 
     return await Respond(command);

@@ -1,6 +1,7 @@
 ﻿using System.Net;
 using System.Text.Json;
 using Amazon.Lambda.APIGatewayEvents;
+using AWS.Lambda.Powertools.Logging;
 using FluentValidation.Results;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
@@ -13,9 +14,9 @@ public abstract class FunctionBase
   private readonly APIGatewayHttpApiV2ProxyResponse _noBodyResponse = new APIGatewayHttpApiV2ProxyResponse
   {
     Body = JsonSerializer.Serialize(new[]
-      {
-            new ValidationFailure("Body", "Invalid request"),
-        }),
+    {
+      new ValidationFailure("Body", "Invalid request"),
+    }),
     StatusCode = (int)HttpStatusCode.BadRequest,
   };
 
@@ -68,11 +69,21 @@ public abstract class FunctionBase
     return HandleErrorResponse(response);
   }
 
+  public void AppendLookup(APIGatewayProxyRequest apiGatewayProxyRequest)
+  {
+    var requestContextRequestId = apiGatewayProxyRequest.RequestContext.RequestId;
+    var lookupInfo = new Dictionary<string, object>()
+    {
+      { "LookupInfo", new Dictionary<string, object>{{ "LookupId", requestContextRequestId }} },
+    };
+    Logger.AppendKeys(lookupInfo);
+  }
+
   private APIGatewayHttpApiV2ProxyResponse HandleErrorResponse(IResponse response)
-      => new APIGatewayHttpApiV2ProxyResponse
-      {
-        StatusCode = (int)HttpStatusCode.BadRequest,
-        Body = JsonSerializer.Serialize(response.Errors),
-        Headers = new Dictionary<string, string> { { "Content-Type", "application/json" } }
-      };
+    => new APIGatewayHttpApiV2ProxyResponse
+    {
+      StatusCode = (int)HttpStatusCode.BadRequest,
+      Body = JsonSerializer.Serialize(response.Errors),
+      Headers = new Dictionary<string, string> { { "Content-Type", "application/json" } }
+    };
 }

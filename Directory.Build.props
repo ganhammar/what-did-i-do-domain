@@ -12,6 +12,7 @@
     <AmazonLambdaSerializationSystemTextJsonVersion>2.3.0</AmazonLambdaSerializationSystemTextJsonVersion>
     <AmazonLambdaTestUtilitiesVersion>2.0.0</AmazonLambdaTestUtilitiesVersion>
     <AspNetCoreIdentityAmazonDynamoDBVersion>1.0.0</AspNetCoreIdentityAmazonDynamoDBVersion>
+    <AWSLambdaPowertoolsLoggingVersion>0.0.2-preview</AWSLambdaPowertoolsLoggingVersion>
     <AWSSDKDynamoDBv2Version>3.7.101.29</AWSSDKDynamoDBv2Version>
     <AWSSDKExtensionsNETCoreSetupVersion>3.7.2</AWSSDKExtensionsNETCoreSetupVersion>
     <AWSXRayRecorderCoreVersion>2.13.0</AWSXRayRecorderCoreVersion>

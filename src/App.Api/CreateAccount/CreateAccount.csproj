@@ -14,6 +14,8 @@
       Version="$(AmazonLambdaAPIGatewayEventsVersion)" />
     <PackageReference Include="Amazon.Lambda.Serialization.SystemTextJson"
       Version="$(AmazonLambdaSerializationSystemTextJsonVersion)" />
+    <PackageReference Include="AWS.Lambda.Powertools.Logging"
+      Version="$(AWSLambdaPowertoolsLoggingVersion)" />
     <PackageReference Include="AWSSDK.DynamoDBv2" Version="$(AWSSDKDynamoDBv2Version)" />
     <PackageReference Include="AWSSDK.Extensions.NETCore.Setup"
       Version="$(AWSSDKExtensionsNETCoreSetupVersion)" />

@@ -2,6 +2,7 @@
 using Amazon.DynamoDBv2.DataModel;
 using App.Api.Shared.Infrastructure;
 using App.Api.Shared.Models;
+using AWS.Lambda.Powertools.Logging;
 using FluentValidation;
 using MediatR;
 
@@ -32,11 +33,17 @@ public class CreateAccountCommand
       _client = new DynamoDBContext(database);
     }
 
-    public override async Task<IResponse<AccountDto>> Handle(Command request, CancellationToken cancellationToken)
+    public override async Task<IResponse<AccountDto>> Handle(
+      Command request, CancellationToken cancellationToken)
     {
+      Logger.LogInformation($"Attempting to create Account with name {request.Name}");
+
+      var id = await AccountMapper.GetUniqueId(request.Name!, _client, cancellationToken);
+      Logger.LogInformation($"The unique Id for the account is {id}");
+
       var item = AccountMapper.FromDto(new AccountDto
       {
-        Id = await AccountMapper.GetUniqueId(request.Name!, _client, cancellationToken),
+        Id = id,
         Name = request.Name,
         CreateDate = DateTime.UtcNow,
       });
@@ -45,6 +52,7 @@ public class CreateAccountCommand
         OverrideTableName = Environment.GetEnvironmentVariable("TABLE_NAME"),
       }, cancellationToken);
 
+      Logger.LogInformation($"Account created");
       return Response(AccountMapper.ToDto(item));
     }
   }
