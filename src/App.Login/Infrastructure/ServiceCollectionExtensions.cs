@@ -58,7 +58,7 @@ public static class ServiceCollectionExtensions
           .SetUserinfoEndpointUris($"{Constants.BasePath}/connect/userinfo")
           .SetTokenEndpointUris($"{Constants.BasePath}/connect/token")
           .SetIntrospectionEndpointUris($"{Constants.BasePath}/connect/introspect")
-          .SetCryptographyEndpointUris($"/prod/{Constants.BasePath}/.well-known/jwks")
+          .SetCryptographyEndpointUris($"{Constants.BasePath}/.well-known/jwks")
           .SetConfigurationEndpointUris($"{Constants.BasePath}/.well-known/openid-configuration");
 
         builder.AllowImplicitFlow();
