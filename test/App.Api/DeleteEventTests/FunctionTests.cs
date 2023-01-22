@@ -7,7 +7,6 @@ using App.Api.Shared.Models;
 using FluentValidation.Results;
 using TestBase;
 using TestBase.Helpers;
-using Xunit;
 
 namespace CreateEventTests;
 

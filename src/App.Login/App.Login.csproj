@@ -7,19 +7,30 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Amazon.Lambda.AspNetCoreServer" Version="7.3.0" />
-    <PackageReference Include="AspNetCore.Identity.AmazonDynamoDB" Version="1.0.0" />
-    <PackageReference Include="AWSSDK.DynamoDBv2" Version="3.7.101.24" />
-    <PackageReference Include="AWSSDK.Extensions.NETCore.Setup" Version="3.7.2" />
-    <PackageReference Include="Community.OpenIddict.AmazonDynamoDB" Version="1.0.0" />
-    <PackageReference Include="OpenIddict.AspNetCore" Version="4.0.0" />
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
+    <PackageReference Include="Amazon.Lambda.AspNetCoreServer"
+      Version="$(AmazonLambdaAspNetCoreServerVersion)" />
+    <PackageReference Include="AspNetCore.Identity.AmazonDynamoDB"
+      Version="$(AspNetCoreIdentityAmazonDynamoDBVersion)" />
+    <PackageReference Include="AWSSDK.DynamoDBv2" Version="$(AWSSDKDynamoDBv2Version)" />
+    <PackageReference Include="AWSSDK.Extensions.NETCore.Setup"
+      Version="$(AWSSDKExtensionsNETCoreSetupVersion)" />
+    <PackageReference Include="Community.OpenIddict.AmazonDynamoDB"
+      Version="$(CommunityOpenIddictAmazonDynamoDBVersion)" />
+    <PackageReference Include="FluentValidation" Version="$(FluentValidationVersion)" />
+    <PackageReference Include="MediatR" Version="$(MediatRVersion)" />
+    <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection"
+      Version="$(MediatRExtensionsMicrosoftDependencyInjectionVersion)" />
+    <PackageReference Include="OdeToCode.AddFeatureFolders"
+      Version="$(OdeToCodeAddFeatureFoldersVersion)" />
+    <PackageReference Include="OpenIddict.AspNetCore" Version="$(OpenIddictAspNetCoreVersion)" />
+    <PackageReference Include="Scrutor" Version="$(ScrutorVersion)" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="$(SwashbuckleAspNetCoreVersion)" />
   </ItemGroup>
 
   <ItemGroup>
     <Content Include="*.pfx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-   </Content>
+    </Content>
   </ItemGroup>
 
 </Project>

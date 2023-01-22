@@ -6,15 +6,19 @@
 
   <PropertyGroup>
     <AmazonCDKLibVersion>2.57.0</AmazonCDKLibVersion>
+    <AmazonLambdaAspNetCoreServerVersion>7.3.0</AmazonLambdaAspNetCoreServerVersion>
     <AmazonLambdaCoreVersion>2.1.0</AmazonLambdaCoreVersion>
     <AmazonLambdaAPIGatewayEventsVersion>2.5.0</AmazonLambdaAPIGatewayEventsVersion>
     <AmazonLambdaSerializationSystemTextJsonVersion>2.3.0</AmazonLambdaSerializationSystemTextJsonVersion>
     <AmazonLambdaTestUtilitiesVersion>2.0.0</AmazonLambdaTestUtilitiesVersion>
-    <AWSSDKDynamoDBv2Version>3.7.101.14</AWSSDKDynamoDBv2Version>
+    <AspNetCoreIdentityAmazonDynamoDBVersion>1.0.0</AspNetCoreIdentityAmazonDynamoDBVersion>
+    <AWSSDKDynamoDBv2Version>3.7.101.29</AWSSDKDynamoDBv2Version>
     <AWSSDKExtensionsNETCoreSetupVersion>3.7.2</AWSSDKExtensionsNETCoreSetupVersion>
     <AWSXRayRecorderCoreVersion>2.13.0</AWSXRayRecorderCoreVersion>
     <AWSXRayRecorderHandlersAwsSdkVersion>2.11.0</AWSXRayRecorderHandlersAwsSdkVersion>
     <ConstructsVersion>10.1.203</ConstructsVersion>
+    <CommunityOpenIddictAmazonDynamoDBVersion>1.0.0</CommunityOpenIddictAmazonDynamoDBVersion>
+    <CoverletCollectorVersion>3.2.0</CoverletCollectorVersion>
     <FluentValidationVersion>11.4.0</FluentValidationVersion>
     <MediatRVersion>11.1.0</MediatRVersion>
     <MediatRExtensionsMicrosoftDependencyInjectionVersion>11.0.0</MediatRExtensionsMicrosoftDependencyInjectionVersion>
@@ -24,9 +28,14 @@
     <MicrosoftExtensionsConfigurationJsonVersion>7.0.0</MicrosoftExtensionsConfigurationJsonVersion>
     <MicrosoftExtensionsDependencyInjectionVersion>7.0.0</MicrosoftExtensionsDependencyInjectionVersion>
     <MicrosoftNETTestSdkVersion>17.4.1</MicrosoftNETTestSdkVersion>
+    <MoqVersion>4.18.4</MoqVersion>
+    <OdeToCodeAddFeatureFoldersVersion>2.0.3</OdeToCodeAddFeatureFoldersVersion>
+    <OpenIddictAspNetCoreVersion>4.0.0</OpenIddictAspNetCoreVersion>
+    <OpenIddictCoreVersion>4.0.0</OpenIddictCoreVersion>
+    <ScrutorVersion>4.2.0</ScrutorVersion>
+    <SwashbuckleAspNetCoreVersion>6.5.0</SwashbuckleAspNetCoreVersion>
     <XunitVersion>2.4.2</XunitVersion>
     <XunitRunnerVisualstudioVersion>2.4.5</XunitRunnerVisualstudioVersion>
-    <CoverletCollectorVersion>3.2.0</CoverletCollectorVersion>
   </PropertyGroup>
 
 </Project>

@@ -4,7 +4,6 @@ using App.Api.Shared.Extensions;
 using App.Api.Shared.Models;
 using TestBase;
 using TestBase.Helpers;
-using Xunit;
 
 namespace CreateAccountTests;
 

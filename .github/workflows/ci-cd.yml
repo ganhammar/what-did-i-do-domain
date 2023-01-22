@@ -24,6 +24,8 @@ jobs:
         with:
           dotnet-version: 6.0.x
 
+      - name: Setup DynamoDB Local
+        run: docker run -d -p 8000:8000 amazon/dynamodb-local
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:

@@ -6,7 +6,6 @@ using App.Api.CreateAccount;
 using App.Api.Shared.Models;
 using FluentValidation.Results;
 using TestBase;
-using Xunit;
 
 namespace CreateAccountTests;
 

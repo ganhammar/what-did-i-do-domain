@@ -1,5 +1,4 @@
 ﻿using Amazon.DynamoDBv2;
-using Xunit;
 
 namespace TestBase;
 

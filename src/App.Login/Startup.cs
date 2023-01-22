@@ -30,6 +30,7 @@ public class Startup
     services.AddIdentity();
     services.AddCors();
     services.AddOpenIddict(Environment.IsDevelopment());
+    services.AddMediatR();
 
     services
       .ConfigureApplicationCookie(options =>
@@ -49,7 +50,9 @@ public class Startup
     }
 
     services.AddHttpContextAccessor();
-    services.AddControllers();
+    services
+      .AddControllers()
+      .AddFeatureFolders();
     services.AddHealthChecks();
   }
 

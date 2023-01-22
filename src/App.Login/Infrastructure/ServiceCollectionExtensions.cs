@@ -1,5 +1,8 @@
-﻿using System.Security.Cryptography.X509Certificates;
+﻿using System.Reflection;
+using System.Security.Cryptography.X509Certificates;
 using AspNetCore.Identity.AmazonDynamoDB;
+using FluentValidation;
+using MediatR;
 using Microsoft.AspNetCore.Identity;
 using OpenIddict.Abstractions;
 using static OpenIddict.Abstractions.OpenIddictConstants;
@@ -99,5 +102,32 @@ public static class ServiceCollectionExtensions
         builder.UseLocalServer();
         builder.UseAspNetCore();
       });
+  }
+
+  public static void AddMediatR(this IServiceCollection services)
+  {
+    services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationPipeline<,>));
+    services.AddMediatR(Assembly.GetAssembly(typeof(Startup))!);
+
+    services.Scan(x => x
+      .FromAssemblyOf<IResponse>()
+        .AddClasses(classes => classes.AssignableTo(typeof(IRequestHandler<,>)))
+          .AsImplementedInterfaces()
+          .WithTransientLifetime()
+        .AddClasses(classes => classes.AssignableTo(typeof(IResponse<>)))
+          .AsImplementedInterfaces()
+          .WithTransientLifetime()
+        .AddClasses(classes => classes.AssignableTo<IResponse>())
+          .AsImplementedInterfaces()
+          .WithTransientLifetime()
+        .AddClasses(classes => classes.AssignableTo(typeof(IValidator<>)))
+          .AsImplementedInterfaces()
+          .WithTransientLifetime()
+        .AddClasses(classes => classes.AssignableTo(typeof(Handler<>)))
+          .AsImplementedInterfaces()
+          .WithTransientLifetime()
+        .AddClasses(classes => classes.AssignableTo(typeof(Handler<,>)))
+          .AsImplementedInterfaces()
+          .WithTransientLifetime());
   }
 }

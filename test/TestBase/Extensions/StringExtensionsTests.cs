@@ -1,6 +1,5 @@
 ﻿using System.Text;
 using App.Api.Shared.Extensions;
-using Xunit;
 
 namespace TestBase.Extensions;
 
