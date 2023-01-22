@@ -58,8 +58,11 @@ public class Startup
     services.AddHealthChecks();
   }
 
-  public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+  public void Configure(
+    IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory)
   {
+    loggerFactory.AddLambdaLogger(Configuration.GetLambdaLoggerOptions());
+
     app.UseForwardedHeaders();
 
     if (Environment.IsDevelopment())
