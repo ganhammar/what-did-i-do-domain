@@ -227,3 +227,5 @@ $RECYCLE.BIN/
 # .pnp.*
 
 # End of https://www.toptal.com/developers/gitignore/api/windows,macos,dotnetcore,node,yarn
+
+appsettings.[dD]evelopment.json
