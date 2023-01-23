@@ -61,10 +61,6 @@ public class DeleteEventCommand
           OverrideTableName = tableName,
         }, cancellationToken);
       }
-      else
-      {
-        Logger.LogWarning($"Could not find a matching Event for id {request.Id}");
-      }
 
       return Response();
     }
