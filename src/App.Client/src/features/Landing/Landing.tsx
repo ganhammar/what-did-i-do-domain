@@ -1,10 +1,9 @@
 export function Landing() {
   return (
     <main>
-      <h2>Authentication & Authorization</h2>
+      <h2>What Did I Do?</h2>
       <p>
-        Yet another authentication & authorization platform, use it if you want,
-        or don't.
+        Can't remember what you did? Let me help you!
       </p>
     </main>
   );
