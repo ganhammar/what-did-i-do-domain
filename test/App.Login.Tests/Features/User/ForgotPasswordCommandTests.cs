@@ -18,7 +18,7 @@ public class ForgotPasswordCommandTests : TestBase
     {
       // Arrange
       var userManager = services.GetRequiredService<UserManager<DynamoDbUser>>();
-      var email = "test@gomsle.com";
+      var email = "test@wdid.fyi";
       var user = new DynamoDbUser
       {
         Email = email,
@@ -28,7 +28,7 @@ public class ForgotPasswordCommandTests : TestBase
       var command = new ForgotPasswordCommand.Command
       {
         Email = email,
-        ResetUrl = "https://gomsle.com/reset",
+        ResetUrl = "https://wdid.fyi/reset",
       };
 
       // Act
@@ -49,11 +49,11 @@ public class ForgotPasswordCommandTests : TestBase
     {
       // Arrange
       var userManager = services.GetRequiredService<UserManager<DynamoDbUser>>();
-      var email = "test@gomsle.com";
+      var email = "test@wdid.fyi";
       var command = new ForgotPasswordCommand.Command
       {
         Email = email,
-        ResetUrl = "https://gomsle.com/reset",
+        ResetUrl = "https://wdid.fyi/reset",
       };
 
       // Act
@@ -75,7 +75,7 @@ public class ForgotPasswordCommandTests : TestBase
       // Arrange
       var command = new ForgotPasswordCommand.Command
       {
-        ResetUrl = "https://gomsle.com/reset",
+        ResetUrl = "https://wdid.fyi/reset",
       };
       var validator = new ForgotPasswordCommand.CommandValidator();
 
@@ -95,7 +95,7 @@ public class ForgotPasswordCommandTests : TestBase
       // Arrange
       var command = new ForgotPasswordCommand.Command
       {
-        Email = "test@gomsle.com",
+        Email = "test@wdid.fyi",
       };
       var validator = new ForgotPasswordCommand.CommandValidator();
 
@@ -116,7 +116,7 @@ public class ForgotPasswordCommandTests : TestBase
       var command = new ForgotPasswordCommand.Command
       {
         Email = "not-a-email",
-        ResetUrl = "https://gomsle.com/reset",
+        ResetUrl = "https://wdid.fyi/reset",
       };
       var validator = new ForgotPasswordCommand.CommandValidator();
 

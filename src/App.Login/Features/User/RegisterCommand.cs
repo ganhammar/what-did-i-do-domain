@@ -97,9 +97,9 @@ public class RegisterCommand
         + $"?UserId={user.Id}&Token={HttpUtility.UrlEncode(token)}"
         + $"&ReturnUrl={HttpUtility.UrlEncode(returnUrl)}";
 
-      var body = $"Follow the link below to confirm your Gömsle account:<br /><a href=\"{url}\">{url}</a>";
+      var body = $"Follow the link below to confirm your WDID account:<br /><a href=\"{url}\">{url}</a>";
 
-      await _emailSender.Send(user.Email, "Confirm Gömsle Account", body);
+      await _emailSender.Send(user.Email, "Confirm WDID Account", body);
     }
   }
 }

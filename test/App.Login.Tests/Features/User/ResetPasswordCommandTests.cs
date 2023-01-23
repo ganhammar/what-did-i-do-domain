@@ -18,7 +18,7 @@ public class ResetPasswordCommandTests : TestBase
       var userManager = services.GetRequiredService<UserManager<DynamoDbUser>>();
       var user = new DynamoDbUser
       {
-        Email = "test@gomsle.com",
+        Email = "test@wdid.fyi",
         UserName = "test",
       };
       await userManager.CreateAsync(user);
@@ -28,7 +28,7 @@ public class ResetPasswordCommandTests : TestBase
         UserId = user.Id,
         Token = token,
         Password = "itsnotaseasyas123",
-        ReturnUrl = "https://gomsle.com/login",
+        ReturnUrl = "https://wdid.fyi/login",
       };
 
       // Act
@@ -46,7 +46,7 @@ public class ResetPasswordCommandTests : TestBase
       var userManager = services.GetRequiredService<UserManager<DynamoDbUser>>();
       var user = new DynamoDbUser
       {
-        Email = "test@gomsle.com",
+        Email = "test@wdid.fyi",
         UserName = "test",
       };
       await userManager.CreateAsync(user);
@@ -55,7 +55,7 @@ public class ResetPasswordCommandTests : TestBase
         UserId = user.Id,
         Token = "not-the-right-stuff",
         Password = "itsnotaseasyas123",
-        ReturnUrl = "https://gomsle.com/login",
+        ReturnUrl = "https://wdid.fyi/login",
       };
 
       // Act
@@ -75,7 +75,7 @@ public class ResetPasswordCommandTests : TestBase
       {
         Token = "a-reset-token",
         Password = "itsnotaseasyas123",
-        ReturnUrl = "https://gomsle.com/login",
+        ReturnUrl = "https://wdid.fyi/login",
       };
       var validator = new ResetPasswordCommand.CommandValidator();
 
@@ -97,7 +97,7 @@ public class ResetPasswordCommandTests : TestBase
       {
         UserId = "a-user-id",
         Password = "itsnotaseasyas123",
-        ReturnUrl = "https://gomsle.com/login",
+        ReturnUrl = "https://wdid.fyi/login",
       };
       var validator = new ResetPasswordCommand.CommandValidator();
 
@@ -119,7 +119,7 @@ public class ResetPasswordCommandTests : TestBase
       {
         UserId = "a-user-id",
         Token = "a-reset-token",
-        ReturnUrl = "https://gomsle.com/login",
+        ReturnUrl = "https://wdid.fyi/login",
       };
       var validator = new ResetPasswordCommand.CommandValidator();
 

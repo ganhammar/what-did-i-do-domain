@@ -77,7 +77,7 @@ public class SendCodeCommand
       switch (request.Provider)
       {
         case "Email":
-          await _emailSender.Send(await _userManager.GetEmailAsync(user), "Security Code - Gömsle", message);
+          await _emailSender.Send(await _userManager.GetEmailAsync(user), "Security Code - WDID", message);
           break;
       }
 

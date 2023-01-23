@@ -41,7 +41,7 @@ public abstract class TestBase
 
     var request = new Mock<HttpRequest>();
     request.Setup(x => x.Scheme).Returns("http");
-    request.Setup(x => x.Host).Returns(HostString.FromUriComponent("gomsle.com"));
+    request.Setup(x => x.Host).Returns(HostString.FromUriComponent("wdid.fyi"));
     request.Setup(x => x.PathBase).Returns(PathString.FromUriComponent("/api"));
     Mocks.Add(request);
 
@@ -133,7 +133,7 @@ public abstract class TestBase
   {
     var mediator = services.GetRequiredService<IMediator>();
     var userManager = services.GetRequiredService<UserManager<DynamoDbUser>>();
-    var email = "valid@gomsle.com";
+    var email = "valid@wdid.fyi";
     var password = "itsaseasyas123";
     var user = new DynamoDbUser
     {

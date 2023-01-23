@@ -17,7 +17,7 @@ public class VerifyCodeCommandTests : TestBase
     {
       // Arrange
       var userManager = services.GetRequiredService<UserManager<DynamoDbUser>>();
-      var email = "valid@gomsle.com";
+      var email = "valid@wdid.fyi";
       var password = "itsaseasyas123";
       var user = new DynamoDbUser
       {
@@ -119,7 +119,7 @@ public class VerifyCodeCommandTests : TestBase
     {
       // Arrange
       var userManager = services.GetRequiredService<UserManager<DynamoDbUser>>();
-      var email = "valid@gomsle.com";
+      var email = "valid@wdid.fyi";
       var password = "itsaseasyas123";
       var user = new DynamoDbUser
       {

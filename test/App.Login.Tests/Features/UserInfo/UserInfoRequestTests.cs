@@ -23,7 +23,7 @@ public class UserInfoQueryTests : TestBase
     {
       // Arrange
       var userManager = services.GetRequiredService<UserManager<DynamoDbUser>>();
-      var email = "valid@gomsle.com";
+      var email = "valid@wdid.fyi";
       var phoneNumber = "0731234567";
       var password = "itsaseasyas123";
       var user = new DynamoDbUser

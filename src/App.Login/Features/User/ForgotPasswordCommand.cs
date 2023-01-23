@@ -66,7 +66,7 @@ public class ForgotPasswordCommand
         + $"?UserId={user.Id}&Token={HttpUtility.UrlEncode(token)}"
         + $"&ReturnUrl={HttpUtility.UrlEncode(returnUrl)}";
 
-      var body = $"Follow the link below to reset your Gömsle account password:<br /><a href=\"{url}\">{url}</a>";
+      var body = $"Follow the link below to reset your WDID account password:<br /><a href=\"{url}\">{url}</a>";
 
       await _emailSender.Send(user.Email, "Reset Password", body);
     }

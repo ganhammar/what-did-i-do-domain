@@ -16,7 +16,7 @@ public class LoginCommandTests : TestBase
     {
       // Arrange
       var userManager = services.GetRequiredService<UserManager<DynamoDbUser>>();
-      var email = "valid@gomsle.com";
+      var email = "valid@wdid.fyi";
       var password = "itsaseasyas123";
       var user = new DynamoDbUser
       {
@@ -74,7 +74,7 @@ public class LoginCommandTests : TestBase
       var userManager = services.GetRequiredService<UserManager<DynamoDbUser>>();
       var command = new LoginCommand.Command
       {
-        Email = "valid@gomsle.com",
+        Email = "valid@wdid.fyi",
       };
       var validator = new LoginCommand.CommandValidator(userManager);
 
@@ -95,7 +95,7 @@ public class LoginCommandTests : TestBase
       var userManager = services.GetRequiredService<UserManager<DynamoDbUser>>();
       var command = new LoginCommand.Command
       {
-        Email = "valid@gomsle.com",
+        Email = "valid@wdid.fyi",
         UserName = "valid",
         Password = "itsnotaseasyas123",
       };

@@ -29,12 +29,12 @@ public class UserControllerTests : TestBase
     // Act & Assert
     async (controller, services) =>
     {
-      var email = "test@gomsle.com";
+      var email = "test@wdid.fyi";
       var result = await controller.Register(new()
       {
         Email = email,
         Password = "itsaseasyas123",
-        ReturnUrl = "http://gomsle.com",
+        ReturnUrl = "http://wdid.fyi",
       });
 
       Assert.NotNull(result);
@@ -61,12 +61,12 @@ public class UserControllerTests : TestBase
     // Act & Assert
     async (controller, services) =>
     {
-      var email = "test@gomsle.com";
+      var email = "test@wdid.fyi";
       var result = await controller.Register(new()
       {
         Email = email,
         Password = "itsaseasyas123",
-        ReturnUrl = "http://gomsle.com",
+        ReturnUrl = "http://wdid.fyi",
       }) as OkObjectResult;
 
       var response = result!.Value as DynamoDbUser;
@@ -84,7 +84,7 @@ public class UserControllerTests : TestBase
     // Act & Assert
     async (controller, services) =>
     {
-      var email = "test@gomsle.com";
+      var email = "test@wdid.fyi";
 
       var userManager = services.GetRequiredService<UserManager<DynamoDbUser>>();
       await userManager.CreateAsync(new()
@@ -97,7 +97,7 @@ public class UserControllerTests : TestBase
       {
         Email = email,
         Password = "itsaseasyas123",
-        ReturnUrl = "http://gomsle.com",
+        ReturnUrl = "http://wdid.fyi",
       });
 
       Assert.NotNull(result);
@@ -123,7 +123,7 @@ public class UserControllerTests : TestBase
       {
         Email = string.Empty,
         Password = "itsaseasyas123",
-        ReturnUrl = "http://gomsle.com",
+        ReturnUrl = "http://wdid.fyi",
       });
 
       Assert.NotNull(result);
@@ -150,13 +150,13 @@ public class UserControllerTests : TestBase
       var userManager = services.GetRequiredService<UserManager<DynamoDbUser>>();
       var user = new DynamoDbUser
       {
-        Email = "test@gomsle.com",
-        UserName = "test@gomsle.com",
+        Email = "test@wdid.fyi",
+        UserName = "test@wdid.fyi",
         EmailConfirmed = false,
       };
       await userManager.CreateAsync(user);
       var token = await userManager.GenerateEmailConfirmationTokenAsync(user);
-      var url = "https://gomsle.com/my-client-app";
+      var url = "https://wdid.fyi/my-client-app";
 
       // Act
       var result = await controller.ConfirmEmail(new()
@@ -202,18 +202,18 @@ public class UserControllerTests : TestBase
     {
       // Arrange
       var userManager = services.GetRequiredService<UserManager<DynamoDbUser>>();
-      var email = "test@gomsle.com";
+      var email = "test@wdid.fyi";
       var user = new DynamoDbUser
       {
         Email = email,
-        UserName = "test@gomsle.com",
+        UserName = "test@wdid.fyi",
         EmailConfirmed = false,
       };
       await userManager.CreateAsync(user);
       var command = new ForgotPasswordCommand.Command
       {
         Email = email,
-        ResetUrl = "https://gomsle.com/reset",
+        ResetUrl = "https://wdid.fyi/reset",
       };
 
       // Act
@@ -240,13 +240,13 @@ public class UserControllerTests : TestBase
       var userManager = services.GetRequiredService<UserManager<DynamoDbUser>>();
       var user = new DynamoDbUser
       {
-        Email = "test@gomsle.com",
-        UserName = "test@gomsle.com",
+        Email = "test@wdid.fyi",
+        UserName = "test@wdid.fyi",
         EmailConfirmed = false,
       };
       await userManager.CreateAsync(user);
       var token = await userManager.GeneratePasswordResetTokenAsync(user);
-      var url = "https://gomsle.com/my-client-app";
+      var url = "https://wdid.fyi/my-client-app";
 
       // Act
       var result = await controller.Reset(new()
@@ -293,7 +293,7 @@ public class UserControllerTests : TestBase
     {
       // Arrange
       var userManager = services.GetRequiredService<UserManager<DynamoDbUser>>();
-      var email = "valid@gomsle.com";
+      var email = "valid@wdid.fyi";
       var password = "itsaseasyas123";
       await userManager.CreateAsync(new()
       {
@@ -329,7 +329,7 @@ public class UserControllerTests : TestBase
     {
       // Arrange
       var userManager = services.GetRequiredService<UserManager<DynamoDbUser>>();
-      var email = "valid@gomsle.com";
+      var email = "valid@wdid.fyi";
       var password = "itsaseasyas123";
       await userManager.CreateAsync(new()
       {
@@ -384,7 +384,7 @@ public class UserControllerTests : TestBase
     {
       // Arrange
       var userManager = services.GetRequiredService<UserManager<DynamoDbUser>>();
-      var email = "valid@gomsle.com";
+      var email = "valid@wdid.fyi";
       var password = "itsaseasyas123";
       await userManager.CreateAsync(new()
       {
@@ -441,7 +441,7 @@ public class UserControllerTests : TestBase
     {
       // Arrange
       var userManager = services.GetRequiredService<UserManager<DynamoDbUser>>();
-      var email = "valid@gomsle.com";
+      var email = "valid@wdid.fyi";
       var password = "itsaseasyas123";
       var user = new DynamoDbUser
       {

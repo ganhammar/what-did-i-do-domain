@@ -18,8 +18,8 @@ public class ConfirmEmailCommandTests : TestBase
       var userManager = services.GetRequiredService<UserManager<DynamoDbUser>>();
       var user = new DynamoDbUser
       {
-        Email = "test@gomsle.com",
-        UserName = "test@gomsle.com",
+        Email = "test@wdid.fyi",
+        UserName = "test@wdid.fyi",
         EmailConfirmed = false,
       };
       await userManager.CreateAsync(user);
@@ -28,7 +28,7 @@ public class ConfirmEmailCommandTests : TestBase
       {
         UserId = user.Id,
         Token = token,
-        ReturnUrl = "https://gomsle.com",
+        ReturnUrl = "https://wdid.fyi",
       };
 
       // Act
@@ -46,8 +46,8 @@ public class ConfirmEmailCommandTests : TestBase
       var userManager = services.GetRequiredService<UserManager<DynamoDbUser>>();
       var user = new DynamoDbUser
       {
-        Email = "test@gomsle.com",
-        UserName = "test@gomsle.com",
+        Email = "test@wdid.fyi",
+        UserName = "test@wdid.fyi",
         EmailConfirmed = false,
       };
       await userManager.CreateAsync(user);
@@ -55,7 +55,7 @@ public class ConfirmEmailCommandTests : TestBase
       var command = new ConfirmEmailCommand.Command
       {
         Token = token,
-        ReturnUrl = "https://gomsle.com",
+        ReturnUrl = "https://wdid.fyi",
       };
       var validator = new ConfirmEmailCommand.CommandValidator(userManager);
 
@@ -76,8 +76,8 @@ public class ConfirmEmailCommandTests : TestBase
       var userManager = services.GetRequiredService<UserManager<DynamoDbUser>>();
       var user = new DynamoDbUser
       {
-        Email = "test@gomsle.com",
-        UserName = "test@gomsle.com",
+        Email = "test@wdid.fyi",
+        UserName = "test@wdid.fyi",
         EmailConfirmed = false,
       };
       await userManager.CreateAsync(user);
@@ -86,7 +86,7 @@ public class ConfirmEmailCommandTests : TestBase
       {
         UserId = Guid.NewGuid().ToString(),
         Token = token,
-        ReturnUrl = "https://gomsle.com",
+        ReturnUrl = "https://wdid.fyi",
       };
       var validator = new ConfirmEmailCommand.CommandValidator(userManager);
 
@@ -107,14 +107,14 @@ public class ConfirmEmailCommandTests : TestBase
       var userManager = services.GetRequiredService<UserManager<DynamoDbUser>>();
       var user = new DynamoDbUser
       {
-        Email = "test@gomsle.com",
-        UserName = "test@gomsle.com",
+        Email = "test@wdid.fyi",
+        UserName = "test@wdid.fyi",
       };
       await userManager.CreateAsync(user);
       var command = new ConfirmEmailCommand.Command
       {
         UserId = user.Id,
-        ReturnUrl = "https://gomsle.com",
+        ReturnUrl = "https://wdid.fyi",
       };
       var validator = new ConfirmEmailCommand.CommandValidator(userManager);
 
@@ -135,8 +135,8 @@ public class ConfirmEmailCommandTests : TestBase
       var userManager = services.GetRequiredService<UserManager<DynamoDbUser>>();
       var user = new DynamoDbUser
       {
-        Email = "test@gomsle.com",
-        UserName = "test@gomsle.com",
+        Email = "test@wdid.fyi",
+        UserName = "test@wdid.fyi",
       };
       await userManager.CreateAsync(user);
       var command = new ConfirmEmailCommand.Command
@@ -163,8 +163,8 @@ public class ConfirmEmailCommandTests : TestBase
       var userManager = services.GetRequiredService<UserManager<DynamoDbUser>>();
       var user = new DynamoDbUser
       {
-        Email = "test@gomsle.com",
-        UserName = "test@gomsle.com",
+        Email = "test@wdid.fyi",
+        UserName = "test@wdid.fyi",
         EmailConfirmed = false,
       };
       await userManager.CreateAsync(user);
@@ -172,7 +172,7 @@ public class ConfirmEmailCommandTests : TestBase
       {
         UserId = user.Id,
         Token = Guid.NewGuid().ToString(),
-        ReturnUrl = "https://gomsle.com",
+        ReturnUrl = "https://wdid.fyi",
       };
 
       // Act

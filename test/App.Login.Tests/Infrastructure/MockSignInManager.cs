@@ -31,7 +31,7 @@ public class MockSignInManager : SignInManager<DynamoDbUser>
 
   public override async Task<SignInResult> PasswordSignInAsync(string userName, string password, bool isPersistent, bool lockoutOnFailure)
   {
-    if (userName == "valid@gomsle.com" && password == "itsaseasyas123")
+    if (userName == "valid@wdid.fyi" && password == "itsaseasyas123")
     {
       _signInRequetInProgress = true;
       CurrentUser = await FindFirstUser();

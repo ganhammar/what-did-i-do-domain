@@ -14,10 +14,10 @@ public class RegisterCommandTests : TestBase
       // Arrange
       var command = new RegisterCommand.Command
       {
-        Email = "test@gomsle.com",
+        Email = "test@wdid.fyi",
         UserName = "test",
         Password = "itsaseasyas123",
-        ReturnUrl = "https://gomsle.com",
+        ReturnUrl = "https://wdid.fyi",
       };
 
       // Act
