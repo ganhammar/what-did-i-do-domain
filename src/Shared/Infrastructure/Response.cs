@@ -35,7 +35,6 @@ public class Response : IResponse
   public bool IsValid
   {
     get => !Errors.Any();
-    private set { }
   }
 
   public IEnumerable<ValidationFailure> Errors { get; set; }
