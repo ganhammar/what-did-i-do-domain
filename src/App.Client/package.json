@@ -3,10 +3,11 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "start": "rimraf ./build && react-scripts start",
+    "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "lint:ci": "eslint",
+    "lint": "eslint --fix"
   },
   "dependencies": {
     "http-proxy-middleware": "^2.0.6",

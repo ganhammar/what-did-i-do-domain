@@ -13,8 +13,8 @@ defaults:
     shell: bash
 
 jobs:
-  build:
-    name: Build & Test
+  test:
+    name: Lint & Test
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -33,14 +33,28 @@ jobs:
           role-to-assume: ${{ secrets.DEPLOY_ROLE }}
           role-session-name: OIDCSession
 
-      - name: Restore
+      - name: 'Backend: Restore'
         run: dotnet restore
-      - name: Build
+      - name: 'Backend: Build'
         run: dotnet build --no-restore
-      - name: Lint
+      - name: 'Backend: Lint'
         run: dotnet format --verify-no-changes --no-restore
-      - name: Test
+      - name: 'Backend: Test'
         run: dotnet test --no-build /p:CollectCoverage=true /p:CoverletOutput=TestResults/ /p:CoverletOutputFormat=lcov /p:Exclude="[TestBase*]*"
+
+      - name: Install node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+      - name: 'Client: Restore'
+        run: npm ci
+        working-directory: ./src/App.Client
+      - name: 'Client: Lint'
+        run: npm run lint:ci
+        working-directory: ./src/App.Client
+      - name: 'Client: Test'
+        run: npm test
+        working-directory: ./src/App.Client
 
       - name: Publish Code Coverage
         uses: codecov/codecov-action@v3
@@ -53,7 +67,7 @@ jobs:
   package-projects:
     name: Package Projects
     runs-on: ubuntu-latest
-    needs: build
+    needs: test
     if: ${{ github.ref == 'refs/heads/main' }}
     strategy:
       fail-fast: true
@@ -101,7 +115,7 @@ jobs:
   package-dependencies:
     name: Package Dependencies
     runs-on: ubuntu-latest
-    needs: build
+    needs: test
     if: ${{ github.ref == 'refs/heads/main' }}
     steps:
       - name: Checkout
@@ -112,6 +126,18 @@ jobs:
           dotnet-version: 6.0.x
       - name: Publish App.Login.EnsureInitialized
         run: dotnet publish ./src/Helpers/App.Login.EnsureInitialized -o App.Login.EnsureInitialized
+
+      - name: Install node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+      - name: 'Client: Restore'
+        run: npm ci
+        working-directory: ./src/App.Client
+      - name: 'Client: Build'
+        run: npm run build
+        working-directory: ./src/App.Client
+
       - name: Upload Artifact
         uses: actions/upload-artifact@v3
         with:
@@ -121,6 +147,7 @@ jobs:
             ./cdk.json
             ./src/App.Stack/**/*
             ./App.Login.EnsureInitialized/**/*
+            ./src/App.Client/build
           retention-days: 1
 
   deploy:
