@@ -46,7 +46,7 @@ export function Header() {
         </StyledNavLink>
         <StyledNavLink
           className={(isActive) => (isActive ? 'active' : '')}
-          to="/login"
+          to="/signin"
         >
           Login
         </StyledNavLink>

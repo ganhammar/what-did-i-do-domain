@@ -11,14 +11,14 @@
     <AmazonLambdaAPIGatewayEventsVersion>2.5.0</AmazonLambdaAPIGatewayEventsVersion>
     <AmazonLambdaSerializationSystemTextJsonVersion>2.3.0</AmazonLambdaSerializationSystemTextJsonVersion>
     <AmazonLambdaTestUtilitiesVersion>2.0.0</AmazonLambdaTestUtilitiesVersion>
-    <AspNetCoreIdentityAmazonDynamoDBVersion>1.0.0</AspNetCoreIdentityAmazonDynamoDBVersion>
+    <AspNetCoreIdentityAmazonDynamoDBVersion>1.0.1</AspNetCoreIdentityAmazonDynamoDBVersion>
     <AWSLambdaPowertoolsLoggingVersion>0.0.2-preview</AWSLambdaPowertoolsLoggingVersion>
     <AWSSDKDynamoDBv2Version>3.7.101.29</AWSSDKDynamoDBv2Version>
     <AWSSDKExtensionsNETCoreSetupVersion>3.7.2</AWSSDKExtensionsNETCoreSetupVersion>
     <AWSXRayRecorderCoreVersion>2.13.0</AWSXRayRecorderCoreVersion>
     <AWSXRayRecorderHandlersAwsSdkVersion>2.11.0</AWSXRayRecorderHandlersAwsSdkVersion>
     <ConstructsVersion>10.1.203</ConstructsVersion>
-    <CommunityOpenIddictAmazonDynamoDBVersion>1.0.0</CommunityOpenIddictAmazonDynamoDBVersion>
+    <CommunityOpenIddictAmazonDynamoDBVersion>1.0.1</CommunityOpenIddictAmazonDynamoDBVersion>
     <CoverletMsbuildVersion>3.2.0</CoverletMsbuildVersion>
     <FluentValidationVersion>11.4.0</FluentValidationVersion>
     <MediatRVersion>11.1.0</MediatRVersion>

@@ -16,20 +16,33 @@ public class Startup
 
   public IConfiguration Configuration { get; }
   public IHostEnvironment Environment { get; }
+  private const string AllowLocalhost = "_allowLocalhost";
 
   public void ConfigureServices(IServiceCollection services)
   {
     var dynamoDbConfig = Configuration.GetSection("DynamoDB");
+    var serviceUrl = dynamoDbConfig.GetValue<string>("ServiceUrl");
 
     services
       .AddDefaultAWSOptions(Configuration.GetAWSOptions())
-      .AddSingleton<IAmazonDynamoDB>(_ => new AmazonDynamoDBClient(new AmazonDynamoDBConfig
-      {
-        ServiceURL = dynamoDbConfig.GetValue<string>("ServiceUrl"),
-      }));
+      .AddSingleton<IAmazonDynamoDB>(_ => new AmazonDynamoDBClient(
+        string.IsNullOrEmpty(serviceUrl) == false ? new AmazonDynamoDBConfig
+        {
+          ServiceURL = dynamoDbConfig.GetValue<string>("ServiceUrl"),
+        } : new()));
 
     services.AddIdentity();
-    services.AddCors();
+    services.AddCors(options =>
+    {
+      options.AddPolicy(name: AllowLocalhost,
+        policy =>
+        {
+          policy
+            .WithOrigins("http://localhost:3000")
+            .AllowAnyHeader()
+            .AllowAnyMethod();
+        });
+    });
     services.AddOpenIddict(Environment.IsDevelopment());
     services.AddMediatR();
     services.AddSingleton<IEmailSender, EmailSender>();
@@ -37,8 +50,8 @@ public class Startup
     services
       .ConfigureApplicationCookie(options =>
       {
-        options.LoginPath = "/login";
-        options.LogoutPath = "/logout";
+        options.LoginPath = "/signin";
+        options.LogoutPath = "/signout";
       })
       .Configure<CookiePolicyOptions>(options =>
       {
@@ -72,7 +85,7 @@ public class Startup
       app.UseStatusCodePagesWithReExecute("/error");
     }
 
-    app.UseCors();
+    app.UseCors(AllowLocalhost);
     app.UseCookiePolicy();
     app.UseStaticFiles();
     app.UseRouting();

@@ -3,7 +3,7 @@ import { Route, Routes } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
 import { Loader } from '../../components/Loader';
 import { userAtom } from '../User';
-import { Login } from './';
+import { Signin } from './';
 
 interface AuthProps {
   children: ReactElement;
@@ -26,8 +26,8 @@ function Logout() {
 export function Auth({ children }: AuthProps) {
   return (
     <Routes>
-      <Route path="/login" element={<Login />} />
-      <Route path="/logout" element={<Logout />} />
+      <Route path="/signin" element={<Signin />} />
+      <Route path="/signout" element={<Logout />} />
       <Route
         path="*"
         element={<RenderIfLoggedIn>{children}</RenderIfLoggedIn>}

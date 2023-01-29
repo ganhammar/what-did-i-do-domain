@@ -19,6 +19,9 @@ public class LoginCommand
 
   public class CommandValidator : AbstractValidator<Command>
   {
+    private bool _userChecked { get; set; }
+    private DynamoDbUser? _user { get; set; }
+
     public CommandValidator(UserManager<DynamoDbUser> userManager)
     {
       When(x => string.IsNullOrEmpty(x.UserName), () =>
@@ -29,12 +32,21 @@ public class LoginCommand
         When(x => string.IsNullOrEmpty(x.Email) == false, () =>
         {
           RuleFor(x => x.Email)
+            .Cascade(CascadeMode.Stop)
             .EmailAddress()
             .MustAsync(async (email, cancellationToken) =>
             {
               var user = await userManager.FindByEmailAsync(email);
 
-              return user != default && user.EmailConfirmed;
+              return user != default;
+            })
+            .WithErrorCode(nameof(ErrorCodes.AccountNotFound))
+            .WithMessage(ErrorCodes.AccountNotFound)
+            .MustAsync(async (email, cancellationToken) =>
+            {
+              var user = await userManager.FindByEmailAsync(email);
+
+              return user.EmailConfirmed;
             })
             .WithErrorCode(nameof(ErrorCodes.EmailUnconfirmed))
             .WithMessage(ErrorCodes.EmailUnconfirmed);
@@ -55,6 +67,17 @@ public class LoginCommand
 
       RuleFor(x => x.Password)
         .NotEmpty();
+    }
+
+    private async Task<DynamoDbUser?> GetUser(UserManager<DynamoDbUser> userManager, string email)
+    {
+      if (_userChecked == false)
+      {
+        _user = await userManager.FindByEmailAsync(email);
+        _userChecked = true;
+      }
+
+      return _user;
     }
   }
 

@@ -1,12 +1,10 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import styled from 'styled-components';
 import Button from '../../components/Button';
 import Checkbox from '../../components/Checkbox';
 import TextInput from '../../components/TextInput';
 import isEmail from '../../utils/isEmail';
 import useAsyncError from '../../utils/useAsyncError';
-import { useDebounce } from '../hooks/useDebounce';
-import { ApplicationService } from '../User/ApplicationService';
 import { UserService } from '../User/UserService';
 
 const Form = styled.form`
@@ -18,28 +16,14 @@ const Submit = styled(Button)`
   margin-top: 0.5rem;
 `;
 
-export function Login() {
+export function Signin() {
   const throwError = useAsyncError();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [rememberMe, setRememberMe] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [domain, setDomain] = useState('');
-  const [domainVerified, setDomainVerified] = useState(false);
-  const [requiredLoginProvider, setRequiredLoginProvider] = useState<
-    string | null
-  >(null);
 
   const userService = useMemo(() => new UserService(), []);
-  const applicationService = useMemo(() => new ApplicationService(), []);
-
-  const checkDomain = useDebounce(async () => {
-    const requirements = await applicationService.domainRequirements(domain);
-    setRequiredLoginProvider(
-      requirements.result?.requiredOidcProviderId ?? null
-    );
-    setDomainVerified(true);
-  }, 500);
 
   const submit = async () => {
     try {
@@ -58,21 +42,6 @@ export function Login() {
     }
   };
 
-  useEffect(() => {
-    if (isEmail(email)) {
-      const currentDomain = email.split('@').pop() as string;
-      if (currentDomain !== domain) {
-        setDomain(currentDomain);
-        setDomainVerified(false);
-      }
-    }
-  }, [email, domain]);
-  useEffect(() => {
-    if (domain && !domainVerified) {
-      checkDomain();
-    }
-  }, [domain, checkDomain, domainVerified]);
-
   return (
     <Form>
       <TextInput
@@ -88,7 +57,6 @@ export function Login() {
         type="password"
         value={password}
         onChange={setPassword}
-        isDisabled={Boolean(requiredLoginProvider)}
       />
       <Checkbox
         title="Remember me"
@@ -99,11 +67,11 @@ export function Login() {
       <Submit
         color="success"
         onClick={submit}
-        isDisabled={!isEmail(email) || !Boolean(password) || !domainVerified}
+        isDisabled={!isEmail(email) || !Boolean(password)}
         isLoading={isLoading}
         isAsync
       >
-        {requiredLoginProvider ? 'Login with SSO' : 'Login'}
+        Login
       </Submit>
     </Form>
   );
