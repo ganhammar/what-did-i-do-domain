@@ -1,6 +1,8 @@
 ﻿using Amazon.CDK;
 using Amazon.CDK.AWS.APIGateway;
 using Amazon.CDK.AWS.DynamoDB;
+using Amazon.CDK.AWS.IAM;
+using Amazon.CDK.AWS.S3;
 using AppStack.Constructs;
 using Constructs;
 
@@ -88,6 +90,40 @@ public class AppStack : Stack
     ));
     applicationTable.GrantReadData(listEventsFunction);
     eventResource.AddMethod("GET", new LambdaIntegration(listEventsFunction));
+
+    // S3: Client
+    var clientBucket = new Bucket(this, "Client", new BucketProps
+    {
+      AccessControl = BucketAccessControl.PRIVATE,
+    });
+    var executeRole = new Role(this, "ClientRole", new RoleProps
+    {
+      AssumedBy = new ServicePrincipal("apigateway.amazonaws.com"),
+      Path = "/service-role/",
+    });
+    clientBucket.GrantRead(executeRole);
+
+    var appResource = apiGateway.Root.AddResource("app");
+    var s3Integration = new AwsIntegration(new AwsIntegrationProps
+    {
+      Service = "s3",
+      IntegrationHttpMethod = "GET",
+      Path = "{bucket}",
+      Options = new IntegrationOptions
+      {
+        CredentialsRole = executeRole,
+      },
+    });
+    appResource.AddMethod("GET", s3Integration, new MethodOptions
+    {
+      MethodResponses = new[]
+      {
+        new MethodResponse
+        {
+          StatusCode = "200",
+        },
+      },
+    });
 
     // Output
     new CfnOutput(this, "APIGWEndpoint", new CfnOutputProps
