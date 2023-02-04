@@ -1,6 +1,6 @@
 "use strict";
 
-exports.handler = (event: any, context: any, callback: any) => {
+exports.handler = (event, context, callback) => {
   const response = event.Records[0].cf.response;
   const request = event.Records[0].cf.request;
 
