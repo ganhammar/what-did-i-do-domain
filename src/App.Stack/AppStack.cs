@@ -54,6 +54,7 @@ public class AppStack : Stack
       Entry = "./src/App.Stack/Redirect/index.ts",
       Handler = "handler",
       Runtime = Runtime.NODEJS_18_X,
+      DepsLockFilePath = "./src/App.Stack/Redirect/package-lock.json",
     });
 
     // CloudFront Distribution
