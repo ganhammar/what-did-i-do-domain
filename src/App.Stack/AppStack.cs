@@ -1,6 +1,7 @@
 ﻿using Amazon.CDK;
 using Amazon.CDK.AWS.APIGateway;
 using Amazon.CDK.AWS.CloudFront;
+using Amazon.CDK.AWS.CloudFront.Experimental;
 using Amazon.CDK.AWS.DynamoDB;
 using Amazon.CDK.AWS.IAM;
 using Amazon.CDK.AWS.Lambda;
@@ -49,12 +50,12 @@ public class AppStack : Stack
     var clientBucket = CreateClientBucket(cloudFrontOriginAccessPrincipal);
 
     // Redirect NotFound Paths
-    var redirectFunction = new NodejsFunction(this, "Redirect", new NodejsFunctionProps
+    var redirectFunction = new EdgeFunction(this, "Redirect", new EdgeFunctionProps
     {
-      Entry = "./src/App.Stack/Redirect/index.ts",
+      Code = Code.FromAsset("./src/App.Stack/Redirect/index.ts"),
       Handler = "handler",
       Runtime = Runtime.NODEJS_18_X,
-      DepsLockFilePath = "./src/App.Stack/Redirect/package-lock.json",
+      Architecture = Architecture.ARM_64,
     });
 
     // CloudFront Distribution
@@ -187,7 +188,7 @@ public class AppStack : Stack
     RestApi apiGateway,
     Bucket clientBucket,
     OriginAccessIdentity cloudFrontOriginAccessPrincipal,
-    NodejsFunction redirectFunction)
+    EdgeFunction redirectFunction)
   {
     return new CloudFrontWebDistribution(
       this, "WhatDidIDoDistribution", new CloudFrontWebDistributionProps

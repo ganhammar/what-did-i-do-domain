@@ -1,9 +1,0 @@
-{
-  "name": "redirect",
-  "version": "1.0.0",
-  "description": "Redirects NotFound Requests",
-  "scripts": {
-  },
-  "author": "",
-  "license": "ISC"
-}
