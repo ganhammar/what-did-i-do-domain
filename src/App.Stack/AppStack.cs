@@ -51,7 +51,7 @@ public class AppStack : Stack
     // Redirect NotFound Paths
     var redirectFunction = new NodejsFunction(this, "Redirect", new NodejsFunctionProps
     {
-      Entry = "./App.Stack/Redirect/index.ts",
+      Entry = "./src/App.Stack/Redirect/index.ts",
       Handler = "handler",
       Runtime = Runtime.NODEJS_18_X
     });
