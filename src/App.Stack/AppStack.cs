@@ -53,7 +53,7 @@ public class AppStack : Stack
     {
       Entry = "./src/App.Stack/Redirect/index.ts",
       Handler = "handler",
-      Runtime = Runtime.NODEJS_18_X
+      Runtime = Runtime.NODEJS_18_X,
     });
 
     // CloudFront Distribution
