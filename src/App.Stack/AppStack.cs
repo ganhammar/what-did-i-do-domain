@@ -54,7 +54,6 @@ public class AppStack : Stack
       Code = Code.FromAsset("./src/App.Stack/Redirect"),
       Handler = "index.handler",
       Runtime = Runtime.NODEJS_18_X,
-      Architecture = Architecture.ARM_64,
     });
 
     // CloudFront Distribution
