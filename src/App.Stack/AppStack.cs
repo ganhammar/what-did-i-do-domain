@@ -200,7 +200,7 @@ public class AppStack : Stack
           {
             CustomOriginSource = new CustomOriginConfig
             {
-              DomainName = $"{apiGateway.RestApiId}.execute-api.{this.Region}.{this.UrlSuffix}",
+              DomainName = apiGateway.ArnForExecuteApi(),
               OriginPath = $"/${apiGateway.DeploymentStage.StageName}",
             },
             Behaviors = new[]
