@@ -8,7 +8,13 @@ public class Program
   {
     var app = new App(null);
 
-    new AppStack(app, "what-did-i-do-stack", new StackProps());
+    new AppStack(app, "what-did-i-do-stack", new StackProps
+    {
+      Env = new Amazon.CDK.Environment
+      {
+        Region = "eu-north-1",
+      },
+    });
 
     app.Synth();
   }
