@@ -39,7 +39,11 @@ public class AppStack : Stack
     HandleEventResource(eventResource, tableName, applicationTable);
 
     // S3: Client
-    var cloudFrontOriginAccessPrincipal = new OriginAccessIdentity(this, "CloudFrontOAI");
+    var cloudFrontOriginAccessPrincipal = new OriginAccessIdentity(
+      this, "CloudFrontOAI", new OriginAccessIdentityProps
+      {
+        Comment = "Allows CloudFront access to S3 bucket",
+      });
     var clientBucket = CreateClientBucket(cloudFrontOriginAccessPrincipal);
 
     // CloudFront Distribution
@@ -156,14 +160,14 @@ public class AppStack : Stack
       Sources = new[] { Source.Asset("./src/App.Client/build") },
       DestinationBucket = clientBucket,
     });
-    clientBucket.AddToResourcePolicy(
-      new PolicyStatement(new PolicyStatementProps
-      {
-        Actions = new[] { "s3:GetObject" },
-        Resources = new[] { $"{clientBucket.BucketArn}/*" },
-        Principals = new[] { cloudFrontOriginAccessPrincipal as IPrincipal } as IPrincipal[],
-      })
-    );
+    var policyStatement = new PolicyStatement(new PolicyStatementProps
+    {
+      Actions = new[] { "s3:GetObject" },
+      Resources = new[] { $"{clientBucket.BucketArn}/*" },
+    });
+    policyStatement.AddCanonicalUserPrincipal(
+      cloudFrontOriginAccessPrincipal.CloudFrontOriginAccessIdentityS3CanonicalUserId);
+    clientBucket.AddToResourcePolicy(policyStatement);
 
     return clientBucket;
   }
