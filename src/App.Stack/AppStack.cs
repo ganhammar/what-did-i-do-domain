@@ -1,10 +1,13 @@
 ﻿using Amazon.CDK;
 using Amazon.CDK.AWS.APIGateway;
+using Amazon.CDK.AWS.CloudFront;
 using Amazon.CDK.AWS.DynamoDB;
 using Amazon.CDK.AWS.IAM;
 using Amazon.CDK.AWS.S3;
+using Amazon.CDK.AWS.S3.Deployment;
 using AppStack.Constructs;
 using Constructs;
+using static Amazon.CDK.AWS.CloudFront.CfnDistribution;
 
 namespace AppStack;
 
@@ -15,7 +18,47 @@ public class AppStack : Stack
   {
     // DynamoDB
     var tableName = "what-did-i-do";
-    var applicationTable = new Table(this, "ApplicationTable", new TableProps
+    var applicationTable = CreateTable(tableName);
+
+    // API Gateway
+    var apiGateway = new RestApi(this, "what-did-i-do", new RestApiProps
+    {
+      RestApiName = "what-did-i-do",
+    });
+
+    // Resource: Login
+    var loginResource = apiGateway.Root.AddResource("login");
+    HandleLoginResource(loginResource, tableName);
+
+    // Resource: Account
+    var accountResource = apiGateway.Root.AddResource("account");
+    HandleAccountResource(accountResource, tableName, applicationTable);
+
+    // Resource: Event
+    var eventResource = apiGateway.Root.AddResource("event");
+    HandleEventResource(eventResource, tableName, applicationTable);
+
+    // S3: Client
+    var cloudFrontOriginAccessPrincipal = new OriginAccessIdentity(this, "CloudFrontOAI");
+    var clientBucket = CreateClientBucket(cloudFrontOriginAccessPrincipal);
+
+    // CloudFront Distribution
+    var cloudFrontDistribution = CreateCloudFrontWebDistribution(
+      apiGateway, clientBucket, cloudFrontOriginAccessPrincipal);
+
+    // Output
+    new CfnOutput(this, "APIGWEndpoint", new CfnOutputProps
+    {
+      Value = apiGateway.Url,
+    });
+    new CfnOutput(this, "CloudFrontDomainName", new CfnOutputProps
+    {
+      Value = cloudFrontDistribution.DistributionDomainName,
+    });
+  }
+
+  private Table CreateTable(string tableName)
+    => new Table(this, "ApplicationTable", new TableProps
     {
       TableName = tableName,
       RemovalPolicy = RemovalPolicy.DESTROY, //Delete DynamoDB table on CDK destroy
@@ -33,14 +76,9 @@ public class AppStack : Stack
       BillingMode = BillingMode.PAY_PER_REQUEST,
     });
 
-    // API Gateway
-    var apiGateway = new RestApi(this, "what-did-i-do", new RestApiProps
-    {
-      RestApiName = "what-did-i-do",
-    });
-
-    // Login
-    var loginResource = apiGateway.Root.AddResource("login");
+  private void HandleLoginResource(
+    Amazon.CDK.AWS.APIGateway.Resource loginResource, string tableName)
+  {
     var loginFunction = new AppFunction(this, "App.Login", new AppFunction.Props(
       "App.Login::App.Login.LambdaEntryPoint::FunctionHandlerAsync",
       tableName
@@ -50,10 +88,13 @@ public class AppStack : Stack
       AnyMethod = true,
       DefaultIntegration = new LambdaIntegration(loginFunction),
     });
+  }
 
-    // Resource: Account
-    var accountResource = apiGateway.Root.AddResource("account");
-
+  private void HandleAccountResource(
+    Amazon.CDK.AWS.APIGateway.Resource accountResource,
+    string tableName,
+    Table applicationTable)
+  {
     // Create
     var createAccountFunction = new AppFunction(this, "CreateAccount", new AppFunction.Props(
       "CreateAccount::App.Api.CreateAccount.Function::FunctionHandler",
@@ -62,10 +103,13 @@ public class AppStack : Stack
     applicationTable.GrantReadData(createAccountFunction);
     applicationTable.GrantWriteData(createAccountFunction);
     accountResource.AddMethod("POST", new LambdaIntegration(createAccountFunction));
+  }
 
-    // Resource: Event
-    var eventResource = apiGateway.Root.AddResource("event");
-
+  private void HandleEventResource(
+    Amazon.CDK.AWS.APIGateway.Resource eventResource,
+    string tableName,
+    Table applicationTable)
+  {
     // Create
     var createEventFunction = new AppFunction(this, "CreateEvent", new AppFunction.Props(
       "CreateEvent::App.Api.CreateEvent.Function::FunctionHandler",
@@ -90,45 +134,93 @@ public class AppStack : Stack
     ));
     applicationTable.GrantReadData(listEventsFunction);
     eventResource.AddMethod("GET", new LambdaIntegration(listEventsFunction));
+  }
 
-    // S3: Client
+  private Bucket CreateClientBucket(OriginAccessIdentity cloudFrontOriginAccessPrincipal)
+  {
     var clientBucket = new Bucket(this, "Client", new BucketProps
     {
       AccessControl = BucketAccessControl.PRIVATE,
-    });
-    var executeRole = new Role(this, "ClientRole", new RoleProps
-    {
-      AssumedBy = new ServicePrincipal("apigateway.amazonaws.com"),
-      Path = "/service-role/",
-    });
-    clientBucket.GrantRead(executeRole);
-
-    var appResource = apiGateway.Root.AddResource("app");
-    var s3Integration = new AwsIntegration(new AwsIntegrationProps
-    {
-      Service = "s3",
-      IntegrationHttpMethod = "GET",
-      Path = "{bucket}",
-      Options = new IntegrationOptions
+      Cors = new[]
       {
-        CredentialsRole = executeRole,
-      },
-    });
-    appResource.AddMethod("GET", s3Integration, new MethodOptions
-    {
-      MethodResponses = new[]
-      {
-        new MethodResponse
+        new CorsRule
         {
-          StatusCode = "200",
+          AllowedOrigins = new[] { "*" },
+          AllowedMethods = new[] { HttpMethods.GET },
+          MaxAge = 3000,
         },
       },
     });
-
-    // Output
-    new CfnOutput(this, "APIGWEndpoint", new CfnOutputProps
+    new BucketDeployment(this, "DeployClient", new BucketDeploymentProps
     {
-      Value = apiGateway.Url,
+      Sources = new[] { Source.Asset("./src/App.Client/build") },
+      DestinationBucket = clientBucket,
     });
+    clientBucket.AddToResourcePolicy(
+      new PolicyStatement(new PolicyStatementProps
+      {
+        Actions = new[] { "s3:GetObject" },
+        Resources = new[] { $"{clientBucket.BucketArn}/*" },
+        Principals = new[] { cloudFrontOriginAccessPrincipal as IPrincipal } as IPrincipal[],
+      })
+    );
+
+    return clientBucket;
+  }
+
+  private CloudFrontWebDistribution CreateCloudFrontWebDistribution(
+    RestApi apiGateway,
+    Bucket clientBucket,
+    OriginAccessIdentity cloudFrontOriginAccessPrincipal)
+  {
+    return new CloudFrontWebDistribution(
+      this, "WhatDidIDoDistribution", new CloudFrontWebDistributionProps
+      {
+        DefaultRootObject = "index.html",
+        ViewerProtocolPolicy = ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
+        PriceClass = PriceClass.PRICE_CLASS_ALL,
+        OriginConfigs = new[]
+        {
+          new SourceConfiguration
+          {
+            CustomOriginSource = new CustomOriginConfig
+            {
+              DomainName = $"{apiGateway.RestApiId}.execute-api.{this.Region}.amazonaws.com",
+            },
+            Behaviors = new[]
+            {
+              new Behavior
+              {
+                PathPattern = "/api/*",
+                AllowedMethods = CloudFrontAllowedMethods.ALL,
+                DefaultTtl = Duration.Seconds(0),
+                ForwardedValues = new ForwardedValuesProperty
+                {
+                  QueryString = true,
+                  Headers = new[] { "Authorization" },
+                },
+              },
+            },
+          },
+          new SourceConfiguration
+          {
+            S3OriginSource = new S3OriginConfig
+            {
+              S3BucketSource = clientBucket,
+              OriginAccessIdentity = cloudFrontOriginAccessPrincipal,
+            },
+            Behaviors = new[]
+            {
+              new Behavior
+              {
+                Compress = true,
+                IsDefaultBehavior = true,
+                DefaultTtl = Duration.Seconds(0),
+                AllowedMethods = CloudFrontAllowedMethods.GET_HEAD_OPTIONS,
+              },
+            },
+          },
+        },
+      });
   }
 }
