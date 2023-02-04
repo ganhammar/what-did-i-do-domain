@@ -5,7 +5,6 @@ using Amazon.CDK.AWS.CloudFront.Experimental;
 using Amazon.CDK.AWS.DynamoDB;
 using Amazon.CDK.AWS.IAM;
 using Amazon.CDK.AWS.Lambda;
-using Amazon.CDK.AWS.Lambda.Nodejs;
 using Amazon.CDK.AWS.S3;
 using Amazon.CDK.AWS.S3.Deployment;
 using AppStack.Constructs;

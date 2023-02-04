@@ -187,4 +187,4 @@ jobs:
       - name: CDK Bootstrap
         run: cdk bootstrap
       - name: CDK Deploy
-        run: cdk deploy --require-approval never
+        run: cdk deploy --require-approval never --all
