@@ -201,6 +201,7 @@ public class AppStack : Stack
             CustomOriginSource = new CustomOriginConfig
             {
               DomainName = $"{apiGateway.RestApiId}.execute-api.{this.Region}.amazonaws.com",
+              OriginPath = $"/${apiGateway.DeploymentStage.StageName}",
             },
             Behaviors = new[]
             {
