@@ -3,6 +3,8 @@ using Amazon.CDK.AWS.APIGateway;
 using Amazon.CDK.AWS.CloudFront;
 using Amazon.CDK.AWS.DynamoDB;
 using Amazon.CDK.AWS.IAM;
+using Amazon.CDK.AWS.Lambda;
+using Amazon.CDK.AWS.Lambda.Nodejs;
 using Amazon.CDK.AWS.S3;
 using Amazon.CDK.AWS.S3.Deployment;
 using AppStack.Constructs;
@@ -46,9 +48,17 @@ public class AppStack : Stack
       });
     var clientBucket = CreateClientBucket(cloudFrontOriginAccessPrincipal);
 
+    // Redirect NotFound Paths
+    var redirectFunction = new NodejsFunction(this, "Redirect", new NodejsFunctionProps
+    {
+      Entry = "./App.Stack/Redirect/index.ts",
+      Handler = "handler",
+      Runtime = Runtime.NODEJS_18_X
+    });
+
     // CloudFront Distribution
     var cloudFrontDistribution = CreateCloudFrontWebDistribution(
-      apiGateway, clientBucket, cloudFrontOriginAccessPrincipal);
+      apiGateway, clientBucket, cloudFrontOriginAccessPrincipal, redirectFunction);
 
     // Output
     new CfnOutput(this, "APIGWEndpoint", new CfnOutputProps
@@ -175,7 +185,8 @@ public class AppStack : Stack
   private CloudFrontWebDistribution CreateCloudFrontWebDistribution(
     RestApi apiGateway,
     Bucket clientBucket,
-    OriginAccessIdentity cloudFrontOriginAccessPrincipal)
+    OriginAccessIdentity cloudFrontOriginAccessPrincipal,
+    NodejsFunction redirectFunction)
   {
     return new CloudFrontWebDistribution(
       this, "WhatDidIDoDistribution", new CloudFrontWebDistributionProps
@@ -189,7 +200,7 @@ public class AppStack : Stack
           {
             CustomOriginSource = new CustomOriginConfig
             {
-              DomainName = $"{apiGateway.RestApiId}.execute-api.{this.Region}.amazonaws.com/{apiGateway.DeploymentStage.StageName}",
+              DomainName = $"{apiGateway.RestApiId}.execute-api.{this.Region}.amazonaws.com",
             },
             Behaviors = new[]
             {
@@ -221,6 +232,14 @@ public class AppStack : Stack
                 IsDefaultBehavior = true,
                 DefaultTtl = Duration.Seconds(0),
                 AllowedMethods = CloudFrontAllowedMethods.GET_HEAD_OPTIONS,
+                LambdaFunctionAssociations = new[]
+                {
+                  new LambdaFunctionAssociation
+                  {
+                    LambdaFunction = redirectFunction.CurrentVersion,
+                    EventType = LambdaEdgeEventType.ORIGIN_RESPONSE,
+                  },
+                },
               },
             },
           },
