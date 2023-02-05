@@ -10,3 +10,5 @@ repos:
         name: eslint
         language: system
         entry: cd src/App.Client && npm run lint:ci
+        files: ^src/App.Client/
+        types_or: ["ts", "tsx"]
