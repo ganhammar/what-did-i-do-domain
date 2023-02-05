@@ -2,5 +2,5 @@
 
 public static class Constants
 {
-  public const string BasePath = "login";
+  public const string BasePath = "api/login";
 }
