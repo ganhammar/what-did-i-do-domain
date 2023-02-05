@@ -27,17 +27,18 @@ public class AppStack : Stack
     {
       RestApiName = "what-did-i-do",
     });
+    var apiResource = apiGateway.Root.AddResource("api");
 
     // Resource: Login
-    var loginResource = apiGateway.Root.AddResource("login");
+    var loginResource = apiResource.AddResource("login");
     HandleLoginResource(loginResource, tableName);
 
     // Resource: Account
-    var accountResource = apiGateway.Root.AddResource("account");
+    var accountResource = apiResource.AddResource("account");
     HandleAccountResource(accountResource, tableName, applicationTable);
 
     // Resource: Event
-    var eventResource = apiGateway.Root.AddResource("event");
+    var eventResource = apiResource.AddResource("event");
     HandleEventResource(eventResource, tableName, applicationTable);
 
     // S3: Client
