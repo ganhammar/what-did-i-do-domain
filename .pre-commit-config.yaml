@@ -6,3 +6,7 @@ repos:
         language: system
         entry: dotnet format --verify-no-changes --include
         types_or: ["c#"]
+      - id: eslint
+        name: eslint
+        language: system
+        entry: cd src/App.Client && npm run lint:ci
