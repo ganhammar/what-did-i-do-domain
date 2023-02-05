@@ -98,7 +98,7 @@ public class AppStack : Stack
 
     var openiddictTable = Table.FromTableArn(
       this,
-      "IdentityTable",
+      "OpenIddictTable",
       $"arn:aws:dynamodb:{this.Region}:{this.Account}:table/what-did-i-do.openiddict");
     openiddictTable.GrantReadData(loginFunction);
     openiddictTable.GrantWriteData(loginFunction);
