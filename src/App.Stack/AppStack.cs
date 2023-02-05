@@ -232,9 +232,9 @@ public class AppStack : Stack
           new CustomErrorResponseProperty
           {
             ErrorCode = 403,
-            ResponsePagePath = "/not-found",
+            ResponsePagePath = "/",
             ErrorCachingMinTtl = 300,
-            ResponseCode = 404,
+            ResponseCode = 200,
           },
         },
       });
