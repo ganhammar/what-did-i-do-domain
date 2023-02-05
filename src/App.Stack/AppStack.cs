@@ -88,6 +88,21 @@ public class AppStack : Stack
       "App.Login::App.Login.LambdaEntryPoint::FunctionHandlerAsync",
       tableName
     ));
+
+    var identityTable = Table.FromTableArn(
+      this,
+      "IdentityTable",
+      $"arn:aws:dynamodb:{this.Region}:{this.Account}:table/what-did-i-do.identity");
+    identityTable.GrantReadData(loginFunction);
+    identityTable.GrantWriteData(loginFunction);
+
+    var openiddictTable = Table.FromTableArn(
+      this,
+      "IdentityTable",
+      $"arn:aws:dynamodb:{this.Region}:{this.Account}:table/what-did-i-do.openiddict");
+    openiddictTable.GrantReadData(loginFunction);
+    openiddictTable.GrantWriteData(loginFunction);
+
     loginResource.AddProxy(new ProxyResourceOptions
     {
       AnyMethod = true,
