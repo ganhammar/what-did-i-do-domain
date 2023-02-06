@@ -89,19 +89,19 @@ public class AppStack : Stack
       tableName
     ));
 
-    var identityTable = Table.FromTableArn(
-      this,
-      "IdentityTable",
-      $"arn:aws:dynamodb:{this.Region}:{this.Account}:table/what-did-i-do.identity");
-    identityTable.GrantReadData(loginFunction);
-    identityTable.GrantWriteData(loginFunction);
+    var identityTable = Table.FromTableAttributes(this, "IdentityTable", new TableAttributes
+    {
+      TableArn = $"arn:aws:dynamodb:{this.Region}:{this.Account}:table/what-did-i-do.identity",
+      GrantIndexPermissions = true,
+    });
+    identityTable.GrantReadWriteData(loginFunction);
 
-    var openiddictTable = Table.FromTableArn(
-      this,
-      "OpenIddictTable",
-      $"arn:aws:dynamodb:{this.Region}:{this.Account}:table/what-did-i-do.openiddict");
-    openiddictTable.GrantReadData(loginFunction);
-    openiddictTable.GrantWriteData(loginFunction);
+    var openiddictTable = Table.FromTableAttributes(this, "OpenIddictTable", new TableAttributes
+    {
+      TableArn = $"arn:aws:dynamodb:{this.Region}:{this.Account}:table/what-did-i-do.openiddict",
+      GrantIndexPermissions = true,
+    });
+    openiddictTable.GrantReadWriteData(loginFunction);
 
     loginResource.AddProxy(new ProxyResourceOptions
     {
@@ -120,8 +120,7 @@ public class AppStack : Stack
       "CreateAccount::App.Api.CreateAccount.Function::FunctionHandler",
       tableName
     ));
-    applicationTable.GrantReadData(createAccountFunction);
-    applicationTable.GrantWriteData(createAccountFunction);
+    applicationTable.GrantReadWriteData(createAccountFunction);
     accountResource.AddMethod("POST", new LambdaIntegration(createAccountFunction));
   }
 
@@ -135,7 +134,7 @@ public class AppStack : Stack
       "CreateEvent::App.Api.CreateEvent.Function::FunctionHandler",
       tableName
     ));
-    applicationTable.GrantWriteData(createEventFunction);
+    applicationTable.GrantReadWriteData(createEventFunction);
     eventResource.AddMethod("POST", new LambdaIntegration(createEventFunction));
 
     // Delete
@@ -143,8 +142,7 @@ public class AppStack : Stack
       "DeleteEvent::App.Api.DeleteEvent.Function::FunctionHandler",
       tableName
     ));
-    applicationTable.GrantReadData(deleteEventFunction);
-    applicationTable.GrantWriteData(deleteEventFunction);
+    applicationTable.GrantReadWriteData(deleteEventFunction);
     eventResource.AddMethod("DELETE", new LambdaIntegration(deleteEventFunction));
 
     // List
