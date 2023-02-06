@@ -137,6 +137,23 @@ public class AppStack : Stack
     applicationTable.GrantReadWriteData(createEventFunction);
     eventResource.AddMethod("POST", new LambdaIntegration(createEventFunction));
 
+    var fromEmail = "hello@wdid.fyi";
+    var mailPolicy = new PolicyStatement(new PolicyStatementProps
+    {
+      Effect = Effect.ALLOW,
+      Actions = new[]
+      {
+        "ses:SendEmail",
+        "ses:SendRawEmail",
+        "ses:SendTemplatedEmail",
+      },
+      Resources = new[]
+      {
+        $"arn:aws:ses:{this.Region}:{this.Account}:identity/{fromEmail}",
+      },
+    });
+    createEventFunction.AddToRolePolicy(mailPolicy);
+
     // Delete
     var deleteEventFunction = new AppFunction(this, "DeleteEvent", new AppFunction.Props(
       "DeleteEvent::App.Api.DeleteEvent.Function::FunctionHandler",
