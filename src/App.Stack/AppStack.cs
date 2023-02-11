@@ -137,7 +137,7 @@ public class AppStack : Stack
     applicationTable.GrantReadWriteData(createEventFunction);
     eventResource.AddMethod("POST", new LambdaIntegration(createEventFunction));
 
-    var fromEmail = "hello@wdid.fyi";
+    var verifiedIdentity = "wdid.fyi";
     var mailPolicy = new PolicyStatement(new PolicyStatementProps
     {
       Effect = Effect.ALLOW,
@@ -149,7 +149,7 @@ public class AppStack : Stack
       },
       Resources = new[]
       {
-        $"arn:aws:ses:{this.Region}:{this.Account}:identity/{fromEmail}",
+        $"arn:aws:ses:{this.Region}:{this.Account}:identity/{verifiedIdentity}",
       },
     });
     createEventFunction.AddToRolePolicy(mailPolicy);
