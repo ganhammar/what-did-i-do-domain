@@ -115,7 +115,7 @@ public class AppStack : Stack
       },
       Resources = new[]
       {
-        $"arn:aws:ses:{this.Region}:{this.Account}:identity/wdid.fyi",
+        "*",
       },
     });
     loginFunction.AddToRolePolicy(mailPolicy);
