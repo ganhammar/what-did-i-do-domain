@@ -278,9 +278,9 @@ public class AppStack : Stack
   private Certificate CreateCertificate()
   {
     var domain = "wdid.fyi";
-    var hostedZone = new HostedZone(this, "HostedZone", new HostedZoneProps
+    var hostedZone = HostedZone.FromLookup(this, "HostedZone", new HostedZoneProviderProps
     {
-      ZoneName = domain,
+      DomainName = domain,
     });
 
     return new Certificate(this, "CustomDomainCertificate", new CertificateProps
