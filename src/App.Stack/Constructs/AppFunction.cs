@@ -14,7 +14,7 @@ public class AppFunction : Function
       Handler = props.Handler,
       Code = Code.FromAsset($"./{id}.zip"),
       Timeout = Duration.Minutes(1),
-      MemorySize = 256,
+      MemorySize = props.MemorySize,
       Environment = new Dictionary<string, string>
       {
         { "TABLE_NAME", props.TableName ?? "" },
@@ -24,13 +24,15 @@ public class AppFunction : Function
 
   public class Props
   {
-    public Props(string handler, string? tableName = default)
+    public Props(string handler, string? tableName = default, int memorySize = 256)
     {
       Handler = handler;
       TableName = tableName;
+      MemorySize = memorySize;
     }
 
     public string Handler { get; set; }
     public string? TableName { get; set; }
+    public int MemorySize { get; set; }
   }
 }

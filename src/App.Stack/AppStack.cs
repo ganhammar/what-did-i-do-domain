@@ -86,7 +86,8 @@ public class AppStack : Stack
   {
     var loginFunction = new AppFunction(this, "App.Login", new AppFunction.Props(
       "App.Login::App.Login.LambdaEntryPoint::FunctionHandlerAsync",
-      tableName
+      tableName,
+      512
     ));
 
     var identityTable = Table.FromTableAttributes(this, "IdentityTable", new TableAttributes
@@ -102,6 +103,22 @@ public class AppStack : Stack
       GrantIndexPermissions = true,
     });
     openiddictTable.GrantReadWriteData(loginFunction);
+
+    var mailPolicy = new PolicyStatement(new PolicyStatementProps
+    {
+      Effect = Effect.ALLOW,
+      Actions = new[]
+      {
+        "ses:SendEmail",
+        "ses:SendRawEmail",
+        "ses:SendTemplatedEmail",
+      },
+      Resources = new[]
+      {
+        $"arn:aws:ses:{this.Region}:{this.Account}:identity/wdid.fyi",
+      },
+    });
+    loginFunction.AddToRolePolicy(mailPolicy);
 
     loginResource.AddProxy(new ProxyResourceOptions
     {
@@ -136,22 +153,6 @@ public class AppStack : Stack
     ));
     applicationTable.GrantReadWriteData(createEventFunction);
     eventResource.AddMethod("POST", new LambdaIntegration(createEventFunction));
-
-    var mailPolicy = new PolicyStatement(new PolicyStatementProps
-    {
-      Effect = Effect.ALLOW,
-      Actions = new[]
-      {
-        "ses:SendEmail",
-        "ses:SendRawEmail",
-        "ses:SendTemplatedEmail",
-      },
-      Resources = new[]
-      {
-        "*",
-      },
-    });
-    createEventFunction.AddToRolePolicy(mailPolicy);
 
     // Delete
     var deleteEventFunction = new AppFunction(this, "DeleteEvent", new AppFunction.Props(
