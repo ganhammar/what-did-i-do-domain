@@ -5,6 +5,7 @@ using Amazon.CDK.AWS.CloudFront;
 using Amazon.CDK.AWS.DynamoDB;
 using Amazon.CDK.AWS.IAM;
 using Amazon.CDK.AWS.Route53;
+using Amazon.CDK.AWS.Route53.Targets;
 using Amazon.CDK.AWS.S3;
 using Amazon.CDK.AWS.S3.Deployment;
 using AppStack.Constructs;
@@ -215,7 +216,7 @@ public class AppStack : Stack
       "CustomDomainCertificate",
       "arn:aws:acm:us-east-1:519157272275:certificate/9ee8b722-7f87-41cc-85d6-968ea8e89eda");
 
-    return new CloudFrontWebDistribution(
+    var distribution = new CloudFrontWebDistribution(
       this, "WhatDidIDoDistribution", new CloudFrontWebDistributionProps
       {
         DefaultRootObject = "index.html",
@@ -276,5 +277,24 @@ public class AppStack : Stack
         },
         ViewerCertificate = ViewerCertificate.FromAcmCertificate(certificate),
       });
+
+    CreateAliasRecord(distribution);
+
+    return distribution;
+  }
+
+  public void CreateAliasRecord(CloudFrontWebDistribution distribution)
+  {
+    var zone = HostedZone.FromHostedZoneAttributes(this, "HostedZone", new HostedZoneAttributes
+    {
+      HostedZoneId = "Z03051521S1HVOKUZOI9I",
+      ZoneName = "wdid.fyi",
+    });
+
+    new AaaaRecord(this, "AliasRecord", new AaaaRecordProps
+    {
+      Target = RecordTarget.FromAlias(new CloudFrontTarget(distribution)),
+      Zone = zone,
+    });
   }
 }
