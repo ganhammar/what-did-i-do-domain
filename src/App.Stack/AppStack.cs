@@ -1,8 +1,10 @@
 ﻿using Amazon.CDK;
 using Amazon.CDK.AWS.APIGateway;
+using Amazon.CDK.AWS.CertificateManager;
 using Amazon.CDK.AWS.CloudFront;
 using Amazon.CDK.AWS.DynamoDB;
 using Amazon.CDK.AWS.IAM;
+using Amazon.CDK.AWS.Route53;
 using Amazon.CDK.AWS.S3;
 using Amazon.CDK.AWS.S3.Deployment;
 using AppStack.Constructs;
@@ -208,6 +210,8 @@ public class AppStack : Stack
     Bucket clientBucket,
     OriginAccessIdentity cloudFrontOriginAccessPrincipal)
   {
+    var certificate = CreateCertificate();
+
     return new CloudFrontWebDistribution(
       this, "WhatDidIDoDistribution", new CloudFrontWebDistributionProps
       {
@@ -267,6 +271,22 @@ public class AppStack : Stack
             ResponseCode = 200,
           },
         },
+        ViewerCertificate = ViewerCertificate.FromAcmCertificate(certificate),
       });
+  }
+
+  private Certificate CreateCertificate()
+  {
+    var domain = "wdid.fyi";
+    var hostedZone = new HostedZone(this, "HostedZone", new HostedZoneProps
+    {
+      ZoneName = domain,
+    });
+
+    return new Certificate(this, "CustomDomainCertificate", new CertificateProps
+    {
+      DomainName = domain,
+      Validation = CertificateValidation.FromDns(hostedZone),
+    });
   }
 }
