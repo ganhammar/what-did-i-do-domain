@@ -210,7 +210,10 @@ public class AppStack : Stack
     Bucket clientBucket,
     OriginAccessIdentity cloudFrontOriginAccessPrincipal)
   {
-    var certificate = CreateCertificate();
+    var certificate = Certificate.FromCertificateArn(
+      this,
+      "CustomDomainCertificate",
+      "arn:aws:acm:us-east-1:519157272275:certificate/9ee8b722-7f87-41cc-85d6-968ea8e89eda");
 
     return new CloudFrontWebDistribution(
       this, "WhatDidIDoDistribution", new CloudFrontWebDistributionProps
@@ -273,21 +276,5 @@ public class AppStack : Stack
         },
         ViewerCertificate = ViewerCertificate.FromAcmCertificate(certificate),
       });
-  }
-
-  private Certificate CreateCertificate()
-  {
-    var domain = "wdid.fyi";
-    var hostedZone = HostedZone.FromHostedZoneAttributes(this, "HostedZone", new HostedZoneAttributes
-    {
-      HostedZoneId = "Z03051521S1HVOKUZOI9I",
-      ZoneName = domain,
-    });
-
-    return new Certificate(this, "CustomDomainCertificate", new CertificateProps
-    {
-      DomainName = domain,
-      Validation = CertificateValidation.FromDns(hostedZone),
-    });
   }
 }
