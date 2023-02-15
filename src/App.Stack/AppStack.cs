@@ -278,12 +278,12 @@ public class AppStack : Stack
         ViewerCertificate = ViewerCertificate.FromAcmCertificate(certificate),
       });
 
-    CreateAliasRecord(distribution);
+    CreateRecords(distribution);
 
     return distribution;
   }
 
-  public void CreateAliasRecord(CloudFrontWebDistribution distribution)
+  public void CreateRecords(CloudFrontWebDistribution distribution)
   {
     var zone = HostedZone.FromHostedZoneAttributes(this, "HostedZone", new HostedZoneAttributes
     {
@@ -294,6 +294,14 @@ public class AppStack : Stack
     new AaaaRecord(this, "AliasRecord", new AaaaRecordProps
     {
       Target = RecordTarget.FromAlias(new CloudFrontTarget(distribution)),
+      Zone = zone,
+    });
+
+    new CnameRecord(this, "CnameRecord", new CnameRecordProps
+    {
+      RecordName = "www.wdid.fyi",
+      DomainName = distribution.DistributionDomainName,
+      Ttl = Duration.Minutes(5),
       Zone = zone,
     });
   }
