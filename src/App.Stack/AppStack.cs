@@ -275,7 +275,14 @@ public class AppStack : Stack
             ResponseCode = 200,
           },
         },
-        ViewerCertificate = ViewerCertificate.FromAcmCertificate(certificate),
+        ViewerCertificate = ViewerCertificate.FromAcmCertificate(certificate, new ViewerCertificateOptions
+        {
+          Aliases = new[]
+          {
+            "wdid.fyi",
+            "www.wdid.fyi",
+          },
+        }),
       });
 
     CreateRecords(distribution);
