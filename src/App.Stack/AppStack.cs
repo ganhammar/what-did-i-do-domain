@@ -214,7 +214,7 @@ public class AppStack : Stack
     var certificate = Certificate.FromCertificateArn(
       this,
       "CustomDomainCertificate",
-      "arn:aws:acm:us-east-1:519157272275:certificate/9ee8b722-7f87-41cc-85d6-968ea8e89eda");
+      "arn:aws:acm:us-east-1:519157272275:certificate/80bb1e7c-410d-4af5-82b0-ed061cd65271");
 
     var distribution = new CloudFrontWebDistribution(
       this, "WhatDidIDoDistribution", new CloudFrontWebDistributionProps
