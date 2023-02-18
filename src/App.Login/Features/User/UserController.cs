@@ -22,7 +22,7 @@ public class UserController : ApiControllerBase
 
   [HttpGet]
   [AllowAnonymous]
-  [Route($"{Constants.BasePath}/[controller]/confirm")]
+  [Route($"~/{Constants.BasePath}/[controller]/confirm")]
   public async Task<IActionResult> ConfirmEmail([FromQuery] ConfirmEmailCommand.Command command)
   {
     var result = await _mediator.Send(command);
@@ -61,7 +61,8 @@ public class UserController : ApiControllerBase
 
   [HttpGet]
   [AllowAnonymous]
-  public async Task<IActionResult> GetTwoFactorProvidersQuery(GetTwoFactorProvidersQuery.Query query)
+  [Route($"~/{Constants.BasePath}/[controller]/twofactorproviders")]
+  public async Task<IActionResult> GetTwoFactorProviders(GetTwoFactorProvidersQuery.Query query)
     => Respond(await _mediator.Send(query));
 
   [HttpPost]
