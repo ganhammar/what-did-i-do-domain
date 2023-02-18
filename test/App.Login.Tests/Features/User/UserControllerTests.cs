@@ -345,7 +345,7 @@ public class UserControllerTests : TestBase
       });
 
       // Act
-      var result = await controller.GetTwoFactorProvidersQuery(new());
+      var result = await controller.GetTwoFactorProviders(new());
 
       // Assert
       Assert.NotNull(result);
@@ -366,7 +366,7 @@ public class UserControllerTests : TestBase
     async (controller, services) =>
     {
       // Act
-      var result = await controller.GetTwoFactorProvidersQuery(new());
+      var result = await controller.GetTwoFactorProviders(new());
 
       // Assert
       Assert.NotNull(result);
