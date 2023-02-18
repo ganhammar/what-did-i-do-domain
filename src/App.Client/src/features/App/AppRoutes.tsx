@@ -10,12 +10,14 @@ export function AppRoutes() {
     <Routes>
       <Route path="/" element={<Landing />} />
       <Route path="/register" element={<Register />} />
-      <Route path="/not-found" element={<NotFound />} />
       <Route
         path="*"
         element={
           <Auth>
-            <Route path="/register" element={<Dashboard />} />
+            <Routes>
+              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/*" element={<NotFound />} />
+            </Routes>
           </Auth>
         }
       />

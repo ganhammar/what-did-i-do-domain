@@ -1,5 +1,7 @@
 import { NavLink } from 'react-router-dom';
+import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
+import useUser from '../Auth/useUser';
 
 const Wrapper = styled.header`
   text-align: center;
@@ -28,28 +30,50 @@ const StyledNavLink = styled(NavLink)`
 `;
 
 export function Header() {
+  const user = useRecoilValue(useUser);
+
   return (
     <Wrapper>
       <Title>What Did I Do?</Title>
       <Nav>
-        <StyledNavLink
-          className={(isActive) => (isActive ? 'active' : '')}
-          to="/"
-        >
-          Home
-        </StyledNavLink>
-        <StyledNavLink
-          className={(isActive) => (isActive ? 'active' : '')}
-          to="/register"
-        >
-          Register
-        </StyledNavLink>
-        <StyledNavLink
-          className={(isActive) => (isActive ? 'active' : '')}
-          to="/signin"
-        >
-          Login
-        </StyledNavLink>
+        {!user && (
+          <>
+            <StyledNavLink
+              className={(isActive) => (isActive ? 'active' : '')}
+              to="/"
+            >
+              Home
+            </StyledNavLink>
+            <StyledNavLink
+              className={(isActive) => (isActive ? 'active' : '')}
+              to="/register"
+            >
+              Register
+            </StyledNavLink>
+            <StyledNavLink
+              className={(isActive) => (isActive ? 'active' : '')}
+              to="/login"
+            >
+              Login
+            </StyledNavLink>
+          </>
+        )}
+        {user && (
+          <>
+            <StyledNavLink
+              className={(isActive) => (isActive ? 'active' : '')}
+              to="/dashboard"
+            >
+              Dashboard
+            </StyledNavLink>
+            <StyledNavLink
+              className={(isActive) => (isActive ? 'active' : '')}
+              to="/logout"
+            >
+              Logout
+            </StyledNavLink>
+          </>
+        )}
       </Nav>
     </Wrapper>
   );

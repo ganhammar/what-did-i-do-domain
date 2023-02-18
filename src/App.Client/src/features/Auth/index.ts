@@ -1,4 +1,4 @@
 import { Auth } from './Auth';
-export * from './Signin';
+export { Login } from './Login';
 
 export default Auth;

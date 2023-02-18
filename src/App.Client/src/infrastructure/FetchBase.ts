@@ -59,11 +59,14 @@ export abstract class FetchBase {
           errorMessage: message,
         }];
       }
-      
+
       return response;
     }
 
-    const data = await result.json();
+    let data = null;
+    if (result.status === 200) {
+      data = await result.json();
+    }
     const response: ApiResponse<T> = {
       success: true,
       result: data,

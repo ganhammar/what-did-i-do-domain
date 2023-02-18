@@ -1,4 +1,6 @@
 import { useMemo, useState } from 'react';
+import { Navigate, useNavigate } from 'react-router-dom';
+import { useRecoilRefresher_UNSTABLE, useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 import Button from '../../components/Button';
 import Checkbox from '../../components/Checkbox';
@@ -6,6 +8,7 @@ import TextInput from '../../components/TextInput';
 import isEmail from '../../utils/isEmail';
 import useAsyncError from '../../utils/useAsyncError';
 import { UserService } from '../User/UserService';
+import useUser from './useUser';
 
 const Form = styled.form`
   display: flex;
@@ -16,8 +19,11 @@ const Submit = styled(Button)`
   margin-top: 0.5rem;
 `;
 
-export function Signin() {
+export function Login() {
+  const navigate = useNavigate();
   const throwError = useAsyncError();
+  const user = useRecoilValue(useUser);
+  const refresh = useRecoilRefresher_UNSTABLE(useUser);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [rememberMe, setRememberMe] = useState(false);
@@ -35,12 +41,22 @@ export function Signin() {
         rememberMe,
       });
 
+      if (response.success && response.result?.succeeded) {
+        setIsLoading(false);
+        refresh();
+        navigate('/dashboard');
+      }
+
       console.log(response);
       setIsLoading(false);
     } catch (error) {
       throwError(error);
     }
   };
+
+  if (user) {
+    return <Navigate to="/dashboard" />;
+  }
 
   return (
     <Form>

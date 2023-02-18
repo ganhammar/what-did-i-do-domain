@@ -1,5 +1,6 @@
-import { ReactNode } from 'react';
+import { ReactNode, Suspense } from 'react';
 import styled, { createGlobalStyle } from 'styled-components';
+import { Loader } from '../../components/Loader';
 import { Header } from './Header';
 
 const GlobalStyle = createGlobalStyle`
@@ -48,8 +49,10 @@ export function Layout({ children }: Props) {
     <>
       <GlobalStyle />
       <App>
-        <Header />
-        {children}
+        <Suspense fallback={<Loader />}>
+          <Header />
+          {children}
+        </Suspense>
       </App>
     </>
   );

@@ -1,5 +1,6 @@
 ﻿using App.Login.Features.Email;
 using App.Login.Features.User;
+using App.Login.Infrastructure.Validators;
 using App.Login.Tests.Infrastructure;
 using AspNetCore.Identity.AmazonDynamoDB;
 using FluentValidation.Results;
@@ -474,5 +475,93 @@ public class UserControllerTests : TestBase
       var signInResult = okObjectResult!.Value as Microsoft.AspNetCore.Identity.SignInResult;
       Assert.NotNull(signInResult);
       Assert.True(signInResult!.Succeeded);
+    });
+
+  [Fact]
+  public async Task Should_BeSuccessfull_When_GettingLoggedInUser() => await ControllerTest<UserController>(
+    // Arrange
+    ConfigureController,
+    // Act & Assert
+    async (controller, services) =>
+    {
+      // Arrange
+      var user = await CreateAndLoginValidUser(services);
+
+      // Act
+      var result = await controller.GetCurrentUser(new());
+
+      // Assert
+      Assert.NotNull(result);
+
+      var okObjectResult = result as OkObjectResult;
+      Assert.NotNull(okObjectResult);
+
+      var currentUser = okObjectResult!.Value as DynamoDbUser;
+      Assert.NotNull(currentUser);
+      Assert.Equal(user.Id, currentUser.Id);
+    });
+
+  [Fact]
+  public async Task Should_ReturnBadRequest_When_GettingCurrentUserAndNotLoggedIn() => await ControllerTest<UserController>(
+    // Arrange
+    ConfigureController,
+    // Act & Assert
+    async (controller, services) =>
+    {
+      // Act
+      var result = await controller.GetCurrentUser(new());
+
+      // Assert
+      Assert.NotNull(result);
+
+      var badRequestObjectResult = result as BadRequestObjectResult;
+      Assert.NotNull(badRequestObjectResult);
+
+      var errors = badRequestObjectResult!.Value as IEnumerable<ValidationFailure>;
+
+      Assert.NotNull(errors);
+      Assert.Contains(errors, error => error.ErrorCode == nameof(ErrorCodes.NoLoggedInUser));
+    });
+
+  [Fact]
+  public async Task Should_BeSuccessfull_When_LoggingOutLoggedInUser() => await ControllerTest<UserController>(
+    // Arrange
+    ConfigureController,
+    // Act & Assert
+    async (controller, services) =>
+    {
+      // Arrange
+      var user = await CreateAndLoginValidUser(services);
+
+      // Act
+      var result = await controller.Logout(new());
+
+      // Assert
+      Assert.NotNull(result);
+
+      var noContentResult = result as NoContentResult;
+      Assert.NotNull(noContentResult);
+    });
+
+  [Fact]
+  public async Task Should_ReturnBadRequest_When_LoggingOutAndNotLoggedIn() => await ControllerTest<UserController>(
+    // Arrange
+    ConfigureController,
+    // Act & Assert
+    async (controller, services) =>
+    {
+      // Act
+      var result = await controller.Logout(new());
+
+      // Assert
+      Assert.NotNull(result);
+
+      var badRequestObjectResult = result as BadRequestObjectResult;
+      Assert.NotNull(badRequestObjectResult);
+
+      var errors = badRequestObjectResult!.Value as IEnumerable<ValidationFailure>;
+
+      Assert.NotNull(errors);
+      Assert.Contains(errors, error => error.ErrorCode == nameof(ErrorCodes.NoLoggedInUser));
     });
 }

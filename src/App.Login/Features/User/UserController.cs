@@ -60,6 +60,15 @@ public class UserController : ApiControllerBase
     => Respond(await _mediator.Send(command));
 
   [HttpGet]
+  [Route($"~/{Constants.BasePath}/[controller]/current")]
+  public async Task<IActionResult> GetCurrentUser(UserQuery.Query query)
+    => Respond(await _mediator.Send(query));
+
+  [HttpGet]
+  public async Task<IActionResult> Logout(LogoutCommand.Command command)
+    => Respond(await _mediator.Send(command));
+
+  [HttpGet]
   [AllowAnonymous]
   [Route($"~/{Constants.BasePath}/[controller]/twofactorproviders")]
   public async Task<IActionResult> GetTwoFactorProviders(GetTwoFactorProvidersQuery.Query query)

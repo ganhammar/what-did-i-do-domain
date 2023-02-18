@@ -13,7 +13,7 @@ export interface LoginParameters {
   rememberMe: boolean;
 }
 
-export interface SignInResult {
+export interface LoginResult {
   succeeded: boolean;
   isLockedOut: boolean;
   isNotAllowed: boolean;
@@ -28,6 +28,14 @@ export class UserService extends FetchBase {
   }
 
   async login(data: LoginParameters) {
-    return await this.post<SignInResult>(`${this.baseUrl}/login`, data);
+    return await this.post<LoginResult>(`${this.baseUrl}/login`, data);
+  }
+
+  async user() {
+    return await this.get<User>(`${this.baseUrl}/current`);
+  }
+
+  async logout() {
+    return await this.get(`${this.baseUrl}/logout`);
   }
 }
