@@ -52,7 +52,7 @@ public class Startup
       {
         options.LoginPath = "/signin";
         options.LogoutPath = "/signout";
-        options.Cookie.Path = "";
+        options.Cookie.Path = "/";
       })
       .Configure<CookiePolicyOptions>(options =>
       {
