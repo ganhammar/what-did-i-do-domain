@@ -242,6 +242,10 @@ public class AppStack : Stack
                 {
                   QueryString = true,
                   Headers = new[] { "Authorization" },
+                  Cookies = new CookiesProperty
+                  {
+                    Forward = "all",
+                  },
                 },
               },
             },
