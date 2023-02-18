@@ -48,16 +48,13 @@ public class RegisterCommand
   {
     private readonly UserManager<DynamoDbUser> _userManager;
     private readonly IEmailSender _emailSender;
-    private readonly IHttpContextAccessor _httpContextAccessor;
 
     public CommandHandler(
       UserManager<DynamoDbUser> userManager,
-      IEmailSender emailSender,
-      IHttpContextAccessor httpContextAccessor)
+      IEmailSender emailSender)
     {
       _userManager = userManager;
       _emailSender = emailSender;
-      _httpContextAccessor = httpContextAccessor;
     }
 
     public override async Task<IResponse<DynamoDbUser>> Handle(
@@ -92,8 +89,7 @@ public class RegisterCommand
     private async Task SendConfirmationEmail(DynamoDbUser user, string? returnUrl)
     {
       var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-      var request = _httpContextAccessor.HttpContext!.Request;
-      var url = $"{request.Scheme}://{request.Host}/user/confirm"
+      var url = $"{Constants.Origin}{Constants.BasePath}/user/confirm"
         + $"?UserId={user.Id}&Token={HttpUtility.UrlEncode(token)}"
         + $"&ReturnUrl={HttpUtility.UrlEncode(returnUrl)}";
 

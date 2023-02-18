@@ -12,7 +12,19 @@ public class EmailSender : IEmailSender
     var response = await client.SendEmailAsync(new SendEmailRequest(
       Constants.FromEmail,
       new Destination(new[] { email }.ToList()),
-      new Message(new Content(subject), new Body(new Content(message)))));
+      new Message(new Content(subject), new Body
+      {
+        Html = new Content
+        {
+          Charset = "UTF-8",
+          Data = message,
+        },
+        Text = new Content
+        {
+          Charset = "UTF-8",
+          Data = message,
+        },
+      })));
 
     if (response.HttpStatusCode != HttpStatusCode.OK)
     {
