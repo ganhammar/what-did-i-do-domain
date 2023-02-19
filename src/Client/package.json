@@ -6,6 +6,7 @@
     "./shared"
   ],
   "scripts": {
+    "build": "npm run build -w login",
     "lint:ci": "npm run lint:ci --ws",
     "lint": "npm run lint --ws",
     "test": "npm run test --ws"
