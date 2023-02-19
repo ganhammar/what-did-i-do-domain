@@ -48,13 +48,13 @@ jobs:
           node-version: 18
       - name: 'Client: Restore'
         run: npm ci
-        working-directory: ./src/Client/Login
+        working-directory: ./src/Client
       - name: 'Client: Lint'
         run: npm run lint:ci
-        working-directory: ./src/Client/Login
+        working-directory: ./src/Client
       - name: 'Client: Test'
         run: npm test
-        working-directory: ./src/Client/Login
+        working-directory: ./src/Client
 
       - name: Publish Code Coverage
         uses: codecov/codecov-action@v3
@@ -133,10 +133,10 @@ jobs:
           node-version: 18
       - name: 'Client: Restore'
         run: npm ci
-        working-directory: ./src/Client/Login
+        working-directory: ./src/Client
       - name: 'Client: Build'
-        run: npm run build
-        working-directory: ./src/Client/Login
+        run: npm run build --workspace=login
+        working-directory: ./src/Client
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v3
@@ -147,7 +147,7 @@ jobs:
             ./cdk.json
             ./src/App.Stack/**/*
             ./App.Login.EnsureInitialized/**/*
-            ./src/Client/Login/build
+            ./src/Client/login/build
           retention-days: 1
 
   deploy:
