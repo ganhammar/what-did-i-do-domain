@@ -231,7 +231,7 @@ public class AppStack : Stack
     });
     new BucketDeployment(this, "DeployClient", new BucketDeploymentProps
     {
-      Sources = new[] { Source.Asset("./src/App.Client/build") },
+      Sources = new[] { Source.Asset("./src/Client/Login/build") },
       DestinationBucket = clientBucket,
     });
     var policyStatement = new PolicyStatement(new PolicyStatementProps

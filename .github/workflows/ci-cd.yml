@@ -48,13 +48,13 @@ jobs:
           node-version: 18
       - name: 'Client: Restore'
         run: npm ci
-        working-directory: ./src/App.Client
+        working-directory: ./src/Client/Login
       - name: 'Client: Lint'
         run: npm run lint:ci
-        working-directory: ./src/App.Client
+        working-directory: ./src/Client/Login
       - name: 'Client: Test'
         run: npm test
-        working-directory: ./src/App.Client
+        working-directory: ./src/Client/Login
 
       - name: Publish Code Coverage
         uses: codecov/codecov-action@v3
@@ -73,11 +73,11 @@ jobs:
       fail-fast: true
       matrix:
         project:
-          - ./src/App.Api/CreateAccount
-          - ./src/App.Api/CreateEvent
-          - ./src/App.Api/DeleteEvent
-          - ./src/App.Api/ListEvents
-          - ./src/App.Login
+          - ./src/Server/App.Api/CreateAccount
+          - ./src/Server/App.Api/CreateEvent
+          - ./src/Server/App.Api/DeleteEvent
+          - ./src/Server/App.Api/ListEvents
+          - ./src/Server/App.Login
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -88,16 +88,16 @@ jobs:
         uses: timheuer/base64-to-file@v1.2
         with:
           fileName: 'signing-certificate.pfx'
-          fileDir: './src/App.Login'
+          fileDir: './src/Server/App.Login'
           encodedString: ${{ secrets.LOGIN_SIGNING_CERTIFICATE }}
-        if: ${{ matrix.project == './src/App.Login' }}
+        if: ${{ matrix.project == './src/Server/App.Login' }}
       - name: Create Encryption Certificate
         uses: timheuer/base64-to-file@v1.2
         with:
           fileName: 'encryption-certificate.pfx'
-          fileDir: './src/App.Login'
+          fileDir: './src/Server/App.Login'
           encodedString: ${{ secrets.LOGIN_ENCRYPTION_CERTIFICATE }}
-        if: ${{ matrix.project == './src/App.Login' }}
+        if: ${{ matrix.project == './src/Server/App.Login' }}
 
       - name: Package Project
         uses: ./.github/actions/package-project
@@ -125,7 +125,7 @@ jobs:
         with:
           dotnet-version: 6.0.x
       - name: Publish App.Login.EnsureInitialized
-        run: dotnet publish ./src/Helpers/App.Login.EnsureInitialized -o App.Login.EnsureInitialized
+        run: dotnet publish ./src/Server/Helpers/App.Login.EnsureInitialized -o App.Login.EnsureInitialized
 
       - name: Install node
         uses: actions/setup-node@v3
@@ -133,10 +133,10 @@ jobs:
           node-version: 18
       - name: 'Client: Restore'
         run: npm ci
-        working-directory: ./src/App.Client
+        working-directory: ./src/Client/Login
       - name: 'Client: Build'
         run: npm run build
-        working-directory: ./src/App.Client
+        working-directory: ./src/Client/Login
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v3
@@ -147,7 +147,7 @@ jobs:
             ./cdk.json
             ./src/App.Stack/**/*
             ./App.Login.EnsureInitialized/**/*
-            ./src/App.Client/build
+            ./src/Client/Login/build
           retention-days: 1
 
   deploy:

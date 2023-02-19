@@ -3,7 +3,7 @@ import { Navigate, Route, Routes, useNavigate } from 'react-router-dom';
 import { useRecoilRefresher_UNSTABLE, useRecoilValue } from 'recoil';
 import { Loader } from '../../components/Loader';
 import { UserService } from '../User/UserService';
-import { Login } from './';
+import { Login } from '.';
 import useUser from './useUser';
 
 interface AuthProps {

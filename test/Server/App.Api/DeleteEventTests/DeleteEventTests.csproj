@@ -25,8 +25,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\src\App.Api\DeleteEvent\DeleteEvent.csproj" />
-    <ProjectReference Include="..\..\..\src\Shared\Shared.csproj" />
+    <ProjectReference Include="..\..\..\..\src\Server\App.Api\DeleteEvent\DeleteEvent.csproj" />
+    <ProjectReference Include="..\..\..\..\src\Server\Shared\Shared.csproj" />
     <ProjectReference Include="..\..\TestBase\TestBase.csproj" />
   </ItemGroup>
 
