@@ -135,7 +135,7 @@ jobs:
         run: npm ci
         working-directory: ./src/Client
       - name: 'Client: Build'
-        run: npm run build --workspace=login
+        run: npm run build
         working-directory: ./src/Client
 
       - name: Upload Artifact
