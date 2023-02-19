@@ -307,7 +307,6 @@ public class AppStack : Stack
               {
                 PathPattern = "/login/*",
                 Compress = true,
-                IsDefaultBehavior = true,
                 DefaultTtl = Duration.Seconds(0),
                 AllowedMethods = CloudFrontAllowedMethods.GET_HEAD_OPTIONS,
               },
