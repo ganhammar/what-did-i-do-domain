@@ -1,7 +1,7 @@
 import { ReactElement, useEffect, useMemo } from 'react';
 import { Navigate, Route, Routes, useNavigate } from 'react-router-dom';
 import { useRecoilRefresher_UNSTABLE, useRecoilValue } from 'recoil';
-import { Loader } from '../../components/Loader';
+import { Loader } from '@wdid/shared';
 import { UserService } from '../User/UserService';
 import { Login } from '.';
 import useUser from './useUser';

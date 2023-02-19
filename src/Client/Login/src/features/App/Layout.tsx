@@ -1,6 +1,6 @@
 import { ReactNode, Suspense } from 'react';
 import styled, { createGlobalStyle } from 'styled-components';
-import { Loader } from '../../components/Loader';
+import { Loader } from '@wdid/shared';
 import { Header } from './Header';
 
 const GlobalStyle = createGlobalStyle`

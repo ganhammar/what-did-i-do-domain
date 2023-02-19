@@ -1,6 +1,6 @@
 import { act } from "react-dom/test-utils";
 
-function flushPromisesAndTimers() {
+export function flushPromisesAndTimers() {
   return act(
     () =>
       new Promise(resolve => {
@@ -9,5 +9,3 @@ function flushPromisesAndTimers() {
       }),
   );
 }
-
-export default flushPromisesAndTimers;

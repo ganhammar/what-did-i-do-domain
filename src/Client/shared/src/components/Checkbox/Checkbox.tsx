@@ -14,7 +14,7 @@ interface Props {
   position: 'left' | 'right';
 }
 
-export default function Checkbox({
+export function Checkbox({
   title,
   isChecked,
   onChange,

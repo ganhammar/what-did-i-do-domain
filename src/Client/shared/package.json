@@ -1,11 +1,12 @@
 {
-  "name": "@wdid/login",
+  "name": "@wdid/shared",
   "version": "0.1.0",
   "private": true,
+  "main": "src/index.ts",
   "scripts": {
-    "start": "react-app-rewired start",
-    "build": "react-app-rewired build",
-    "test": "react-app-rewired test",
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
     "lint:ci": "eslint",
     "lint": "eslint --fix"
   },
@@ -26,9 +27,5 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  },
-  "devDependencies": {
-    "customize-cra": "^1.0.0",
-    "react-app-rewired": "^2.2.1"
   }
 }

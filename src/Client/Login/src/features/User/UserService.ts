@@ -1,4 +1,4 @@
-import { FetchBase } from '../../infrastructure/FetchBase';
+import { FetchBase } from '@wdid/shared';
 
 export interface RegisterParamters {
   email: string;

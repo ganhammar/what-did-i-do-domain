@@ -2,11 +2,9 @@ import { useMemo, useState } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
 import { useRecoilRefresher_UNSTABLE, useRecoilValue } from 'recoil';
 import styled from 'styled-components';
-import Button from '../../components/Button';
-import Checkbox from '../../components/Checkbox';
-import TextInput from '../../components/TextInput';
-import isEmail from '../../utils/isEmail';
-import useAsyncError from '../../utils/useAsyncError';
+import {
+  Button, Checkbox, TextInput, isEmail, useAsyncError,
+} from '@wdid/shared';
 import { UserService } from '../User/UserService';
 import useUser from './useUser';
 

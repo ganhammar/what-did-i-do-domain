@@ -85,7 +85,7 @@ interface Props {
   errorTip?: string;
 }
 
-export default function TextInput({
+export function TextInput({
   type,
   value,
   title,

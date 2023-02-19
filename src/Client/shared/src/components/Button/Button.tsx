@@ -122,7 +122,7 @@ interface Props {
   onClick: () => void;
 }
 
-export default function Button({
+export function Button({
   children,
   className,
   color,

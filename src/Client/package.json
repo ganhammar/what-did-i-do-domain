@@ -1,0 +1,32 @@
+{
+  "name": "npm_workspaces",
+  "private": "true",
+  "workspaces": [
+    "./login",
+    "./shared"
+  ],
+  "scripts": {
+    "lint:ci": "npm run lint:ci --ws",
+    "lint": "npm run lint --ws",
+    "test": "npm run test --ws"
+  },
+  "dependencies": {
+    "@testing-library/jest-dom": "^5.16.5",
+    "@testing-library/react": "^13.4.0",
+    "@testing-library/user-event": "^13.5.0",
+    "@types/jest": "^27.5.2",
+    "@types/node": "^16.18.12",
+    "@types/react": "^18.0.28",
+    "@types/react-dom": "^18.0.11",
+    "@types/styled-components": "^5.1.26",
+    "http-proxy-middleware": "^2.0.6",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-router-dom": "^6.4.3",
+    "react-scripts": "5.0.1",
+    "recoil": "^0.7.6",
+    "styled-components": "^5.3.6",
+    "typescript": "^4.9.5",
+    "web-vitals": "^2.1.4"
+  }
+}

@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react';
-import flushPromisesAndTimers from '../../../utils/flushPromisesAndTimers';
+import { flushPromisesAndTimers } from '@wdid/shared';
 import { App } from '../App';
 
 test('renders application title', async () => {
