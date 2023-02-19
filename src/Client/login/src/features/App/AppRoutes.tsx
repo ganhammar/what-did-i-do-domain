@@ -1,22 +1,18 @@
-import { Route, Routes } from 'react-router-dom';
-import Dashboard from '../Dashboard';
-import Landing from '../Landing';
+import { Navigate, Route, Routes } from 'react-router-dom';
 import Auth from '../Auth';
-import { Register } from '../User';
-import NotFound from '../NotFound';
+import { Register, Edit } from '../User';
 
 export function AppRoutes() {
   return (
     <Routes>
-      <Route path="/" element={<Landing />} />
       <Route path="/register" element={<Register />} />
       <Route
         path="*"
         element={
           <Auth>
             <Routes>
-              <Route path="/dashboard" element={<Dashboard />} />
-              <Route path="/*" element={<NotFound />} />
+              <Route path="/user" element={<Edit />} />
+              <Route path="/*" element={<Navigate to="/login" />} />
             </Routes>
           </Auth>
         }

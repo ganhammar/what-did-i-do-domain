@@ -2,11 +2,12 @@
   "name": "npm_workspaces",
   "private": "true",
   "workspaces": [
+    "./landing",
     "./login",
     "./shared"
   ],
   "scripts": {
-    "build": "npm run build -w @wdid/login",
+    "build": "npm run build -w @wdid/landing -w @wdid/login",
     "lint:ci": "npm run lint:ci --ws",
     "lint": "npm run lint --ws",
     "test": "npm run test --ws"

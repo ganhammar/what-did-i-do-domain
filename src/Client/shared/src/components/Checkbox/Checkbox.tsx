@@ -7,6 +7,10 @@ const Fieldset = styled.fieldset`
 
 const CheckboxElement = styled.input``;
 
+const Label = styled.label`
+  cursor: pointer;
+`;
+
 interface Props {
   title: string;
   isChecked: boolean;
@@ -22,8 +26,8 @@ export function Checkbox({
 }: Props) {
   return (
     <Fieldset onClick={onChange}>
-      <CheckboxElement type="checkbox" checked={isChecked} />
-      <label>{title}</label>
+      <CheckboxElement type="checkbox" checked={isChecked} onChange={onChange} />
+      <Label>{title}</Label>
     </Fieldset>
   );
 }

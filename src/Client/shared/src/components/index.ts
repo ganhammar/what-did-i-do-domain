@@ -1,3 +1,4 @@
+export * from './App';
 export * from './Button';
 export * from './Checkbox';
 export * from './Loader';

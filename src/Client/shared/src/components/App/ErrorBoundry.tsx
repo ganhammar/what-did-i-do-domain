@@ -18,7 +18,7 @@ const Icon = styled.div`
   font-size: 7rem;
 `;
 
-class ErrorBoundry extends Component<Props, State> {
+export class ErrorBoundry extends Component<Props, State> {
   public state: State = {
     hasError: false,
   };
@@ -45,5 +45,3 @@ class ErrorBoundry extends Component<Props, State> {
     return this.props.children;
   }
 }
-
-export default ErrorBoundry;

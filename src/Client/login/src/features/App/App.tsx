@@ -1,21 +1,43 @@
-import { RecoilRoot } from 'recoil';
+import { RecoilRoot, useRecoilValue } from 'recoil';
 import { BrowserRouter } from 'react-router-dom';
 import { ThemeProvider } from 'styled-components';
 import { AppRoutes } from './AppRoutes';
-import { appTheme } from './appTheme';
-import { Layout } from './Layout';
-import ErrorBoundry from './ErrorBoundry';
+import {
+  appTheme, ErrorBoundry, Layout, Loader,
+} from '@wdid/shared';
+import useUser from '../Auth/useUser';
+import { Suspense } from 'react';
+
+function AppLayout() {
+  const user = useRecoilValue(useUser);
+
+  let links = [
+    { to: '/register', title: 'Register' },
+  ];
+
+  if (user) {
+    links = [
+      { to: '/dashboard', title: 'Dashboard' },
+    ];
+  }
+
+  return (
+    <Layout isLoggedIn={Boolean(user)} links={links}>
+      <ErrorBoundry>
+        <AppRoutes />
+      </ErrorBoundry>
+    </Layout>
+  );
+}
 
 export function App() {
   return (
     <RecoilRoot>
       <BrowserRouter>
         <ThemeProvider theme={appTheme}>
-          <Layout>
-            <ErrorBoundry>
-              <AppRoutes />
-            </ErrorBoundry>
-          </Layout>
+          <Suspense fallback={<Loader />}>
+            <AppLayout />
+          </Suspense>
         </ThemeProvider>
       </BrowserRouter>
     </RecoilRoot>

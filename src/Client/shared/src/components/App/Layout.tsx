@@ -1,6 +1,5 @@
-import { ReactNode, Suspense } from 'react';
+import { ReactNode } from 'react';
 import styled, { createGlobalStyle } from 'styled-components';
-import { Loader } from '@wdid/shared';
 import { Header } from './Header';
 
 const GlobalStyle = createGlobalStyle`
@@ -42,17 +41,17 @@ const App = styled.div`
 
 interface Props {
   children: ReactNode;
+  links: { to: string, title: string }[];
+  isLoggedIn: boolean;
 }
 
-export function Layout({ children }: Props) {
+export function Layout({ children, links, isLoggedIn }: Props) {
   return (
     <>
       <GlobalStyle />
       <App>
-        <Suspense fallback={<Loader />}>
-          <Header />
-          {children}
-        </Suspense>
+        <Header links={links} isLoggedIn={isLoggedIn} />
+        {children}
       </App>
     </>
   );
