@@ -42,17 +42,8 @@ public class AppStack : Stack
     var eventResource = apiResource.AddResource("event");
     HandleEventResource(eventResource, tableName, applicationTable);
 
-    // S3: Client
-    var cloudFrontOriginAccessPrincipal = new OriginAccessIdentity(
-      this, "CloudFrontOAI", new OriginAccessIdentityProps
-      {
-        Comment = "Allows CloudFront access to S3 bucket",
-      });
-    var clientBucket = CreateClientBucket(cloudFrontOriginAccessPrincipal);
-
     // CloudFront Distribution
-    var cloudFrontDistribution = CreateCloudFrontWebDistribution(
-      apiGateway, clientBucket, cloudFrontOriginAccessPrincipal);
+    var cloudFrontDistribution = CreateCloudFrontWebDistribution(apiGateway);
 
     // Output
     new CfnOutput(this, "APIGWEndpoint", new CfnOutputProps
@@ -214,9 +205,12 @@ public class AppStack : Stack
     eventResource.AddMethod("GET", new LambdaIntegration(listEventsFunction));
   }
 
-  private Bucket CreateClientBucket(OriginAccessIdentity cloudFrontOriginAccessPrincipal)
+  private Bucket CreateClientBucket(
+    OriginAccessIdentity cloudFrontOriginAccessPrincipal,
+    string name,
+    string path)
   {
-    var clientBucket = new Bucket(this, "Client", new BucketProps
+    var clientBucket = new Bucket(this, name, new BucketProps
     {
       AccessControl = BucketAccessControl.PRIVATE,
       Cors = new[]
@@ -229,9 +223,9 @@ public class AppStack : Stack
         },
       },
     });
-    new BucketDeployment(this, "DeployClient", new BucketDeploymentProps
+    new BucketDeployment(this, $"Deploy{name}", new BucketDeploymentProps
     {
-      Sources = new[] { Source.Asset("./src/Client/login/build") },
+      Sources = new[] { Source.Asset($"./src/Client/{path}/build") },
       DestinationBucket = clientBucket,
     });
     var policyStatement = new PolicyStatement(new PolicyStatementProps
@@ -247,10 +241,20 @@ public class AppStack : Stack
   }
 
   private CloudFrontWebDistribution CreateCloudFrontWebDistribution(
-    RestApi apiGateway,
-    Bucket clientBucket,
-    OriginAccessIdentity cloudFrontOriginAccessPrincipal)
+    RestApi apiGateway)
   {
+    var cloudFrontOriginAccessPrincipal = new OriginAccessIdentity(
+      this, "CloudFrontOAI", new OriginAccessIdentityProps
+      {
+        Comment = "Allows CloudFront access to S3 bucket",
+      });
+
+    // S3: Login
+    var loginBucket = CreateClientBucket(cloudFrontOriginAccessPrincipal, "Login", "login");
+
+    // S3: Landing
+    var landingBucket = CreateClientBucket(cloudFrontOriginAccessPrincipal, "Landing", "landing");
+
     var certificate = Certificate.FromCertificateArn(
       this,
       "CustomDomainCertificate",
@@ -294,7 +298,26 @@ public class AppStack : Stack
           {
             S3OriginSource = new S3OriginConfig
             {
-              S3BucketSource = clientBucket,
+              S3BucketSource = loginBucket,
+              OriginAccessIdentity = cloudFrontOriginAccessPrincipal,
+            },
+            Behaviors = new[]
+            {
+              new Behavior
+              {
+                PathPattern = "/login/*",
+                Compress = true,
+                IsDefaultBehavior = true,
+                DefaultTtl = Duration.Seconds(0),
+                AllowedMethods = CloudFrontAllowedMethods.GET_HEAD_OPTIONS,
+              },
+            },
+          },
+          new SourceConfiguration
+          {
+            S3OriginSource = new S3OriginConfig
+            {
+              S3BucketSource = landingBucket,
               OriginAccessIdentity = cloudFrontOriginAccessPrincipal,
             },
             Behaviors = new[]

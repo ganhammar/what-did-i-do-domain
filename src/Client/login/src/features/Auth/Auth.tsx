@@ -52,7 +52,7 @@ export function Auth({ children }: AuthProps) {
   return (
     <Routes>
       <Route path="/login" element={<Login />} />
-      <Route path="/logout" element={<Logout />} />
+      <Route path="/login/logout" element={<Logout />} />
       <Route
         path="*"
         element={<RenderIfLoggedIn>{children}</RenderIfLoggedIn>}

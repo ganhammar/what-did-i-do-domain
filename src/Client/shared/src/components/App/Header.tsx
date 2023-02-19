@@ -57,7 +57,7 @@ export function Header({ links, isLoggedIn }: Props) {
         {isLoggedIn && (
           <StyledNavLink
             className={(isActive) => (isActive ? 'active' : '')}
-            to="/logout"
+            to="/login/logout"
           >
             Logout
           </StyledNavLink>

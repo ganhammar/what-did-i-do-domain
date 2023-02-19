@@ -5,14 +5,14 @@ import { Register, Edit } from '../User';
 export function AppRoutes() {
   return (
     <Routes>
-      <Route path="/register" element={<Register />} />
+      <Route path="/login/register" element={<Register />} />
       <Route
         path="*"
         element={
           <Auth>
             <Routes>
-              <Route path="/user" element={<Edit />} />
-              <Route path="/*" element={<Navigate to="/login" />} />
+              <Route path="/login/user" element={<Edit />} />
+              <Route path="/*" element={<Navigate to="/login/user" />} />
             </Routes>
           </Auth>
         }

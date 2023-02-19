@@ -12,7 +12,7 @@ function AppLayout() {
   const user = useRecoilValue(useUser);
 
   let links = [
-    { to: '/register', title: 'Register' },
+    { to: '/login/register', title: 'Register' },
   ];
 
   if (user) {
