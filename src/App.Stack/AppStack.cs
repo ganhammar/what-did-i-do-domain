@@ -123,11 +123,51 @@ public class AppStack : Stack
     });
     loginFunction.AddToRolePolicy(mailPolicy);
 
+    AllowSes(loginFunction);
+    AllowSsm(loginFunction);
+
     loginResource.AddProxy(new ProxyResourceOptions
     {
       AnyMethod = true,
       DefaultIntegration = new LambdaIntegration(loginFunction),
     });
+  }
+
+  private void AllowSsm(AppFunction function)
+  {
+    var ssmPolicy = new PolicyStatement(new PolicyStatementProps
+    {
+      Effect = Effect.ALLOW,
+      Actions = new[]
+      {
+        "ssm:PutParameter",
+        "ssm:GetParametersByPath",
+      },
+      Resources = new[]
+      {
+        "*",
+      },
+    });
+    function.AddToRolePolicy(ssmPolicy);
+  }
+
+  private void AllowSes(AppFunction function)
+  {
+    var sesPolicy = new PolicyStatement(new PolicyStatementProps
+    {
+      Effect = Effect.ALLOW,
+      Actions = new[]
+      {
+        "ses:SendEmail",
+        "ses:SendRawEmail",
+        "ses:SendTemplatedEmail",
+      },
+      Resources = new[]
+      {
+        "*",
+      },
+    });
+    function.AddToRolePolicy(sesPolicy);
   }
 
   private void HandleAccountResource(

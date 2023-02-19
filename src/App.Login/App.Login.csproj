@@ -7,11 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Amazon.AspNetCore.DataProtection.SSM" Version="$(AmazonAspNetCoreDataProtectionSSMVersion)" />
     <PackageReference Include="Amazon.Lambda.AspNetCoreServer" Version="$(AmazonLambdaAspNetCoreServerVersion)" />
     <PackageReference Include="AspNetCore.Identity.AmazonDynamoDB" Version="$(AspNetCoreIdentityAmazonDynamoDBVersion)" />
     <PackageReference Include="AWSSDK.DynamoDBv2" Version="$(AWSSDKDynamoDBv2Version)" />
     <PackageReference Include="AWSSDK.Extensions.NETCore.Setup" Version="$(AWSSDKExtensionsNETCoreSetupVersion)" />
-    <PackageReference Include="AWSSDK.SimpleEmail" Version="3.7.100.67" />
+    <PackageReference Include="AWSSDK.SimpleEmail" Version="$(AWSSDKSimpleEmailVersion)" />
     <PackageReference Include="Community.OpenIddict.AmazonDynamoDB" Version="$(CommunityOpenIddictAmazonDynamoDBVersion)" />
     <PackageReference Include="FluentValidation" Version="$(FluentValidationVersion)" />
     <PackageReference Include="MediatR" Version="$(MediatRVersion)" />

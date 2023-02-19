@@ -41,14 +41,14 @@ export function Login() {
         rememberMe,
       });
 
+      setIsLoading(false);
+
       if (response.success && response.result?.succeeded) {
-        setIsLoading(false);
         refresh();
         navigate('/dashboard');
+      } else {
+        console.log(response);
       }
-
-      console.log(response);
-      setIsLoading(false);
     } catch (error) {
       throwError(error);
     }

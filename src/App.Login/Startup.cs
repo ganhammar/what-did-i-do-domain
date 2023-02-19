@@ -31,6 +31,9 @@ public class Startup
           ServiceURL = dynamoDbConfig.GetValue<string>("ServiceUrl"),
         } : new()));
 
+    services.AddDataProtection()
+      .PersistKeysToAWSSystemsManager("/WhatDidIDo/DataProtection");
+
     services.AddIdentity();
     services.AddCors(options =>
     {

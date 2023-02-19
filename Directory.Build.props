@@ -5,6 +5,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
+    <AmazonAspNetCoreDataProtectionSSMVersion>3.1.0</AmazonAspNetCoreDataProtectionSSMVersion>
     <AmazonCDKLibVersion>2.57.0</AmazonCDKLibVersion>
     <AmazonLambdaAspNetCoreServerVersion>7.3.0</AmazonLambdaAspNetCoreServerVersion>
     <AmazonLambdaCoreVersion>2.1.0</AmazonLambdaCoreVersion>
@@ -15,6 +16,7 @@
     <AWSLambdaPowertoolsLoggingVersion>0.0.2-preview</AWSLambdaPowertoolsLoggingVersion>
     <AWSSDKDynamoDBv2Version>3.7.101.29</AWSSDKDynamoDBv2Version>
     <AWSSDKExtensionsNETCoreSetupVersion>3.7.2</AWSSDKExtensionsNETCoreSetupVersion>
+    <AWSSDKSimpleEmailVersion>3.7.100.67</AWSSDKSimpleEmailVersion>
     <AWSXRayRecorderCoreVersion>2.13.0</AWSXRayRecorderCoreVersion>
     <AWSXRayRecorderHandlersAwsSdkVersion>2.11.0</AWSXRayRecorderHandlersAwsSdkVersion>
     <ConstructsVersion>10.1.203</ConstructsVersion>
