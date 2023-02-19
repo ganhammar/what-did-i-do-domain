@@ -44,7 +44,7 @@ public class UserControllerTests : TestBase
 
       Assert.NotNull(okResult);
 
-      var response = okResult!.Value as DynamoDbUser;
+      var response = okResult!.Value as UserDto;
 
       Assert.NotNull(response);
       Assert.Equal(email, response!.Email);
@@ -70,7 +70,7 @@ public class UserControllerTests : TestBase
         ReturnUrl = "http://wdid.fyi",
       }) as OkObjectResult;
 
-      var response = result!.Value as DynamoDbUser;
+      var response = result!.Value as UserDto;
 
       var mock = GetMock<IEmailSender>();
       mock!.Verify(x =>
@@ -496,7 +496,7 @@ public class UserControllerTests : TestBase
       var okObjectResult = result as OkObjectResult;
       Assert.NotNull(okObjectResult);
 
-      var currentUser = okObjectResult!.Value as DynamoDbUser;
+      var currentUser = okObjectResult!.Value as UserDto;
       Assert.NotNull(currentUser);
       Assert.Equal(user.Id, currentUser.Id);
     });

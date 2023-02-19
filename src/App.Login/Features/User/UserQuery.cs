@@ -9,7 +9,7 @@ namespace App.Login.Features.User;
 
 public class UserQuery
 {
-  public class Query : IRequest<IResponse<DynamoDbUser>>
+  public class Query : IRequest<IResponse<UserDto>>
   {
   }
 
@@ -36,7 +36,7 @@ public class UserQuery
     }
   }
 
-  public class QueryHandler : Handler<Query, IResponse<DynamoDbUser>>
+  public class QueryHandler : Handler<Query, IResponse<UserDto>>
   {
     private readonly UserManager<DynamoDbUser> _userManager;
     private readonly IHttpContextAccessor _httpContextAccessor;
@@ -49,12 +49,12 @@ public class UserQuery
       _httpContextAccessor = httpContextAccessor;
     }
 
-    public override async Task<IResponse<DynamoDbUser>> Handle(
+    public override async Task<IResponse<UserDto>> Handle(
       Query request, CancellationToken cancellationToken)
     {
       var user = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext?.User);
 
-      return Response(user);
+      return Response(UserMapper.ToDto(user));
     }
   }
 }

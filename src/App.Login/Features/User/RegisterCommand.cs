@@ -11,7 +11,7 @@ namespace App.Login.Features.User;
 
 public class RegisterCommand
 {
-  public class Command : IRequest<IResponse<DynamoDbUser>>
+  public class Command : IRequest<IResponse<UserDto>>
   {
     public string? Email { get; set; }
     public string? UserName { get; set; }
@@ -44,7 +44,7 @@ public class RegisterCommand
     }
   }
 
-  public class CommandHandler : Handler<Command, IResponse<DynamoDbUser>>
+  public class CommandHandler : Handler<Command, IResponse<UserDto>>
   {
     private readonly UserManager<DynamoDbUser> _userManager;
     private readonly IEmailSender _emailSender;
@@ -57,7 +57,7 @@ public class RegisterCommand
       _emailSender = emailSender;
     }
 
-    public override async Task<IResponse<DynamoDbUser>> Handle(
+    public override async Task<IResponse<UserDto>> Handle(
       Command request, CancellationToken cancellationToken)
     {
       var user = new DynamoDbUser
@@ -76,14 +76,14 @@ public class RegisterCommand
       }
       else
       {
-        return Response<DynamoDbUser>(new(), result.Errors.Select(x => new ValidationFailure
+        return Response<UserDto>(new(), result.Errors.Select(x => new ValidationFailure
         {
           ErrorCode = x.Code,
           ErrorMessage = x.Description,
         }));
       }
 
-      return Response(user);
+      return Response(UserMapper.ToDto(user));
     }
 
     private async Task SendConfirmationEmail(DynamoDbUser user, string? returnUrl)

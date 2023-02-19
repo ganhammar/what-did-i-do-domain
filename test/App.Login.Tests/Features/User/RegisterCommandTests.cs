@@ -12,9 +12,10 @@ public class RegisterCommandTests : TestBase
     await MediatorTest(async (mediator, services) =>
     {
       // Arrange
+      var email = "test@wdid.fyi";
       var command = new RegisterCommand.Command
       {
-        Email = "test@wdid.fyi",
+        Email = email,
         UserName = "test",
         Password = "itsaseasyas123",
         ReturnUrl = "https://wdid.fyi",
@@ -25,6 +26,6 @@ public class RegisterCommandTests : TestBase
 
       // Assert
       Assert.True(response.IsValid);
-      Assert.Equal("test", response.Result!.UserName);
+      Assert.Equal(email, response.Result!.Email);
     });
 }
