@@ -208,7 +208,8 @@ public class AppStack : Stack
   private Bucket CreateClientBucket(
     OriginAccessIdentity cloudFrontOriginAccessPrincipal,
     string name,
-    string path)
+    string packagePath,
+    string s3Path = "/")
   {
     var clientBucket = new Bucket(this, name, new BucketProps
     {
@@ -225,8 +226,9 @@ public class AppStack : Stack
     });
     new BucketDeployment(this, $"Deploy{name}", new BucketDeploymentProps
     {
-      Sources = new[] { Source.Asset($"./src/Client/{path}/build") },
+      Sources = new[] { Source.Asset($"./src/Client/{packagePath}/build") },
       DestinationBucket = clientBucket,
+      DestinationKeyPrefix = s3Path,
     });
     var policyStatement = new PolicyStatement(new PolicyStatementProps
     {
@@ -250,7 +252,7 @@ public class AppStack : Stack
       });
 
     // S3: Login
-    var loginBucket = CreateClientBucket(cloudFrontOriginAccessPrincipal, "Login", "login");
+    var loginBucket = CreateClientBucket(cloudFrontOriginAccessPrincipal, "Login", "login", "login");
 
     // S3: Landing
     var landingBucket = CreateClientBucket(cloudFrontOriginAccessPrincipal, "Landing", "landing");
