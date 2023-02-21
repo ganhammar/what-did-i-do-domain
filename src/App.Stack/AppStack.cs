@@ -245,17 +245,21 @@ public class AppStack : Stack
   private CloudFrontWebDistribution CreateCloudFrontWebDistribution(
     RestApi apiGateway)
   {
-    var cloudFrontOriginAccessPrincipal = new OriginAccessIdentity(
-      this, "CloudFrontOAI", new OriginAccessIdentityProps
+    // S3: Login
+    var loginPrincipal = new OriginAccessIdentity(
+      this, "LoginCloudFrontOAI", new OriginAccessIdentityProps
       {
         Comment = "Allows CloudFront access to S3 bucket",
       });
-
-    // S3: Login
-    var loginBucket = CreateClientBucket(cloudFrontOriginAccessPrincipal, "Login", "login", "login");
+    var loginBucket = CreateClientBucket(loginPrincipal, "Login", "login", "login");
 
     // S3: Landing
-    var landingBucket = CreateClientBucket(cloudFrontOriginAccessPrincipal, "Landing", "landing");
+    var landingPrincipal = new OriginAccessIdentity(
+      this, "LandingCloudFrontOAI", new OriginAccessIdentityProps
+      {
+        Comment = "Allows CloudFront access to S3 bucket",
+      });
+    var landingBucket = CreateClientBucket(landingPrincipal, "Landing", "landing");
 
     var certificate = Certificate.FromCertificateArn(
       this,
@@ -301,7 +305,7 @@ public class AppStack : Stack
             S3OriginSource = new S3OriginConfig
             {
               S3BucketSource = loginBucket,
-              OriginAccessIdentity = cloudFrontOriginAccessPrincipal,
+              OriginAccessIdentity = loginPrincipal,
             },
             Behaviors = new[]
             {
@@ -319,7 +323,7 @@ public class AppStack : Stack
             S3OriginSource = new S3OriginConfig
             {
               S3BucketSource = landingBucket,
-              OriginAccessIdentity = cloudFrontOriginAccessPrincipal,
+              OriginAccessIdentity = landingPrincipal,
             },
             Behaviors = new[]
             {
