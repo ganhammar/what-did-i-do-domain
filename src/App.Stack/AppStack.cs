@@ -2,8 +2,10 @@
 using Amazon.CDK.AWS.APIGateway;
 using Amazon.CDK.AWS.CertificateManager;
 using Amazon.CDK.AWS.CloudFront;
+using Amazon.CDK.AWS.CloudFront.Experimental;
 using Amazon.CDK.AWS.DynamoDB;
 using Amazon.CDK.AWS.IAM;
+using Amazon.CDK.AWS.Lambda;
 using Amazon.CDK.AWS.Route53;
 using Amazon.CDK.AWS.Route53.Targets;
 using Amazon.CDK.AWS.S3;
@@ -245,6 +247,14 @@ public class AppStack : Stack
   private CloudFrontWebDistribution CreateCloudFrontWebDistribution(
     RestApi apiGateway)
   {
+    // Redirect NotFound Paths
+    var routerFunction = new EdgeFunction(this, "Router", new EdgeFunctionProps
+    {
+      Code = Code.FromAsset("./src/App.Stack/Router"),
+      Handler = "index.handler",
+      Runtime = Runtime.NODEJS_18_X,
+    });
+
     // S3: Login
     var loginPrincipal = new OriginAccessIdentity(
       this, "LoginCloudFrontOAI", new OriginAccessIdentityProps
@@ -333,6 +343,14 @@ public class AppStack : Stack
                 IsDefaultBehavior = true,
                 DefaultTtl = Duration.Seconds(0),
                 AllowedMethods = CloudFrontAllowedMethods.GET_HEAD_OPTIONS,
+                LambdaFunctionAssociations = new[]
+                {
+                  new LambdaFunctionAssociation
+                  {
+                    LambdaFunction = routerFunction.CurrentVersion,
+                    EventType = LambdaEdgeEventType.ORIGIN_REQUEST,
+                  },
+                },
               },
             },
           },
