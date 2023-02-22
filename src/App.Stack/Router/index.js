@@ -6,6 +6,7 @@ exports.handler = async (event, context, callback) => {
   const MATCHING_PATHS = ['/login/'];
 
   if (MATCHING_PATHS.some(path => request.uri.startsWith(path))) {
+    console.log(request.ui);
     request.origin = {
       custom: {
         domainName: newBucketOrigin,
