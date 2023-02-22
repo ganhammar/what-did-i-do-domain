@@ -6,8 +6,15 @@ exports.handler = async (event, context, callback) => {
   const MATCHING_EXTENSIONS = ['.js', '.css', '.json', '.txt', '.html', '.map', '.png', '.jpg', '.svg'];
 
   if (!MATCHING_EXTENSIONS.some(path => request.uri.endsWith(path))) {
-    request.uri = '/index.html';
+    let prefix = '';
+
+    if (request.uri.startsWith('/login')) {
+      prefix = '/login';
+    }
+
+    request.uri = `${prefix}/index.html`;
   }
 
+  console.log('REQUEST END', { uri: request.uri });
   callback(null, request);
 };
