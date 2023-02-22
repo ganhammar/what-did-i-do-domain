@@ -279,7 +279,6 @@ public class AppStack : Stack
     var distribution = new CloudFrontWebDistribution(
       this, "WhatDidIDoDistribution", new CloudFrontWebDistributionProps
       {
-        DefaultRootObject = "index.html",
         ViewerProtocolPolicy = ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
         PriceClass = PriceClass.PRICE_CLASS_ALL,
         OriginConfigs = new[]
@@ -325,6 +324,14 @@ public class AppStack : Stack
                 Compress = true,
                 DefaultTtl = Duration.Seconds(0),
                 AllowedMethods = CloudFrontAllowedMethods.GET_HEAD_OPTIONS,
+                LambdaFunctionAssociations = new[]
+                {
+                  new LambdaFunctionAssociation
+                  {
+                    LambdaFunction = routerFunction.CurrentVersion,
+                    EventType = LambdaEdgeEventType.ORIGIN_REQUEST,
+                  },
+                },
               },
             },
           },
