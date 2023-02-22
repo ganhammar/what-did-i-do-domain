@@ -1,8 +1,8 @@
 'use strict';
 
 exports.handler = async (event, context, callback) => {
-  console.log('REQUEST INIT', request.uri);
   const request = event.Records[0].cf.request;
+  console.log('REQUEST INIT', request.uri);
   const newBucketOrigin = 'what-did-i-do-stack-logindde9992a-s5qwsfxw77e5.s3.eu-north-1.amazonaws.com';
   const MATCHING_PATHS = ['/login/'];
 
