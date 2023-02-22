@@ -147,6 +147,7 @@ jobs:
             ./cdk.json
             ./src/App.Stack/**/*
             ./App.Login.EnsureInitialized/**/*
+            ./src/Client/account/build
             ./src/Client/landing/build
             ./src/Client/login/build
           retention-days: 1

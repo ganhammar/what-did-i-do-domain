@@ -17,7 +17,7 @@ function AppLayout() {
 
   if (user) {
     links = [
-      { to: '/dashboard', title: 'Dashboard', serverSide: true },
+      { to: '/account/dashboard', title: 'Dashboard', serverSide: true },
     ];
   }
 

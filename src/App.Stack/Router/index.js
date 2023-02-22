@@ -10,6 +10,8 @@ exports.handler = async (event, context, callback) => {
 
     if (request.uri.startsWith('/login')) {
       prefix = '/login';
+    } else if (request.uri.startsWith('/account')) {
+      prefix = '/account';
     }
 
     request.uri = `${prefix}/index.html`;

@@ -1,3 +1,4 @@
+import { Fragment } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import styled, { css } from 'styled-components';
 
@@ -46,7 +47,7 @@ export function Header({ links, isLoggedIn }: Props) {
       <Title>What Did I Do?</Title>
       <Nav>
         {links.map(({ to, title, serverSide }) => (
-          <>
+          <Fragment key={to}>
             {serverSide && (
               <StyledALink
                 href={to}
@@ -59,20 +60,19 @@ export function Header({ links, isLoggedIn }: Props) {
               <StyledNavLink
                 className={(isActive) => (isActive ? 'active' : '')}
                 to={to}
-                key={to}
               >
                 {title}
               </StyledNavLink>
             )}
-          </>
+          </Fragment>
         ))}
         {!isLoggedIn && (
-            <StyledALink
-              href="/login"
-              className={pathname === '/login' ? 'active' : ''}
-            >
-              Login
-            </StyledALink>
+          <StyledALink
+            href="/login"
+            className={pathname === '/login' ? 'active' : ''}
+          >
+            Login
+          </StyledALink>
         )}
         {isLoggedIn && (
           <StyledALink href="/login/logout">Logout</StyledALink>

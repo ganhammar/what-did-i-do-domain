@@ -271,6 +271,14 @@ public class AppStack : Stack
       });
     var landingBucket = CreateClientBucket(landingPrincipal, "Landing", "landing");
 
+    // S3: Account
+    var accountPrincipal = new OriginAccessIdentity(
+      this, "AccountCloudFrontOAI", new OriginAccessIdentityProps
+      {
+        Comment = "Allows CloudFront access to S3 bucket",
+      });
+    var accountBucket = CreateClientBucket(accountPrincipal, "Account", "account");
+
     var certificate = Certificate.FromCertificateArn(
       this,
       "CustomDomainCertificate",
@@ -321,6 +329,32 @@ public class AppStack : Stack
               new Behavior
               {
                 PathPattern = "/login*",
+                Compress = true,
+                DefaultTtl = Duration.Seconds(0),
+                AllowedMethods = CloudFrontAllowedMethods.GET_HEAD_OPTIONS,
+                LambdaFunctionAssociations = new[]
+                {
+                  new LambdaFunctionAssociation
+                  {
+                    LambdaFunction = routerFunction.CurrentVersion,
+                    EventType = LambdaEdgeEventType.ORIGIN_REQUEST,
+                  },
+                },
+              },
+            },
+          },
+          new SourceConfiguration
+          {
+            S3OriginSource = new S3OriginConfig
+            {
+              S3BucketSource = accountBucket,
+              OriginAccessIdentity = accountPrincipal,
+            },
+            Behaviors = new[]
+            {
+              new Behavior
+              {
+                PathPattern = "/account*",
                 Compress = true,
                 DefaultTtl = Duration.Seconds(0),
                 AllowedMethods = CloudFrontAllowedMethods.GET_HEAD_OPTIONS,
