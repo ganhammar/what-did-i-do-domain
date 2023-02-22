@@ -263,6 +263,14 @@ public class AppStack : Stack
       });
     var loginBucket = CreateClientBucket(loginPrincipal, "Login", "login", "login");
 
+    // S3: Account
+    var accountPrincipal = new OriginAccessIdentity(
+      this, "AccountCloudFrontOAI", new OriginAccessIdentityProps
+      {
+        Comment = "Allows CloudFront access to S3 bucket",
+      });
+    var accountBucket = CreateClientBucket(accountPrincipal, "Account", "account", "account");
+
     // S3: Landing
     var landingPrincipal = new OriginAccessIdentity(
       this, "LandingCloudFrontOAI", new OriginAccessIdentityProps
@@ -270,14 +278,6 @@ public class AppStack : Stack
         Comment = "Allows CloudFront access to S3 bucket",
       });
     var landingBucket = CreateClientBucket(landingPrincipal, "Landing", "landing");
-
-    // S3: Account
-    var accountPrincipal = new OriginAccessIdentity(
-      this, "AccountCloudFrontOAI", new OriginAccessIdentityProps
-      {
-        Comment = "Allows CloudFront access to S3 bucket",
-      });
-    var accountBucket = CreateClientBucket(accountPrincipal, "Account", "account");
 
     var certificate = Certificate.FromCertificateArn(
       this,
