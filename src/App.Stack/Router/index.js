@@ -1,12 +1,13 @@
 'use strict';
 
 exports.handler = async (event, context, callback) => {
+  console.log('REQUEST INIT', request.uri);
   const request = event.Records[0].cf.request;
   const newBucketOrigin = 'what-did-i-do-stack-logindde9992a-s5qwsfxw77e5.s3.eu-north-1.amazonaws.com';
   const MATCHING_PATHS = ['/login/'];
 
   if (MATCHING_PATHS.some(path => request.uri.startsWith(path))) {
-    console.log(request.ui);
+    console.log('ITS A MATCH!');
     request.origin = {
       custom: {
         domainName: newBucketOrigin,
