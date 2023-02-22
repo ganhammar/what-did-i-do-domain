@@ -320,7 +320,7 @@ public class AppStack : Stack
             {
               new Behavior
               {
-                PathPattern = "/login/*",
+                PathPattern = "/login*",
                 Compress = true,
                 DefaultTtl = Duration.Seconds(0),
                 AllowedMethods = CloudFrontAllowedMethods.GET_HEAD_OPTIONS,
