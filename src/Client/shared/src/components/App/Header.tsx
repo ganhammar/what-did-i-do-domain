@@ -1,5 +1,5 @@
-import { NavLink } from 'react-router-dom';
-import styled from 'styled-components';
+import { NavLink, useLocation } from 'react-router-dom';
+import styled, { css } from 'styled-components';
 
 const Wrapper = styled.header`
   text-align: center;
@@ -14,7 +14,7 @@ const Nav = styled.nav`
   border-bottom: 1px solid ${({ theme }) => theme.palette.divider.main};
   position: relative;
 `;
-const StyledNavLink = styled(NavLink)`
+const LinkStyle = css`
   text-decoration: none;
   margin: 0 ${({ theme }) => theme.spacing.s};
   &:last-child {
@@ -26,6 +26,12 @@ const StyledNavLink = styled(NavLink)`
     color: ${({ theme }) => theme.palette.primary.main};
   }
 `;
+const StyledNavLink = styled(NavLink)`
+  ${LinkStyle}
+`;
+const StyledALink = styled.a`
+  ${LinkStyle}
+`;
 
 interface Props {
   links: { to: string, title: string, serverSide: boolean }[];
@@ -33,6 +39,8 @@ interface Props {
 };
 
 export function Header({ links, isLoggedIn }: Props) {
+  const { pathname } = useLocation();
+
   return (
     <Wrapper>
       <Title>What Did I Do?</Title>
@@ -40,7 +48,12 @@ export function Header({ links, isLoggedIn }: Props) {
         {links.map(({ to, title, serverSide }) => (
           <>
             {serverSide && (
-              <a href={to}>{title}</a>
+              <StyledALink
+                href={to}
+                className={pathname.startsWith(to) ? 'active' : ''}
+              >
+                {title}
+              </StyledALink>
             )}
             {!serverSide && (
               <StyledNavLink
@@ -54,10 +67,15 @@ export function Header({ links, isLoggedIn }: Props) {
           </>
         ))}
         {!isLoggedIn && (
-            <a href="/login">Login</a>
+            <StyledALink
+              href="/login"
+              className={pathname === '/login' ? 'active' : ''}
+            >
+              Login
+            </StyledALink>
         )}
         {isLoggedIn && (
-          <a href="/login/logout">Logout</a>
+          <StyledALink href="/login/logout">Logout</StyledALink>
         )}
       </Nav>
     </Wrapper>
