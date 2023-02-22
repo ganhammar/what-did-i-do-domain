@@ -1,5 +1,6 @@
 {
   "name": "@wdid/login",
+  "homepage": "/login",
   "version": "0.1.0",
   "private": true,
   "scripts": {

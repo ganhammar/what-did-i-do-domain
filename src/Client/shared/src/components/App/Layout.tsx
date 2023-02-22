@@ -41,7 +41,7 @@ const App = styled.div`
 
 interface Props {
   children: ReactNode;
-  links: { to: string, title: string }[];
+  links: { to: string, title: string, serverSide: boolean }[];
   isLoggedIn: boolean;
 }
 

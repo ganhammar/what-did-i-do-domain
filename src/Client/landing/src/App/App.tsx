@@ -5,7 +5,7 @@ import { appTheme, ErrorBoundry, Layout } from '@wdid/shared';
 
 export function App() {
   const links = [
-    { to: '/login/register', title: 'Register' },
+    { to: '/login/register', title: 'Register', serverSide: true },
   ];
 
   return (

@@ -28,7 +28,7 @@ const StyledNavLink = styled(NavLink)`
 `;
 
 interface Props {
-  links: { to: string, title: string }[];
+  links: { to: string, title: string, serverSide: boolean }[];
   isLoggedIn: boolean;
 };
 
@@ -37,30 +37,27 @@ export function Header({ links, isLoggedIn }: Props) {
     <Wrapper>
       <Title>What Did I Do?</Title>
       <Nav>
-        {links.map(({ to, title }) => (
-          <StyledNavLink
-            className={(isActive) => (isActive ? 'active' : '')}
-            to={to}
-            key={to}
-          >
-            {title}
-          </StyledNavLink>
+        {links.map(({ to, title, serverSide }) => (
+          <>
+            {serverSide && (
+              <a href={to}>{title}</a>
+            )}
+            {!serverSide && (
+              <StyledNavLink
+                className={(isActive) => (isActive ? 'active' : '')}
+                to={to}
+                key={to}
+              >
+                {title}
+              </StyledNavLink>
+            )}
+          </>
         ))}
         {!isLoggedIn && (
-          <StyledNavLink
-            className={(isActive) => (isActive ? 'active' : '')}
-            to="/login"
-          >
-            Login
-          </StyledNavLink>
+            <a href="/login">Login</a>
         )}
         {isLoggedIn && (
-          <StyledNavLink
-            className={(isActive) => (isActive ? 'active' : '')}
-            to="/login/logout"
-          >
-            Logout
-          </StyledNavLink>
+          <a href="/login/logout">Logout</a>
         )}
       </Nav>
     </Wrapper>
