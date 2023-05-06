@@ -12,6 +12,11 @@
     <PackageReference Include="AWS.Lambda.Powertools.Logging"
       Version="$(AWSLambdaPowertoolsLoggingVersion)" />
     <PackageReference Include="AWSSDK.DynamoDBv2" Version="$(AWSSDKDynamoDBv2Version)" />
+    <PackageReference Include="AWSSDK.Extensions.NETCore.Setup"
+      Version="$(AWSSDKExtensionsNETCoreSetupVersion)" />
+    <PackageReference Include="AWSXRayRecorder.Core" Version="$(AWSXRayRecorderCoreVersion)" />
+    <PackageReference Include="AWSXRayRecorder.Handlers.AwsSdk"
+      Version="$(AWSXRayRecorderHandlersAwsSdkVersion)" />
     <PackageReference Include="FluentValidation" Version="$(FluentValidationVersion)" />
     <PackageReference Include="MediatR" Version="$(MediatRVersion)" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Binder"

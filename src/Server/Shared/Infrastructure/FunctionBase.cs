@@ -1,16 +1,26 @@
 ﻿using System.Net;
 using System.Text.Json;
+using Amazon.DynamoDBv2;
 using Amazon.Lambda.APIGatewayEvents;
+using Amazon.XRay.Recorder.Core;
+using Amazon.XRay.Recorder.Handlers.AwsSdk;
 using AWS.Lambda.Powertools.Logging;
 using FluentValidation.Results;
 using MediatR;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace App.Api.Shared.Infrastructure;
 
 public abstract class FunctionBase
 {
-  private readonly IServiceProvider _serviceProvider;
+  protected readonly IServiceProvider ServiceProvider;
+  protected readonly IConfiguration Configuration = new ConfigurationBuilder()
+    .SetBasePath(Directory.GetCurrentDirectory())
+    .AddJsonFile("appsettings.json", optional: true)
+    .AddJsonFile($"appsettings.{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")}.json", optional: true)
+    .AddEnvironmentVariables()
+    .Build();
   private readonly APIGatewayHttpApiV2ProxyResponse _noBodyResponse = new APIGatewayHttpApiV2ProxyResponse
   {
     Body = JsonSerializer.Serialize(new[]
@@ -20,9 +30,29 @@ public abstract class FunctionBase
     StatusCode = (int)HttpStatusCode.BadRequest,
   };
 
-  public FunctionBase(IServiceProvider serviceProvider)
+  public FunctionBase() => ServiceProvider = BuildServiceProvider();
+
+  protected virtual void ConfigureServices(IServiceCollection services) { }
+
+  private IServiceProvider BuildServiceProvider()
   {
-    _serviceProvider = serviceProvider;
+    var services = new ServiceCollection();
+
+    AWSSDKHandler.RegisterXRayForAllServices();
+#if DEBUG
+    AWSXRayRecorder.Instance.XRayOptions.IsXRayTracingDisabled = true;
+#endif
+
+    var dynamoDbConfig = Configuration.GetSection("DynamoDB");
+
+    services
+      .AddDefaultAWSOptions(Configuration.GetAWSOptions())
+      .AddSingleton<IAmazonDynamoDB>(_ => new AmazonDynamoDBClient());
+    services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationPipeline<,>));
+
+    ConfigureServices(services);
+
+    return services.BuildServiceProvider();
   }
 
   public async Task<APIGatewayHttpApiV2ProxyResponse> Respond<T>(IRequest<IResponse<T>>? request)
@@ -32,7 +62,7 @@ public abstract class FunctionBase
       return _noBodyResponse;
     }
 
-    var mediator = _serviceProvider.GetRequiredService<IMediator>();
+    var mediator = ServiceProvider.GetRequiredService<IMediator>();
     var response = await mediator.Send(request);
 
     if (response.IsValid)
@@ -55,7 +85,7 @@ public abstract class FunctionBase
       return _noBodyResponse;
     }
 
-    var mediator = _serviceProvider.GetRequiredService<IMediator>();
+    var mediator = ServiceProvider.GetRequiredService<IMediator>();
     var response = await mediator.Send(request);
 
     if (response.IsValid)

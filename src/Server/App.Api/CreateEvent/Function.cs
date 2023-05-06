@@ -1,9 +1,13 @@
-﻿using System.Text.Json;
+﻿using System.Reflection;
+using System.Text.Json;
 using Amazon.Lambda.APIGatewayEvents;
 using Amazon.Lambda.Core;
 using Amazon.Lambda.Serialization.SystemTextJson;
 using App.Api.Shared.Infrastructure;
+using App.Api.Shared.Models;
 using AWS.Lambda.Powertools.Logging;
+using FluentValidation;
+using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 
 [assembly: LambdaSerializer(typeof(DefaultLambdaJsonSerializer))]
@@ -12,11 +16,13 @@ namespace App.Api.CreateEvent;
 
 public class Function : FunctionBase
 {
-  private static readonly IServiceProvider _serviceProvider = Startup
-    .ConfigureServices()
-    .BuildServiceProvider();
-
-  public Function() : base(_serviceProvider) { }
+  protected override void ConfigureServices(IServiceCollection services)
+  {
+    services.AddMediatR(Assembly.GetCallingAssembly());
+    services.AddTransient<IResponse<EventDto>, Response<EventDto>>();
+    services.AddTransient<IRequestHandler<CreateEventCommand.Command, IResponse<EventDto>>, CreateEventCommand.CommandHandler>();
+    services.AddTransient<IValidator<CreateEventCommand.Command>, CreateEventCommand.CommandValidator>();
+  }
 
   [Logging(LogEvent = true)]
   public async Task<APIGatewayHttpApiV2ProxyResponse> FunctionHandler(
