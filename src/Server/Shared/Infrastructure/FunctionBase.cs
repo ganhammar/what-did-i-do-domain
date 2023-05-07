@@ -102,9 +102,14 @@ public abstract class FunctionBase
   public void AppendLookup(APIGatewayProxyRequest apiGatewayProxyRequest)
   {
     var requestContextRequestId = apiGatewayProxyRequest.RequestContext.RequestId;
+    AppendLookup(requestContextRequestId);
+  }
+
+  public void AppendLookup(string lookupId)
+  {
     var lookupInfo = new Dictionary<string, object>()
     {
-      { "LookupInfo", new Dictionary<string, object>{{ "LookupId", requestContextRequestId }} },
+      { "LookupInfo", new Dictionary<string, object>{{ "LookupId", lookupId }} },
     };
     Logger.AppendKeys(lookupInfo);
   }
