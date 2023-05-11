@@ -26,9 +26,15 @@ var client = new AmazonDynamoDBClient(
     ServiceURL = serviceUrl,
   } : new());
 
-services.AddIdentity();
-services.AddOpenIddict(true);
+services.AddIdentityCore<DynamoDbUser>().AddRoles<DynamoDbRole>().AddDynamoDbStores().Configure(options =>
+{
+  options.DefaultTableName = "what-did-i-do.identity";
+});
 services.AddSingleton<IAmazonDynamoDB>(client);
+services.AddOpenIddict().AddCore().UseDynamoDb().Configure(options =>
+{
+  options.DefaultTableName = "what-did-i-do.openiddict";
+});
 
 var serviceProvider = services.BuildServiceProvider();
 
@@ -62,6 +68,35 @@ if (environment?.ToLower().Equals("development") == true)
 
 var tables = client.ListTablesAsync().GetAwaiter().GetResult();
 
-Console.WriteLine("All done, the following tables exists:");
+Console.WriteLine("Tables initialized, the following tables exists:");
 
 tables.TableNames.ForEach(tableName => Console.WriteLine(tableName));
+
+var internalClients = new[] { "what-did-i-do.account" };
+
+foreach (var clientId in internalClients)
+{
+  var applicationStore = serviceProvider.GetRequiredService<OpenIddictDynamoDbApplicationStore<OpenIddictDynamoDbApplication>>();
+
+  var application = applicationStore.FindByClientIdAsync(clientId, CancellationToken.None).GetAwaiter().GetResult();
+
+  if (application == default)
+  {
+    var clientSecret = Guid.NewGuid().ToString();
+
+    Console.WriteLine($"Creating client with id \"{clientId}\" ({clientSecret})");
+
+    application = new()
+    {
+      ClientId = clientId,
+      ClientSecret = clientSecret,
+      DisplayName = clientId,
+    };
+
+    applicationStore.CreateAsync(application, CancellationToken.None).GetAwaiter().GetResult();
+  }
+}
+
+Console.ForegroundColor = ConsoleColor.Green;
+Console.WriteLine("All good!");
+Console.ResetColor();
