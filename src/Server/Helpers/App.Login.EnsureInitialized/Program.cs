@@ -1,12 +1,14 @@
 ﻿using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.Model;
+using App.Login.EnsureInitialized;
 using App.Login.Infrastructure;
 using AspNetCore.Identity.AmazonDynamoDB;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using OpenIddict.AmazonDynamoDB;
 
-var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Development";
 var configuration = new ConfigurationBuilder()
   .AddJsonFile($"appsettings.json")
   .AddJsonFile($"appsettings.{environment}.json", optional: true)
@@ -35,35 +37,34 @@ services.AddOpenIddict().AddCore().UseDynamoDb().Configure(options =>
 {
   options.DefaultTableName = "what-did-i-do.openiddict";
 });
+var config = configuration.GetSection("ClientOptions");
+services.Configure<ClientOptions>(configuration.GetSection(nameof(ClientOptions)));
 
 var serviceProvider = services.BuildServiceProvider();
 
 AspNetCoreIdentityDynamoDbSetup.EnsureInitialized(serviceProvider);
 OpenIddictDynamoDbSetup.EnsureInitialized(serviceProvider);
 
-if (environment?.ToLower().Equals("development") == true)
-{
-  var tableName = "what-did-i-do";
-  var exist = client.DescribeTableAsync(tableName).GetAwaiter().GetResult();
+var tableName = "what-did-i-do";
+var exist = client.DescribeTableAsync(tableName).GetAwaiter().GetResult();
 
-  if (exist.Table == default)
+if (exist.Table == default)
+{
+  client.CreateTableAsync(new CreateTableRequest
   {
-    client.CreateTableAsync(new CreateTableRequest
+    BillingMode = BillingMode.PAY_PER_REQUEST,
+    TableName = tableName,
+    KeySchema = new List<KeySchemaElement>
     {
-      BillingMode = BillingMode.PAY_PER_REQUEST,
-      TableName = tableName,
-      KeySchema = new List<KeySchemaElement>
-      {
-        new("PartitionKey", KeyType.HASH),
-        new("SortKey", KeyType.RANGE),
-      },
-      AttributeDefinitions = new List<AttributeDefinition>
-      {
-        new("PartitionKey", ScalarAttributeType.S),
-        new("SortKey", ScalarAttributeType.S),
-      },
-    }).GetAwaiter().GetResult();
-  }
+      new("PartitionKey", KeyType.HASH),
+      new("SortKey", KeyType.RANGE),
+    },
+    AttributeDefinitions = new List<AttributeDefinition>
+    {
+      new("PartitionKey", ScalarAttributeType.S),
+      new("SortKey", ScalarAttributeType.S),
+    },
+  }).GetAwaiter().GetResult();
 }
 
 var tables = client.ListTablesAsync().GetAwaiter().GetResult();
@@ -72,28 +73,32 @@ Console.WriteLine("Tables initialized, the following tables exists:");
 
 tables.TableNames.ForEach(tableName => Console.WriteLine(tableName));
 
-var internalClients = new[] { "what-did-i-do.account" };
+var clientOptions = serviceProvider.GetRequiredService<IOptionsMonitor<ClientOptions>>();
 
-foreach (var clientId in internalClients)
+if (clientOptions.CurrentValue.Clients?.Any() == true)
 {
-  var applicationStore = serviceProvider.GetRequiredService<OpenIddictDynamoDbApplicationStore<OpenIddictDynamoDbApplication>>();
-
-  var application = applicationStore.FindByClientIdAsync(clientId, CancellationToken.None).GetAwaiter().GetResult();
-
-  if (application == default)
+  foreach (var internalClient in clientOptions.CurrentValue.Clients)
   {
-    var clientSecret = Guid.NewGuid().ToString();
+    ArgumentNullException.ThrowIfNull(internalClient.Id);
+    ArgumentNullException.ThrowIfNull(internalClient.Secret);
 
-    Console.WriteLine($"Creating client with id \"{clientId}\" ({clientSecret})");
+    var applicationStore = serviceProvider.GetRequiredService<OpenIddictDynamoDbApplicationStore<OpenIddictDynamoDbApplication>>();
 
-    application = new()
+    var application = applicationStore.FindByClientIdAsync(internalClient.Id, CancellationToken.None).GetAwaiter().GetResult();
+
+    if (application == default)
     {
-      ClientId = clientId,
-      ClientSecret = clientSecret,
-      DisplayName = clientId,
-    };
+      Console.WriteLine($"Creating client with id \"{internalClient.Id}\"");
 
-    applicationStore.CreateAsync(application, CancellationToken.None).GetAwaiter().GetResult();
+      application = new()
+      {
+        ClientId = internalClient.Id,
+        ClientSecret = internalClient.Secret,
+        DisplayName = internalClient.Id,
+      };
+
+      applicationStore.CreateAsync(application, CancellationToken.None).GetAwaiter().GetResult();
+    }
   }
 }
 
