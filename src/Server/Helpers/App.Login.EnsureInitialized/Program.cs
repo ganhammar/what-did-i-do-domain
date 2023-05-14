@@ -2,7 +2,6 @@
 using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.Model;
 using App.Login.EnsureInitialized;
-using App.Login.Infrastructure;
 using AspNetCore.Identity.AmazonDynamoDB;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
