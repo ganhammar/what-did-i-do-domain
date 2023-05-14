@@ -228,7 +228,7 @@ public class AppStack : Stack
     });
     new BucketDeployment(this, $"Deploy{name}", new BucketDeploymentProps
     {
-      Sources = new[] { Source.Asset($"./src/Client/{packagePath}/build") },
+      Sources = new[] { Source.Asset($"./{packagePath}/build") },
       DestinationBucket = clientBucket,
       DestinationKeyPrefix = s3Path,
     });
