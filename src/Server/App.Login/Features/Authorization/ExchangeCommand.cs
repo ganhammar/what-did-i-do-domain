@@ -49,9 +49,9 @@ public class ExchangeCommand
     private readonly IOpenIddictScopeManager _scopeManager;
 
     public CommandHandler(
-        IHttpContextAccessor httpContextAccessor,
-        IOpenIddictApplicationManager applicationManager,
-        IOpenIddictScopeManager scopeManager)
+      IHttpContextAccessor httpContextAccessor,
+      IOpenIddictApplicationManager applicationManager,
+      IOpenIddictScopeManager scopeManager)
     {
       _httpContextAccessor = httpContextAccessor;
       _applicationManager = applicationManager;
@@ -59,7 +59,7 @@ public class ExchangeCommand
     }
 
     public override async Task<IResponse<ClaimsPrincipal>> Handle(
-        Command request, CancellationToken cancellationToken)
+      Command request, CancellationToken cancellationToken)
     {
       var openIddictRequest = _httpContextAccessor.HttpContext!.GetOpenIddictServerRequest();
       var application = await _applicationManager.FindByClientIdAsync(openIddictRequest!.ClientId!);
@@ -67,14 +67,14 @@ public class ExchangeCommand
       if (application == default)
       {
         return Response<ClaimsPrincipal>(new(), new List<ValidationFailure>
-                {
-                    new ValidationFailure("InvalidApplication", "The application is not valid in this context"),
-                });
+        {
+          new ValidationFailure("InvalidApplication", "The application is not valid in this context"),
+        });
       }
 
       var identity = new ClaimsIdentity(
-          TokenValidationParameters.DefaultAuthenticationType,
-          Claims.Name, Claims.Role);
+        TokenValidationParameters.DefaultAuthenticationType,
+        Claims.Name, Claims.Role);
 
       // Use the client_id as the subject identifier.
       identity.SetClaim(Claims.Subject, (await _applicationManager.GetClientIdAsync(application))!);

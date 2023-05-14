@@ -167,7 +167,8 @@ jobs:
           encryption-certificate-content: ${{ secrets.LOGIN_ENCRYPTION_CERTIFICATE }}
           target-dir: './src/Server/Helpers/App.Login.EnsureInitialized'
       - name: Ensure 3rd Party Tables is Created
-        run: dotnet run ./src/Server/Helpers/App.Login.EnsureInitialized -o App.Login.EnsureInitialized
+        run: dotnet run
+        working-directory: ./src/Server/Helpers/App.Login.EnsureInitialized
         env:
           ClientOptions__Clients__0__Secret: ${{ secrets.INTERNAL_CLIENT_ACCOUNT_SECRET }}
           ASPNETCORE_ENVIRONMENT: ci
