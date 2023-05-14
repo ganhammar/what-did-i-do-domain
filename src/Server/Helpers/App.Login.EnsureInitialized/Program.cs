@@ -1,4 +1,5 @@
-﻿using Amazon.DynamoDBv2;
+﻿using System.Security.Cryptography.X509Certificates;
+using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.Model;
 using App.Login.EnsureInitialized;
 using App.Login.Infrastructure;
@@ -6,9 +7,11 @@ using AspNetCore.Identity.AmazonDynamoDB;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
+using OpenIddict.Abstractions;
 using OpenIddict.AmazonDynamoDB;
 
 var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Development";
+var isDevelopment = environment.ToLower().Equals("development");
 var configuration = new ConfigurationBuilder()
   .AddJsonFile($"appsettings.json")
   .AddJsonFile($"appsettings.{environment}.json", optional: true)
@@ -33,10 +36,33 @@ services.AddIdentityCore<DynamoDbUser>().AddRoles<DynamoDbRole>().AddDynamoDbSto
   options.DefaultTableName = "what-did-i-do.identity";
 });
 services.AddSingleton<IAmazonDynamoDB>(client);
-services.AddOpenIddict().AddCore().UseDynamoDb().Configure(options =>
-{
-  options.DefaultTableName = "what-did-i-do.openiddict";
-});
+services
+  .AddOpenIddict()
+  .AddCore(builder =>
+  {
+    builder
+      .UseDynamoDb()
+      .Configure(builder =>
+      {
+        builder.DefaultTableName = "what-did-i-do.openiddict";
+      });
+  })
+  .AddServer(builder =>
+  {
+    if (isDevelopment)
+    {
+      builder
+        .AddDevelopmentEncryptionCertificate()
+        .AddDevelopmentSigningCertificate();
+    }
+    else
+    {
+      builder
+        .AddSigningCertificate(new X509Certificate2("./signing-certificate.pfx"))
+        .AddEncryptionCertificate(new X509Certificate2("./encryption-certificate.pfx"));
+    }
+  });
+
 var config = configuration.GetSection("ClientOptions");
 services.Configure<ClientOptions>(configuration.GetSection(nameof(ClientOptions)));
 
@@ -82,22 +108,39 @@ if (clientOptions.CurrentValue.Clients?.Any() == true)
     ArgumentNullException.ThrowIfNull(internalClient.Id);
     ArgumentNullException.ThrowIfNull(internalClient.Secret);
 
-    var applicationStore = serviceProvider.GetRequiredService<OpenIddictDynamoDbApplicationStore<OpenIddictDynamoDbApplication>>();
+    var applicationManager = serviceProvider.GetRequiredService<IOpenIddictApplicationManager>();
 
-    var application = applicationStore.FindByClientIdAsync(internalClient.Id, CancellationToken.None).GetAwaiter().GetResult();
+    var application = (OpenIddictDynamoDbApplication?)applicationManager
+      .FindByClientIdAsync(internalClient.Id, CancellationToken.None).GetAwaiter().GetResult();
 
     if (application == default)
     {
-      Console.WriteLine($"Creating client with id \"{internalClient.Id}\"");
+      Console.WriteLine($"Attempting to create client with id \"{internalClient.Id}\"");
 
-      application = new()
+      var descriptor = new OpenIddictApplicationDescriptor
       {
         ClientId = internalClient.Id,
         ClientSecret = internalClient.Secret,
         DisplayName = internalClient.Id,
+        Permissions =
+        {
+          OpenIddictConstants.Permissions.Endpoints.Token,
+          OpenIddictConstants.Permissions.Endpoints.Introspection,
+          OpenIddictConstants.Permissions.Endpoints.Authorization,
+          OpenIddictConstants.Permissions.Endpoints.Logout,
+          OpenIddictConstants.Permissions.GrantTypes.ClientCredentials,
+        },
       };
 
-      applicationStore.CreateAsync(application, CancellationToken.None).GetAwaiter().GetResult();
+      if (!isDevelopment)
+      {
+        applicationManager.CreateAsync(descriptor, CancellationToken.None).GetAwaiter().GetResult();
+        Console.WriteLine("Client created");
+      }
+      else
+      {
+        Console.WriteLine("Skipping create client in development");
+      }
     }
   }
 }
