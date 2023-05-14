@@ -71,9 +71,23 @@ AspNetCoreIdentityDynamoDbSetup.EnsureInitialized(serviceProvider);
 OpenIddictDynamoDbSetup.EnsureInitialized(serviceProvider);
 
 var tableName = "what-did-i-do";
-var exist = client.DescribeTableAsync(tableName).GetAwaiter().GetResult();
+var exists = false;
 
-if (exist.Table == default)
+try
+{
+  var tableResponse = client.DescribeTableAsync(tableName).GetAwaiter().GetResult();
+
+  if (tableResponse.Table != default)
+  {
+    exists = true;
+  }
+}
+catch (Exception)
+{
+  Console.WriteLine($"Table \"{tableName}\" does not exists, attempting to create");
+}
+
+if (exists == false)
 {
   client.CreateTableAsync(new CreateTableRequest
   {
