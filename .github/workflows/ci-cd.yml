@@ -179,6 +179,8 @@ jobs:
           dotnet-version: 6.0.x
       - name: Ensure 3rd Party Tables is Created
         run: dotnet App.Login.EnsureInitialized/App.Login.EnsureInitialized.dll
+        env:
+          ASPNETCORE_ENVIRONMENT: ci
 
       - name: Install node
         uses: actions/setup-node@v3
