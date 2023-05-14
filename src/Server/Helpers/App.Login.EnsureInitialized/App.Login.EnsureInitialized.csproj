@@ -5,6 +5,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Community.OpenIddict.AmazonDynamoDB"
+      Version="$(CommunityOpenIddictAmazonDynamoDBVersion)" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection"
       Version="$(MicrosoftExtensionsDependencyInjectionVersion)" />
   </ItemGroup>
@@ -15,5 +17,17 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include="appsettings*.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="*-certificate.pfx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
 
 </Project>

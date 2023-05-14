@@ -30,12 +30,16 @@
     <MicrosoftExtensionsConfigurationFileExtensionsVersion>7.0.0</MicrosoftExtensionsConfigurationFileExtensionsVersion>
     <MicrosoftExtensionsConfigurationJsonVersion>7.0.0</MicrosoftExtensionsConfigurationJsonVersion>
     <MicrosoftExtensionsDependencyInjectionVersion>7.0.0</MicrosoftExtensionsDependencyInjectionVersion>
+    <MicrosoftExtensionsOptionsVersion>7.0.1</MicrosoftExtensionsOptionsVersion>
+    <MicrosoftIdentityModelProtocolsVersion>6.30.0</MicrosoftIdentityModelProtocolsVersion>
+    <MicrosoftIdentityModelProtocolsVersionOpenIdConnect>6.30.0</MicrosoftIdentityModelProtocolsVersionOpenIdConnect>
     <MicrosoftNETTestSdkVersion>17.4.1</MicrosoftNETTestSdkVersion>
     <MoqVersion>4.18.4</MoqVersion>
     <OdeToCodeAddFeatureFoldersVersion>2.0.3</OdeToCodeAddFeatureFoldersVersion>
     <OpenIddictAspNetCoreVersion>4.0.0</OpenIddictAspNetCoreVersion>
     <OpenIddictCoreVersion>4.0.0</OpenIddictCoreVersion>
     <ScrutorVersion>4.2.0</ScrutorVersion>
+    <SystemIdentityModelTokensJwtVersion>6.30.0</SystemIdentityModelTokensJwtVersion>
     <SwashbuckleAspNetCoreVersion>6.5.0</SwashbuckleAspNetCoreVersion>
     <XunitVersion>2.4.2</XunitVersion>
     <XunitRunnerVisualstudioVersion>2.4.5</XunitRunnerVisualstudioVersion>

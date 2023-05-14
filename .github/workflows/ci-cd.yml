@@ -84,19 +84,12 @@ jobs:
       - name: Install Lambda Tools
         run: dotnet tool install -g Amazon.Lambda.Tools
 
-      - name: Create Signing Certificate
-        uses: timheuer/base64-to-file@v1.2
+      - name: Create Certificate Files
+        uses: ./.github/actions/certificates
         with:
-          fileName: 'signing-certificate.pfx'
-          fileDir: './src/Server/App.Login'
-          encodedString: ${{ secrets.LOGIN_SIGNING_CERTIFICATE }}
-        if: ${{ matrix.project == './src/Server/App.Login' }}
-      - name: Create Encryption Certificate
-        uses: timheuer/base64-to-file@v1.2
-        with:
-          fileName: 'encryption-certificate.pfx'
-          fileDir: './src/Server/App.Login'
-          encodedString: ${{ secrets.LOGIN_ENCRYPTION_CERTIFICATE }}
+          signing-certificate-content: ${{ secrets.LOGIN_SIGNING_CERTIFICATE }}
+          encryption-certificate-content: ${{ secrets.LOGIN_ENCRYPTION_CERTIFICATE }}
+          target-dir: './src/Server/App.Login'
         if: ${{ matrix.project == './src/Server/App.Login' }}
 
       - name: Package Project
@@ -124,8 +117,16 @@ jobs:
         uses: actions/setup-dotnet@v3
         with:
           dotnet-version: 6.0.x
+      - name: Create Certificate Files
+        uses: ./.github/actions/certificates
+        with:
+          signing-certificate-content: ${{ secrets.LOGIN_SIGNING_CERTIFICATE }}
+          encryption-certificate-content: ${{ secrets.LOGIN_ENCRYPTION_CERTIFICATE }}
+          target-dir: './src/Server/Helpers/App.Login.EnsureInitialized'
       - name: Publish App.Login.EnsureInitialized
         run: dotnet publish ./src/Server/Helpers/App.Login.EnsureInitialized -o App.Login.EnsureInitialized
+        env:
+          ClientOptions__Clients__0__Secret: ${{ secrets.INTERNAL_CLIENT_ACCOUNT_SECRET }}
 
       - name: Install node
         uses: actions/setup-node@v3
