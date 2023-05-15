@@ -17,8 +17,8 @@ public class UserInfoController : ApiControllerBase
   }
 
   [Authorize(AuthenticationSchemes = OpenIddictServerAspNetCoreDefaults.AuthenticationScheme)]
-  [HttpGet("~/connect/userinfo")]
-  [HttpPost("~/connect/userinfo")]
+  [HttpGet($"~/{Constants.BasePath}/connect/userinfo")]
+  [HttpPost($"~/{Constants.BasePath}/connect/userinfo")]
   [Produces("application/json")]
   public async Task<IActionResult> UserInfo(UserInfoQuery.Query query)
   {

@@ -113,10 +113,8 @@ public class ExchangeCommand
 
       return claim.Type switch
       {
-        Claims.Name or
-        Claims.Subject
-            => ImmutableArray.Create(Destinations.AccessToken, Destinations.IdentityToken),
-
+        Claims.Name or Claims.Subject
+          => ImmutableArray.Create(Destinations.AccessToken, Destinations.IdentityToken),
         _ => ImmutableArray.Create(Destinations.AccessToken),
       };
     }

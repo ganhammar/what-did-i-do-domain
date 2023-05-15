@@ -20,7 +20,7 @@
     <AWSXRayRecorderCoreVersion>2.13.0</AWSXRayRecorderCoreVersion>
     <AWSXRayRecorderHandlersAwsSdkVersion>2.11.0</AWSXRayRecorderHandlersAwsSdkVersion>
     <ConstructsVersion>10.1.203</ConstructsVersion>
-    <CommunityOpenIddictAmazonDynamoDBVersion>1.0.1</CommunityOpenIddictAmazonDynamoDBVersion>
+    <CommunityOpenIddictAmazonDynamoDBVersion>1.0.2</CommunityOpenIddictAmazonDynamoDBVersion>
     <CoverletMsbuildVersion>3.2.0</CoverletMsbuildVersion>
     <FluentValidationVersion>11.4.0</FluentValidationVersion>
     <MediatRVersion>11.1.0</MediatRVersion>

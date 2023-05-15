@@ -15,7 +15,7 @@ public class AuthorizationController : ApiControllerBase
     _mediator = mediator;
   }
 
-  [HttpGet("~/connect/authorize")]
+  [HttpGet($"~/{Constants.BasePath}/connect/authorize")]
   public async Task<IActionResult> Authorize(AuthorizeCommand.Command command)
   {
     var result = await _mediator.Send(command);
@@ -37,7 +37,7 @@ public class AuthorizationController : ApiControllerBase
         OpenIddictServerAspNetCoreDefaults.AuthenticationScheme);
   }
 
-  [HttpGet("~/connect/LogoutCommand")]
+  [HttpGet($"~/{Constants.BasePath}/connect/LogoutCommand")]
   public async Task<IActionResult> LogoutCommand(LogoutCommand.Command command)
   {
     await _mediator.Send(command);
@@ -45,7 +45,7 @@ public class AuthorizationController : ApiControllerBase
     return SignOut(OpenIddictServerAspNetCoreDefaults.AuthenticationScheme);
   }
 
-  [HttpPost("~/connect/token")]
+  [HttpPost($"~/{Constants.BasePath}/connect/token")]
   [Produces("application/json")]
   public async Task<IActionResult> ExchangeCommand(ExchangeCommand.Command command)
   {
