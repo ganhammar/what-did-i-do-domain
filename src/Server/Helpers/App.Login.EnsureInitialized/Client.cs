@@ -6,4 +6,5 @@ public class Client
   public string? Secret { get; set; }
   public List<Uri> RedirectUris { get; set; } = new();
   public List<Uri> PostLogoutRedirectUris { get; set; } = new();
+  public List<string> Scopes { get; set; } = new();
 }

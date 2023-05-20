@@ -142,6 +142,9 @@ if (clientOptions.CurrentValue.Clients?.Any() == true)
           OpenIddictConstants.Permissions.Endpoints.Authorization,
           OpenIddictConstants.Permissions.Endpoints.Logout,
           OpenIddictConstants.Permissions.GrantTypes.ClientCredentials,
+          OpenIddictConstants.Permissions.GrantTypes.AuthorizationCode,
+          OpenIddictConstants.Permissions.Scopes.Email,
+          OpenIddictConstants.Permissions.Scopes.Profile,
         },
       };
 
@@ -149,6 +152,8 @@ if (clientOptions.CurrentValue.Clients?.Any() == true)
         .ForEach(x => descriptor.RedirectUris.Add(x));
       internalClient.PostLogoutRedirectUris
         .ForEach(x => descriptor.PostLogoutRedirectUris.Add(x));
+      internalClient.Scopes
+        .ForEach(x => descriptor.Permissions.Add(x));
 
       if (!isDevelopment)
       {
