@@ -1,23 +1,17 @@
-import { atom, selector } from 'recoil';
+import { atom } from 'recoil';
 import { userManager } from './userManager';
 
-const currentUserDefault = selector({
-  key: 'currentUserDefault',
-  get: async () => {
-    const result =  await userManager.getUser();
+const currentUserDefault = async () => {
+  const result =  await userManager.getUser();
 
-    if (result && result.expired === false) {
-      return result;
-    } else {
-      return undefined;
-    }
-  },
-  set: ({ set }, value) => {
-    set(currentUserAtom, value);
-  },
-});
+  if (result && result.expired === false) {
+    return result;
+  } else {
+    return undefined;
+  }
+};
 
 export const currentUserAtom = atom({
   key: 'currentUser',
-  default: currentUserDefault,
+  default: currentUserDefault(),
 });
