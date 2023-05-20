@@ -31,5 +31,8 @@
   "devDependencies": {
     "customize-cra": "^1.0.0",
     "react-app-rewired": "^2.2.1"
+  },
+  "dependencies": {
+    "oidc-client-ts": "^2.2.4"
   }
 }

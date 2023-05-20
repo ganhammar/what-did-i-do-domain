@@ -1,7 +1,8 @@
 import { BrowserRouter } from 'react-router-dom';
 import { ThemeProvider } from 'styled-components';
 import { AppRoutes } from './AppRoutes';
-import { appTheme, ErrorBoundry, Layout } from '@wdid/shared';
+import { Auth, appTheme, ErrorBoundry, Layout } from '@wdid/shared';
+import { RecoilRoot } from 'recoil';
 
 export function App() {
   const links = [
@@ -9,14 +10,18 @@ export function App() {
   ];
 
   return (
-    <BrowserRouter>
-      <ThemeProvider theme={appTheme}>
-        <Layout isLoggedIn={true} links={links}>
-          <ErrorBoundry>
-            <AppRoutes />
-          </ErrorBoundry>
-        </Layout>
-      </ThemeProvider>
-    </BrowserRouter>
+    <RecoilRoot>
+      <BrowserRouter>
+        <ThemeProvider theme={appTheme}>
+          <Auth defaultView="/account/dashboard">
+            <Layout isLoggedIn={true} links={links}>
+              <ErrorBoundry>
+                <AppRoutes />
+              </ErrorBoundry>
+            </Layout>
+          </Auth>
+        </ThemeProvider>
+      </BrowserRouter>
+    </RecoilRoot>
   );
 }

@@ -145,6 +145,11 @@ if (clientOptions.CurrentValue.Clients?.Any() == true)
         },
       };
 
+      internalClient.RedirectUris
+        .ForEach(x => descriptor.RedirectUris.Add(x));
+      internalClient.PostLogoutRedirectUris
+        .ForEach(x => descriptor.PostLogoutRedirectUris.Add(x));
+
       if (!isDevelopment)
       {
         applicationManager.CreateAsync(descriptor, CancellationToken.None).GetAwaiter().GetResult();
