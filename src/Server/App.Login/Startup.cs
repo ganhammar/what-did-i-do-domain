@@ -2,6 +2,7 @@
 using App.Login.Features.Email;
 using App.Login.Infrastructure;
 using Microsoft.AspNetCore.CookiePolicy;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.IdentityModel.Logging;
 
 namespace App.Login;
@@ -22,6 +23,11 @@ public class Startup
   {
     var dynamoDbConfig = Configuration.GetSection("DynamoDB");
     var serviceUrl = dynamoDbConfig.GetValue<string>("ServiceUrl");
+
+    services.Configure<ForwardedHeadersOptions>(options =>
+    {
+      options.ForwardedHeaders = ForwardedHeaders.XForwardedHost;
+    });
 
     services
       .AddDefaultAWSOptions(Configuration.GetAWSOptions())
