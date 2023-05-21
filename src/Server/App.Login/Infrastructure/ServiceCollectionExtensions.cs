@@ -51,20 +51,23 @@ public static class ServiceCollectionExtensions
       })
       .AddServer(builder =>
       {
+        var basePath = Constants.BasePath;
+
         if (isDevelopment == false)
         {
           builder.SetIssuer(new Uri(Constants.Origin));
+          basePath = $"{Constants.Origin}{Constants.BasePath}";
         }
 
         builder
-          .SetAuthorizationEndpointUris($"{Constants.BasePath}/connect/authorize")
-          .SetLogoutEndpointUris($"{Constants.BasePath}/connect/logout")
-          .SetIntrospectionEndpointUris($"{Constants.BasePath}/connect/introspect")
-          .SetUserinfoEndpointUris($"{Constants.BasePath}/connect/userinfo")
-          .SetTokenEndpointUris($"{Constants.BasePath}/connect/token")
-          .SetIntrospectionEndpointUris($"{Constants.BasePath}/connect/introspect")
-          .SetCryptographyEndpointUris($"{Constants.BasePath}/.well-known/jwks")
-          .SetConfigurationEndpointUris($"{Constants.BasePath}/.well-known/openid-configuration");
+          .SetAuthorizationEndpointUris($"{basePath}/connect/authorize")
+          .SetLogoutEndpointUris($"{basePath}/connect/logout")
+          .SetIntrospectionEndpointUris($"{basePath}/connect/introspect")
+          .SetUserinfoEndpointUris($"{basePath}/connect/userinfo")
+          .SetTokenEndpointUris($"{basePath}/connect/token")
+          .SetIntrospectionEndpointUris($"{basePath}/connect/introspect")
+          .SetCryptographyEndpointUris($"{basePath}/.well-known/jwks")
+          .SetConfigurationEndpointUris($"{basePath}/.well-known/openid-configuration");
 
         builder.AllowImplicitFlow();
         builder.AllowRefreshTokenFlow();
