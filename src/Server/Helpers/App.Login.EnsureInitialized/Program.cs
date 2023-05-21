@@ -143,6 +143,7 @@ if (clientOptions.CurrentValue.Clients?.Any() == true)
           OpenIddictConstants.Permissions.Endpoints.Logout,
           OpenIddictConstants.Permissions.GrantTypes.ClientCredentials,
           OpenIddictConstants.Permissions.GrantTypes.AuthorizationCode,
+          OpenIddictConstants.Permissions.ResponseTypes.Code,
           OpenIddictConstants.Permissions.Scopes.Email,
           OpenIddictConstants.Permissions.Scopes.Profile,
         },
