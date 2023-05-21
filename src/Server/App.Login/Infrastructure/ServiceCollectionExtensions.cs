@@ -51,11 +51,6 @@ public static class ServiceCollectionExtensions
       })
       .AddServer(builder =>
       {
-        if (isDevelopment == false)
-        {
-          builder.SetIssuer(new Uri(Constants.Origin));
-        }
-
         builder
           .SetAuthorizationEndpointUris($"{Constants.BasePath}/connect/authorize")
           .SetLogoutEndpointUris($"{Constants.BasePath}/connect/logout")
