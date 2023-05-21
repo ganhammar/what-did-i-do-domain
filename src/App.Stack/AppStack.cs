@@ -255,6 +255,14 @@ public class AppStack : Stack
       Runtime = Runtime.NODEJS_18_X,
     });
 
+    // Add X-Forwarded-Host Header
+    var forwardedForFunction = new EdgeFunction(this, "ForwardedHostHeader", new EdgeFunctionProps
+    {
+      Code = Code.FromAsset("./src/App.Stack/ForwardedHostHeader"),
+      Handler = "index.handler",
+      Runtime = Runtime.NODEJS_18_X,
+    });
+
     // S3: Login
     var loginPrincipal = new OriginAccessIdentity(
       this, "LoginCloudFrontOAI", new OriginAccessIdentityProps
@@ -312,6 +320,14 @@ public class AppStack : Stack
                   Cookies = new CookiesProperty
                   {
                     Forward = "all",
+                  },
+                },
+                LambdaFunctionAssociations = new[]
+                {
+                  new LambdaFunctionAssociation
+                  {
+                    LambdaFunction = forwardedForFunction.CurrentVersion,
+                    EventType = LambdaEdgeEventType.VIEWER_REQUEST,
                   },
                 },
               },

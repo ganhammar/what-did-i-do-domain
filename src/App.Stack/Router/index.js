@@ -1,6 +1,6 @@
 'use strict';
 
-exports.handler = async (event, context, callback) => {
+exports.handler = async (event, _, callback) => {
   const request = event.Records[0].cf.request;
   console.log('REQUEST INIT', { uri: request.uri, target: request.origin.s3.domainName });
   const MATCHING_EXTENSIONS = ['.js', '.css', '.json', '.txt', '.html', '.map', '.png', '.jpg', '.svg'];
