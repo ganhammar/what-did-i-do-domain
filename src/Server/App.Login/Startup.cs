@@ -86,6 +86,14 @@ public class Startup
   {
     app.UseForwardedHeaders();
 
+    app.Use(async (context, next) =>
+    {
+      context.Request.Path = new PathString(
+        context.Request.Path.ToString().Replace("/prod", ""));
+
+      await next(context);
+    });
+
     if (Environment.IsDevelopment())
     {
       app.UseDeveloperExceptionPage();
