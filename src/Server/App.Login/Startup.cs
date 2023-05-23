@@ -82,14 +82,19 @@ public class Startup
   }
 
   public void Configure(
-    IApplicationBuilder app, IWebHostEnvironment env)
+    IApplicationBuilder app, IWebHostEnvironment env, ILogger<Startup> logger)
   {
     app.UseForwardedHeaders();
 
     app.Use(async (context, next) =>
     {
-      context.Request.Path = new PathString(
-        context.Request.Path.ToString().Replace("/prod", ""));
+      logger.LogInformation($"Incoming request to {context.Request.Path}");
+
+      if (context.Request.PathBase.HasValue)
+      {
+        logger.LogInformation($"Request has a path base, {context.Request.PathBase.Value}, replacing with empty path");
+        context.Request.PathBase = PathString.Empty;
+      }
 
       await next(context);
     });
