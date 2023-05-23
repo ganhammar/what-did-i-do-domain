@@ -8,6 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using OpenIddict.Abstractions;
 using OpenIddict.AmazonDynamoDB;
+using static OpenIddict.Abstractions.OpenIddictConstants;
 
 var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Development";
 var isDevelopment = environment.ToLower().Equals("development");
@@ -134,6 +135,8 @@ if (clientOptions.CurrentValue.Clients?.Any() == true)
         ClientId = internalClient.Id,
         ClientSecret = internalClient.Secret,
         DisplayName = internalClient.Id,
+        ConsentType = ConsentTypes.Explicit,
+        Type = ClientTypes.Public,
         Permissions =
         {
           OpenIddictConstants.Permissions.Endpoints.Token,
@@ -145,6 +148,11 @@ if (clientOptions.CurrentValue.Clients?.Any() == true)
           OpenIddictConstants.Permissions.ResponseTypes.Code,
           OpenIddictConstants.Permissions.Scopes.Email,
           OpenIddictConstants.Permissions.Scopes.Profile,
+          OpenIddictConstants.Permissions.Scopes.Roles,
+        },
+        Requirements =
+        {
+          Requirements.Features.ProofKeyForCodeExchange
         },
       };
 
