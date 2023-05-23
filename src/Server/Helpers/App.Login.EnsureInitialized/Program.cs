@@ -119,7 +119,6 @@ if (clientOptions.CurrentValue.Clients?.Any() == true)
   foreach (var internalClient in clientOptions.CurrentValue.Clients)
   {
     ArgumentNullException.ThrowIfNull(internalClient.Id);
-    ArgumentNullException.ThrowIfNull(internalClient.Secret);
 
     var applicationManager = serviceProvider.GetRequiredService<IOpenIddictApplicationManager>();
 
