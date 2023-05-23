@@ -170,7 +170,6 @@ jobs:
         run: dotnet run
         working-directory: ./src/Server/Helpers/App.Login.EnsureInitialized
         env:
-          ClientOptions__Clients__0__Secret: ${{ secrets.INTERNAL_CLIENT_ACCOUNT_SECRET }}
           ASPNETCORE_ENVIRONMENT: ci
 
       - name: Install node
