@@ -1,11 +1,15 @@
 ﻿using System.Collections.Immutable;
 using System.Security.Claims;
 using App.Login.Infrastructure;
+using AspNetCore.Identity.AmazonDynamoDB;
 using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using OpenIddict.Abstractions;
+using OpenIddict.Server.AspNetCore;
 using static OpenIddict.Abstractions.OpenIddictConstants;
 using ValidationFailure = FluentValidation.Results.ValidationFailure;
 
@@ -22,23 +26,23 @@ public class ExchangeCommand
     public CommandValidator(IHttpContextAccessor httpContextAccessor)
     {
       RuleFor(x => x)
-          .Cascade(CascadeMode.Stop)
-          .Must((command) =>
-          {
-            var request = httpContextAccessor.HttpContext?.GetOpenIddictServerRequest();
+        .Cascade(CascadeMode.Stop)
+        .Must((command) =>
+        {
+          var request = httpContextAccessor.HttpContext?.GetOpenIddictServerRequest();
 
-            return request != default;
-          })
-          .WithErrorCode("NoAuthorizationRequestInProgress")
-          .WithMessage("No authorization request in progress")
-          .Must((command) =>
-          {
-            var request = httpContextAccessor.HttpContext!.GetOpenIddictServerRequest();
+          return request != default;
+        })
+        .WithErrorCode("NoAuthorizationRequestInProgress")
+        .WithMessage("No authorization request in progress")
+        .Must((command) =>
+        {
+          var request = httpContextAccessor.HttpContext!.GetOpenIddictServerRequest();
 
-            return request!.IsClientCredentialsGrantType();
-          })
-          .WithErrorCode(Errors.UnsupportedGrantType)
-          .WithMessage("The specified grant type is not supported");
+          return request!.IsClientCredentialsGrantType() || request!.IsAuthorizationCodeGrantType();
+        })
+        .WithErrorCode(Errors.UnsupportedGrantType)
+        .WithMessage("The specified grant type is not supported");
     }
   }
 
@@ -47,22 +51,39 @@ public class ExchangeCommand
     private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly IOpenIddictApplicationManager _applicationManager;
     private readonly IOpenIddictScopeManager _scopeManager;
+    private readonly UserManager<DynamoDbUser> _userManager;
+    private readonly SignInManager<DynamoDbUser> _signInManager;
 
     public CommandHandler(
       IHttpContextAccessor httpContextAccessor,
       IOpenIddictApplicationManager applicationManager,
-      IOpenIddictScopeManager scopeManager)
+      IOpenIddictScopeManager scopeManager,
+      UserManager<DynamoDbUser> userManager,
+      SignInManager<DynamoDbUser> signInManager)
     {
       _httpContextAccessor = httpContextAccessor;
       _applicationManager = applicationManager;
       _scopeManager = scopeManager;
+      _userManager = userManager;
+      _signInManager = signInManager;
     }
 
     public override async Task<IResponse<ClaimsPrincipal>> Handle(
       Command request, CancellationToken cancellationToken)
     {
-      var openIddictRequest = _httpContextAccessor.HttpContext!.GetOpenIddictServerRequest();
-      var application = await _applicationManager.FindByClientIdAsync(openIddictRequest!.ClientId!);
+      var openIddictRequest = _httpContextAccessor.HttpContext!.GetOpenIddictServerRequest()!;
+
+      if (openIddictRequest.IsClientCredentialsGrantType())
+      {
+        return await HandleClientCredentials(openIddictRequest);
+      }
+
+      return await HandleAuthorizationCode(openIddictRequest);
+    }
+
+    private async Task<IResponse<ClaimsPrincipal>> HandleClientCredentials(OpenIddictRequest openIddictRequest)
+    {
+      var application = await _applicationManager.FindByClientIdAsync(openIddictRequest.ClientId!);
 
       if (application == default)
       {
@@ -103,6 +124,48 @@ public class ExchangeCommand
       }
 
       return Response(principal);
+    }
+
+    private async Task<IResponse<ClaimsPrincipal>> HandleAuthorizationCode(OpenIddictRequest openIddictRequest)
+    {
+      var result = await _httpContextAccessor.HttpContext!.AuthenticateAsync(
+        OpenIddictServerAspNetCoreDefaults.AuthenticationScheme);
+
+      // Retrieve the user profile corresponding to the authorization code/refresh token.
+      var user = await _userManager.FindByIdAsync(result.Principal?.GetClaim(Claims.Subject));
+      if (user is null)
+      {
+        return Response<ClaimsPrincipal>(new(), new List<ValidationFailure>
+        {
+          new ValidationFailure(Errors.InvalidGrant, "The token is no longer valid"),
+        });
+      }
+
+      // Ensure the user is still allowed to sign in.
+      if (!await _signInManager.CanSignInAsync(user))
+      {
+        return Response<ClaimsPrincipal>(new(), new List<ValidationFailure>
+        {
+          new ValidationFailure(Errors.InvalidGrant, "The user is no longer allowed to sign in"),
+        });
+      }
+
+      var identity = new ClaimsIdentity(result.Principal!.Claims,
+        authenticationType: TokenValidationParameters.DefaultAuthenticationType,
+        nameType: Claims.Name,
+        roleType: Claims.Role);
+
+      // Override the user claims present in the principal in case they
+      // changed since the authorization code/refresh token was issued.
+      identity.SetClaim(Claims.Subject, await _userManager.GetUserIdAsync(user))
+        .SetClaim(Claims.Email, await _userManager.GetEmailAsync(user))
+        .SetClaim(Claims.Name, await _userManager.GetUserNameAsync(user))
+        .SetClaims(Claims.Role, (await _userManager.GetRolesAsync(user)).ToImmutableArray());
+
+      identity.SetDestinations(GetDestinations);
+
+      // Returning a SignInResult will ask OpenIddict to issue the appropriate access/identity tokens.
+      return Response(new ClaimsPrincipal(identity));
     }
 
     private IEnumerable<string> GetDestinations(Claim claim)
