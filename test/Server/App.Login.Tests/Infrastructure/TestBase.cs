@@ -5,6 +5,7 @@ using App.Login.Features.User;
 using App.Login.Infrastructure;
 using AspNetCore.Identity.AmazonDynamoDB;
 using MediatR;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Identity;
@@ -53,6 +54,9 @@ public abstract class TestBase
     httpContextAccessor.Setup(x => x.HttpContext).Returns(httpContext.Object);
     Mocks.Add(httpContextAccessor);
 
+    var authenticationService = new Mock<IAuthenticationService>();
+    Mocks.Add(authenticationService);
+
     var serviceCollection = new ServiceCollection();
     serviceCollection
       .AddOpenIddict()
@@ -61,6 +65,7 @@ public abstract class TestBase
     serviceCollection.AddSingleton<IEmailSender>(emailMock.Object);
     serviceCollection.AddControllers();
     serviceCollection.AddSingleton<IHttpContextAccessor>(httpContextAccessor.Object);
+    serviceCollection.AddSingleton<IAuthenticationService>(authenticationService.Object);
     serviceCollection.AddIdentity();
     serviceCollection.AddMediatR();
     serviceCollection.AddSingleton<SignInManager<DynamoDbUser>, MockSignInManager>();

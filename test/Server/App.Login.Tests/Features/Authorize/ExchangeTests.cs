@@ -1,8 +1,11 @@
-﻿using App.Login.Features.Authorization;
+﻿using System.Security.Claims;
+using App.Login.Features.Authorization;
 using App.Login.Tests.Infrastructure;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.Extensions.DependencyInjection;
+using Moq;
 using OpenIddict.Abstractions;
 using OpenIddict.AmazonDynamoDB;
 using OpenIddict.Server;
@@ -16,7 +19,7 @@ namespace App.Login.Tests.Features.Authorize;
 public class ExchangeCommandTests : TestBase
 {
   [Fact]
-  public async Task Should_ReturnPrincipal_When_RequestIsValid() =>
+  public async Task Should_ReturnPrincipal_When_ClientCredentialsRequestIsValid() =>
     await MediatorTest(async (mediator, services) =>
     {
       // Arrange
@@ -40,6 +43,55 @@ public class ExchangeCommandTests : TestBase
             ClientSecret = clientSecret,
             GrantType = GrantTypes.ClientCredentials,
             Scope = "test",
+          },
+        },
+      });
+      httpContext!.Setup(x => x.Features).Returns(featureCollection);
+      var command = new ExchangeCommand.Command();
+
+      // Act
+      var result = await mediator.Send(command);
+
+      // Assert
+      Assert.True(result.IsValid);
+      Assert.NotNull(result.Result!.Identity);
+      Assert.True(result.Result!.Identity!.IsAuthenticated);
+    });
+
+  [Fact]
+  public async Task Should_ReturnPrincipal_When_AuthorizationCodeRequestIsValid() =>
+    await MediatorTest(async (mediator, services) =>
+    {
+      // Arrange
+      var user = await CreateAndLoginValidUser(services);
+      var authenticationService = GetMock<IAuthenticationService>();
+      authenticationService!.Setup(x => x.AuthenticateAsync(It.IsAny<HttpContext>(), It.IsAny<string>()))
+        .Returns(Task.FromResult(AuthenticateResult.Success(new AuthenticationTicket(new ClaimsPrincipal(new ClaimsIdentity(new List<Claim>
+        {
+          new Claim(Claims.Subject, user.Id),
+        })), default, OpenIddictServerAspNetCoreDefaults.AuthenticationScheme))));
+
+      var applicationManager = services.GetRequiredService<IOpenIddictApplicationManager>();
+      var clientId = Guid.NewGuid().ToString();
+      var application = new OpenIddictDynamoDbApplication
+      {
+        ClientId = clientId,
+        ConsentType = ConsentTypes.Explicit,
+        Type = ClientTypes.Public,
+      };
+      await applicationManager.CreateAsync(application);
+      var httpContext = GetMock<HttpContext>();
+      var featureCollection = new FeatureCollection();
+      featureCollection.Set(new OpenIddictServerAspNetCoreFeature
+      {
+        Transaction = new OpenIddictServerTransaction
+        {
+          Request = new OpenIddictRequest
+          {
+            ClientId = clientId,
+            GrantType = GrantTypes.AuthorizationCode,
+            Scope = "test",
+            ResponseType = ResponseTypes.Code,
           },
         },
       });

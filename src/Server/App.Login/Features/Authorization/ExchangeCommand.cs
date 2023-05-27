@@ -174,12 +174,40 @@ public class ExchangeCommand
       // To allow OpenIddict to serialize them, you must attach them a destination, that specifies
       // whether they should be included in access tokens, in identity tokens or in both.
 
-      return claim.Type switch
+      switch (claim.Type)
       {
-        Claims.Name or Claims.Subject
-          => ImmutableArray.Create(Destinations.AccessToken, Destinations.IdentityToken),
-        _ => ImmutableArray.Create(Destinations.AccessToken),
-      };
+        case Claims.Name:
+        case Claims.Subject:
+          yield return Destinations.AccessToken;
+
+          if (claim.Subject?.HasScope(Scopes.Profile) == true)
+            yield return Destinations.IdentityToken;
+
+          yield break;
+
+        case Claims.Email:
+          yield return Destinations.AccessToken;
+
+          if (claim.Subject?.HasScope(Scopes.Email) == true)
+            yield return Destinations.IdentityToken;
+
+          yield break;
+
+        case Claims.Role:
+          yield return Destinations.AccessToken;
+
+          if (claim.Subject?.HasScope(Scopes.Roles) == true)
+            yield return Destinations.IdentityToken;
+
+          yield break;
+
+        // Never include the security stamp in the access and identity tokens, as it's a secret value.
+        case "AspNet.Identity.SecurityStamp": yield break;
+
+        default:
+          yield return Destinations.AccessToken;
+          yield break;
+      }
     }
   }
 }
