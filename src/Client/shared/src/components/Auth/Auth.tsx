@@ -1,6 +1,6 @@
-import { useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { useRecoilState } from 'recoil';
+import { useRecoilValue } from 'recoil';
 import { userManager } from './userManager';
 import { currentUserAtom } from './currentUserAtom';
 import { Loader } from '../Loader';
@@ -18,11 +18,11 @@ interface Props extends LoginProps {
 }
 
 function RenderIfLoggedIn({ children, defaultView }: Props) {
-  const [user, setUser] = useRecoilState(currentUserAtom);
+  const user = useRecoilValue(currentUserAtom);
   const { pathname } = useLocation();
   const navigate = useNavigate();
 
-  const login = () => {
+  const login = useCallback(() => {
     new Promise((resolve, reject) => {
       if (!user || user.expired === true) {
         reject(new Error('login_required'));
@@ -46,21 +46,11 @@ function RenderIfLoggedIn({ children, defaultView }: Props) {
         throw new Error(message);
       }
     });
-  };
-
-  const verifyLogin = () => userManager.getUser()
-    .then((result) => {
-      if (result && result.expired === false) {
-        setUser(result);
-      } else {
-        login();
-      }
-    });
+  }, [user, defaultView, pathname, navigate]);
 
   useEffect(() => {
-    verifyLogin();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    login();
+  }, [login]);
 
   if (user && children) {
     return children;
@@ -113,15 +103,20 @@ function LogoutCallbackRedirect() {
 
 export function Auth({ children, defaultView }: Props) {
   const { pathname } = useLocation();
+  console.log(pathname);
 
   switch(pathname) {
     case '/login/callback':
+      console.log('/login/callback');
       return <LoginCallback defaultView={defaultView} />;
     case '/logout/callback':
+      console.log('/logout/callback');
       return <LogoutCallbackRedirect />;
     case '/logout':
+      console.log('/logout');
       return <LogoutRedirect />;
     default:
+      console.log('default');
       return (
         <RenderIfLoggedIn defaultView={defaultView}>
           {children}
