@@ -195,6 +195,7 @@ public class AppStack : Stack
     });
     return new CfnAuthorizer(this, "ApiAuthorizer", new CfnAuthorizerProps
     {
+      Name = "ApiAuthorizer",
       RestApiId = apiGateway.RestApiId,
       Type = "TOKEN",
       AuthorizerUri = $"arn:aws:apigateway:{this.Region}:lambda:path/2015-03-31/functions/{authorizerFunction.FunctionArn}/invocations",
