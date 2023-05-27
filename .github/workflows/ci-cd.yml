@@ -78,6 +78,7 @@ jobs:
           - ./src/Server/App.Api/DeleteEvent
           - ./src/Server/App.Api/ListEvents
           - ./src/Server/App.Login
+          - ./src/Server/App.Authorizer
     steps:
       - name: Checkout
         uses: actions/checkout@v3
