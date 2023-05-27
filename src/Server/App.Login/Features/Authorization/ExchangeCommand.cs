@@ -132,12 +132,15 @@ public class ExchangeCommand
         OpenIddictServerAspNetCoreDefaults.AuthenticationScheme);
 
       // Retrieve the user profile corresponding to the authorization code/refresh token.
-      var user = await _userManager.FindByIdAsync(result.Principal?.GetClaim(Claims.Subject));
+      var user = await _userManager.FindByIdAsync(result.Principal?.GetClaim(Claims.Subject) ?? String.Empty);
       if (user is null)
       {
         return Response<ClaimsPrincipal>(new(), new List<ValidationFailure>
         {
-          new ValidationFailure(Errors.InvalidGrant, "The token is no longer valid"),
+          new ValidationFailure(nameof(ExchangeCommand.Command), "The token is no longer valid")
+          {
+            ErrorCode = Errors.InvalidGrant,
+          },
         });
       }
 
@@ -146,7 +149,10 @@ public class ExchangeCommand
       {
         return Response<ClaimsPrincipal>(new(), new List<ValidationFailure>
         {
-          new ValidationFailure(Errors.InvalidGrant, "The user is no longer allowed to sign in"),
+          new ValidationFailure(nameof(ExchangeCommand.Command), "The user is no longer allowed to sign in")
+          {
+            ErrorCode = Errors.InvalidGrant,
+          },
         });
       }
 

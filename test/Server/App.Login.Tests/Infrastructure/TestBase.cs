@@ -148,6 +148,10 @@ public abstract class TestBase
       TwoFactorEnabled = false,
     };
     await userManager.CreateAsync(user, password);
+
+    user.LockoutEnabled = false;
+    await userManager.UpdateAsync(user);
+
     await mediator.Send(new LoginCommand.Command
     {
       Email = email,

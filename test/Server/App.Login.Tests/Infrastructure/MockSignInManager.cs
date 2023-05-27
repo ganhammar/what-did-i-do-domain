@@ -93,6 +93,11 @@ public class MockSignInManager : SignInManager<DynamoDbUser>
     return Task.CompletedTask;
   }
 
+  public override Task<bool> CanSignInAsync(DynamoDbUser user)
+  {
+    return Task.FromResult(user.LockoutEnabled == false);
+  }
+
   private async Task<DynamoDbUser> FindFirstUser()
   {
     var database = base.Context.RequestServices.GetRequiredService<IAmazonDynamoDB>();
