@@ -31,12 +31,6 @@ public class Function : FunctionBase
     var result = await ValidateTokenAsync(
       options.CurrentValue.Issuer, request.AuthorizationToken);
 
-    if (result.IsValid == false)
-    {
-      result = await ValidateTokenAsync(
-      options.CurrentValue.FallbackIssuer, request.AuthorizationToken);
-    }
-
     return new()
     {
       PrincipalID = "user",
