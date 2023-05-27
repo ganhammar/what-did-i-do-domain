@@ -13,11 +13,15 @@ interface LoginProps {
   defaultView: string;
 }
 
-interface Props extends LoginProps {
+interface LoginPropsWithChildren extends LoginProps {
   children: JSX.Element;
 }
 
-function RenderIfLoggedIn({ children, defaultView }: Props) {
+interface Props extends LoginPropsWithChildren {
+  pathPrefix: string;
+}
+
+function RenderIfLoggedIn({ children, defaultView }: LoginPropsWithChildren) {
   const user = useRecoilValue(currentUserAtom);
   const { pathname } = useLocation();
   const navigate = useNavigate();
@@ -101,22 +105,17 @@ function LogoutCallbackRedirect() {
   return <Loader />;
 }
 
-export function Auth({ children, defaultView }: Props) {
+export function Auth({ children, defaultView, pathPrefix }: Props) {
   const { pathname } = useLocation();
-  console.log(pathname);
 
-  switch(pathname) {
+  switch(pathname.replace(`/${pathPrefix}`, '')) {
     case '/login/callback':
-      console.log('/login/callback');
       return <LoginCallback defaultView={defaultView} />;
     case '/logout/callback':
-      console.log('/logout/callback');
       return <LogoutCallbackRedirect />;
     case '/logout':
-      console.log('/logout');
       return <LogoutRedirect />;
     default:
-      console.log('default');
       return (
         <RenderIfLoggedIn defaultView={defaultView}>
           {children}

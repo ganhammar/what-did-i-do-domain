@@ -13,7 +13,7 @@ export function App() {
     <RecoilRoot>
       <BrowserRouter>
         <ThemeProvider theme={appTheme}>
-          <Auth defaultView="/account/dashboard">
+          <Auth defaultView="/account/dashboard" pathPrefix="account">
             <Layout isLoggedIn={true} links={links}>
               <ErrorBoundry>
                 <AppRoutes />
