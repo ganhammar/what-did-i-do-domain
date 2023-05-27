@@ -33,7 +33,9 @@ public class AppStack : Stack
     var apiResource = apiGateway.Root.AddResource("api");
 
     // Authorizer
-    var cfnAuthorizer = AddApiAuthorizer(apiGateway);
+    var authorizerFunction = new AppFunction(this, "App.Authorizer", new AppFunction.Props(
+      "App.Authorizer::App.Authorizer.Function::FunctionHandler"
+    ));
 
     // Resource: Login
     var loginResource = apiResource.AddResource("login");
@@ -41,7 +43,7 @@ public class AppStack : Stack
 
     // Resource: Account
     var accountResource = apiResource.AddResource("account");
-    HandleAccountResource(accountResource, tableName, applicationTable, cfnAuthorizer);
+    HandleAccountResource(accountResource, tableName, applicationTable, authorizerFunction);
 
     // Resource: Event
     var eventResource = apiResource.AddResource("event");
@@ -166,66 +168,30 @@ public class AppStack : Stack
     function.AddToRolePolicy(sesPolicy);
   }
 
-  private CfnAuthorizer AddApiAuthorizer(RestApi apiGateway)
-  {
-    var authorizerFunction = new AppFunction(this, "App.Authorizer", new AppFunction.Props(
-      "App.Authorizer::App.Authorizer.Function::FunctionHandler"
-    ));
-    var authorizerRole = new Role(this, "ApiAuthorizerRole", new RoleProps
-    {
-      AssumedBy = new ServicePrincipal("apigateway.amazonaws.com"),
-      InlinePolicies = new Dictionary<string, PolicyDocument>
-      {
-        {
-          "allowLambdaInvocation",
-          new PolicyDocument(new PolicyDocumentProps
-          {
-            Statements = new[]
-            {
-              new PolicyStatement(new PolicyStatementProps
-              {
-                Effect = Effect.ALLOW,
-                Actions = new[] { "lambda:InvokeFunction", "lambda:InvokeAsync" },
-                Resources = new[] { $"arn:aws:lambda:{this.Region}:{this.Account}:function:*" },
-              }),
-            },
-          })
-        },
-      }
-    });
-    return new CfnAuthorizer(this, "ApiAuthorizer", new CfnAuthorizerProps
-    {
-      Name = "ApiAuthorizer",
-      RestApiId = apiGateway.RestApiId,
-      Type = "TOKEN",
-      AuthorizerUri = $"arn:aws:apigateway:{this.Region}:lambda:path/2015-03-31/functions/{authorizerFunction.FunctionArn}/invocations",
-      IdentitySource = "method.request.header.Authorization",
-      AuthorizerCredentials = authorizerRole.RoleArn,
-    });
-  }
-
   private void HandleAccountResource(
     Amazon.CDK.AWS.APIGateway.Resource accountResource,
     string tableName,
     Table applicationTable,
-    CfnAuthorizer authorizer)
+    AppFunction authorizerFunction)
   {
     // Create
+    var authorizer = new RequestAuthorizer(this, "AccountsAuthorizer", new RequestAuthorizerProps
+    {
+      Handler = authorizerFunction,
+      IdentitySources = new[] { IdentitySource.Header("Authorization") },
+    });
+
     var createAccountFunction = new AppFunction(this, "CreateAccount", new AppFunction.Props(
       "CreateAccount::App.Api.CreateAccount.Function::FunctionHandler",
       tableName
     ));
+
     applicationTable.GrantReadWriteData(createAccountFunction);
     accountResource.AddMethod("POST", new LambdaIntegration(createAccountFunction), new MethodOptions
     {
       AuthorizationType = AuthorizationType.CUSTOM,
+      Authorizer = authorizer,
     });
-    var childResource = accountResource.Node.FindChild("Resource");
-
-    (childResource as Amazon.CDK.AWS.APIGateway.CfnResource)!
-      .AddPropertyOverride("AuthorizationType", AuthorizationType.CUSTOM);
-    (childResource as Amazon.CDK.AWS.APIGateway.CfnResource)!
-      .AddPropertyOverride("AuthorizerId", new { Ref = authorizer.LogicalId });
   }
 
   private void HandleEventResource(
