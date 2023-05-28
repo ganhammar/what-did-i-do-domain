@@ -39,7 +39,8 @@ public class AppStack : Stack
     var authorizer = new RequestAuthorizer(this, "ApiAuthorizer", new RequestAuthorizerProps
     {
       Handler = authorizerFunction,
-      IdentitySources = new[] { IdentitySource.Header("Authorization") },
+      IdentitySources = new[] { IdentitySource.Header("authorization") },
+      ResultsCacheTtl = Duration.Seconds(0),
     });
 
     // Resource: Login

@@ -8,11 +8,10 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Protocols;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
-using Microsoft.IdentityModel.Tokens;
 
 [assembly: LambdaSerializer(typeof(CamelCaseLambdaJsonSerializer))]
 
-namespace App.Authorizer.Authorizer;
+namespace App.Authorizer;
 
 public class Function : FunctionBase
 {
@@ -27,9 +26,11 @@ public class Function : FunctionBase
   {
     AppendLookup(request.RequestContext.RequestId);
 
+    request.Headers.TryGetValue("authorization", out var token);
+
     var options = ServiceProvider.GetRequiredService<IOptionsMonitor<AuthorizationOptions>>();
     var result = await ValidateTokenAsync(
-      options.CurrentValue.Issuer, request.AuthorizationToken);
+      options.CurrentValue.Issuer, options.CurrentValue.Audiences, token);
 
     return new()
     {
@@ -41,7 +42,7 @@ public class Function : FunctionBase
         {
           new()
           {
-            Effect = result.IsValid ? "Allow" : "Deny",
+            Effect = result ? "Allow" : "Deny",
             Resource = new() { request.MethodArn },
             Action = new() { "execute-api:Invoke" },
           },
@@ -50,8 +51,14 @@ public class Function : FunctionBase
     };
   }
 
-  private async Task<TokenValidationResult> ValidateTokenAsync(string? issuer, string? token)
+  private async Task<bool> ValidateTokenAsync(string? issuer, List<string>? audiences, string? token)
   {
+    if (string.IsNullOrEmpty(token))
+    {
+      Logger.LogInformation("Token is not set, validation failed");
+      return false;
+    }
+
     ArgumentNullException.ThrowIfNull(issuer);
 
     var configurationManager = new ConfigurationManager<OpenIdConnectConfiguration>(
@@ -60,25 +67,26 @@ public class Function : FunctionBase
     var config = await configurationManager.GetConfigurationAsync();
 
     token = token?.Replace("Bearer ", "");
+    var validIssuer = $"{new Uri(issuer).GetLeftPart(UriPartial.Authority)}/";
 
     var tokenHandler = new JwtSecurityTokenHandler();
     var result = await tokenHandler.ValidateTokenAsync(token, new()
     {
       ValidateIssuerSigningKey = true,
       IssuerSigningKeys = config.SigningKeys,
-      ValidIssuer = issuer,
-      ValidateAudience = false,
+      ValidIssuer = validIssuer,
+      ValidAudiences = audiences,
     });
 
     if (result.IsValid)
     {
-      Logger.LogInformation($"Token successfully validated");
+      Logger.LogInformation("Token successfully validated");
     }
     else
     {
       Logger.LogWarning(result.Exception, $"Could not validate token for issuer {issuer}");
     }
 
-    return result;
+    return result.IsValid;
   }
 }
