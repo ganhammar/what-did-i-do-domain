@@ -1,5 +1,4 @@
 ﻿using System.Reflection;
-using System.Text.Json;
 using Amazon.Lambda.APIGatewayEvents;
 using Amazon.Lambda.Core;
 using Amazon.Lambda.Serialization.SystemTextJson;
@@ -31,11 +30,32 @@ public class Function : FunctionBase
   {
     AppendLookup(apiGatewayProxyRequest);
 
-    return await Respond(JsonSerializer.Deserialize<ListEventsCommand.Command>(
-      apiGatewayProxyRequest.Body,
-      new JsonSerializerOptions
-      {
-        PropertyNameCaseInsensitive = true,
-      }));
+    var queryStringParameters = new Dictionary<string, string>(
+      apiGatewayProxyRequest.QueryStringParameters ?? new Dictionary<string, string>(),
+      StringComparer.OrdinalIgnoreCase);
+
+    queryStringParameters.TryGetValue("accountid", out var accountId);
+    queryStringParameters.TryGetValue("fromdate", out var fromDateRaw);
+    queryStringParameters.TryGetValue("todate", out var toDateRaw);
+
+    var fromDate = TryParseDateTime(fromDateRaw);
+    var toDate = TryParseDateTime(toDateRaw);
+
+    return await Respond(new ListEventsCommand.Command
+    {
+      AccountId = accountId,
+      FromDate = fromDate,
+      ToDate = toDate,
+    });
+  }
+
+  private DateTime? TryParseDateTime(string? date)
+  {
+    if (DateTime.TryParse(date, out var parseDate))
+    {
+      return parseDate;
+    }
+
+    return default;
   }
 }

@@ -25,14 +25,14 @@ public class FunctionTests
     });
     var function = new Function();
     var context = new TestLambdaContext();
-    var data = new ListEventsCommand.Command
+    var data = new Dictionary<string, string>
     {
-      AccountId = accountId,
+      { "AccountId", accountId },
     };
     var request = new APIGatewayProxyRequest
     {
       HttpMethod = HttpMethod.Post.Method,
-      Body = JsonSerializer.Serialize(data),
+      QueryStringParameters = data,
       RequestContext = new APIGatewayProxyRequest.ProxyRequestContext
       {
         RequestId = Guid.NewGuid().ToString(),
@@ -61,16 +61,16 @@ public class FunctionTests
     });
     var function = new Function();
     var context = new TestLambdaContext();
-    var data = new ListEventsCommand.Command
+    var data = new Dictionary<string, string>
     {
-      AccountId = accountId,
-      FromDate = DateTime.UtcNow.AddDays(-7),
-      ToDate = DateTime.UtcNow.AddDays(-6),
+      { "AccountId", accountId },
+      { "FromDate", DateTime.UtcNow.AddDays(-7).ToString() },
+      { "ToDate", DateTime.UtcNow.AddDays(-6).ToString() },
     };
     var request = new APIGatewayProxyRequest
     {
       HttpMethod = HttpMethod.Post.Method,
-      Body = JsonSerializer.Serialize(data),
+      QueryStringParameters = data,
       RequestContext = new APIGatewayProxyRequest.ProxyRequestContext
       {
         RequestId = Guid.NewGuid().ToString(),
@@ -91,11 +91,9 @@ public class FunctionTests
   {
     var function = new Function();
     var context = new TestLambdaContext();
-    var data = new ListEventsCommand.Command();
     var request = new APIGatewayProxyRequest
     {
       HttpMethod = HttpMethod.Post.Method,
-      Body = JsonSerializer.Serialize(data),
       RequestContext = new APIGatewayProxyRequest.ProxyRequestContext
       {
         RequestId = Guid.NewGuid().ToString(),
@@ -117,15 +115,15 @@ public class FunctionTests
   {
     var function = new Function();
     var context = new TestLambdaContext();
-    var data = new ListEventsCommand.Command
+    var data = new Dictionary<string, string>
     {
-      AccountId = Guid.NewGuid().ToString(),
-      FromDate = DateTime.UtcNow,
+      { "AccountId", Guid.NewGuid().ToString() },
+      { "FromDate", DateTime.UtcNow.ToString() },
     };
     var request = new APIGatewayProxyRequest
     {
       HttpMethod = HttpMethod.Post.Method,
-      Body = JsonSerializer.Serialize(data),
+      QueryStringParameters = data,
       RequestContext = new APIGatewayProxyRequest.ProxyRequestContext
       {
         RequestId = Guid.NewGuid().ToString(),
@@ -147,15 +145,15 @@ public class FunctionTests
   {
     var function = new Function();
     var context = new TestLambdaContext();
-    var data = new ListEventsCommand.Command
+    var data = new Dictionary<string, string>
     {
-      AccountId = Guid.NewGuid().ToString(),
-      ToDate = DateTime.UtcNow,
+      { "AccountId", Guid.NewGuid().ToString() },
+      { "ToDate", DateTime.UtcNow.ToString() },
     };
     var request = new APIGatewayProxyRequest
     {
       HttpMethod = HttpMethod.Post.Method,
-      Body = JsonSerializer.Serialize(data),
+      QueryStringParameters = data,
       RequestContext = new APIGatewayProxyRequest.ProxyRequestContext
       {
         RequestId = Guid.NewGuid().ToString(),
@@ -177,16 +175,16 @@ public class FunctionTests
   {
     var function = new Function();
     var context = new TestLambdaContext();
-    var data = new ListEventsCommand.Command
+    var data = new Dictionary<string, string>
     {
-      AccountId = Guid.NewGuid().ToString(),
-      ToDate = DateTime.UtcNow.AddDays(-1),
-      FromDate = DateTime.UtcNow,
+      { "AccountId", Guid.NewGuid().ToString() },
+      { "ToDate", DateTime.UtcNow.AddDays(-1).ToString() },
+      { "FromDate", DateTime.UtcNow.ToString() },
     };
     var request = new APIGatewayProxyRequest
     {
       HttpMethod = HttpMethod.Post.Method,
-      Body = JsonSerializer.Serialize(data),
+      QueryStringParameters = data,
       RequestContext = new APIGatewayProxyRequest.ProxyRequestContext
       {
         RequestId = Guid.NewGuid().ToString(),
