@@ -31,8 +31,13 @@ public class Function : FunctionBase
     headers.TryGetValue("authorization", out var token);
 
     var options = ServiceProvider.GetRequiredService<IOptionsMonitor<AuthorizationOptions>>();
-    var result = await ValidateTokenAsync(
+    var valid = await ValidateTokenAsync(
       options.CurrentValue.Issuer, options.CurrentValue.Audiences, token);
+
+    if (!valid)
+    {
+      throw new Exception("Unauthorized");
+    }
 
     return new()
     {
@@ -44,7 +49,7 @@ public class Function : FunctionBase
         {
           new()
           {
-            Effect = result ? "Allow" : "Deny",
+            Effect = "Allow",
             Resource = new() { request.MethodArn },
             Action = new() { "execute-api:Invoke" },
           },
