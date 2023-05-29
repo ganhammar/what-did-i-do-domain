@@ -66,4 +66,27 @@ public class FunctionTests
     Assert.Contains(errors, error => error.PropertyName == nameof(CreateAccountCommand.Command.Name)
       && error.ErrorCode == "NotEmptyValidator");
   }
+
+  [Fact]
+  public async Task Should_ReturnBadRequest_When_BodyIsEmpty()
+  {
+    var function = new Function();
+    var context = new TestLambdaContext();
+    var request = new APIGatewayProxyRequest
+    {
+      HttpMethod = HttpMethod.Post.Method,
+      RequestContext = new APIGatewayProxyRequest.ProxyRequestContext
+      {
+        RequestId = Guid.NewGuid().ToString(),
+      },
+    };
+    var response = await function.FunctionHandler(request, context);
+
+    Assert.Equal((int)HttpStatusCode.BadRequest, response.StatusCode);
+
+    var errors = JsonSerializer.Deserialize<List<ValidationFailure>>(response.Body);
+
+    Assert.NotNull(errors);
+    Assert.Contains(errors, error => error.ErrorCode == "InvalidRequest");
+  }
 }

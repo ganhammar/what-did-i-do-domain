@@ -26,7 +26,9 @@ public class Function : FunctionBase
   {
     AppendLookup(request.RequestContext.RequestId);
 
-    request.Headers.TryGetValue("authorization", out var token);
+    var headers = new Dictionary<string, string>(request.Headers, StringComparer.OrdinalIgnoreCase);
+
+    headers.TryGetValue("authorization", out var token);
 
     var options = ServiceProvider.GetRequiredService<IOptionsMonitor<AuthorizationOptions>>();
     var result = await ValidateTokenAsync(

@@ -25,7 +25,10 @@ public abstract class FunctionBase
   {
     Body = JsonSerializer.Serialize(new[]
     {
-      new ValidationFailure("Body", "Invalid request"),
+      new ValidationFailure("Body", "Invalid request")
+      {
+        ErrorCode = "InvalidRequest",
+      },
     }),
     StatusCode = (int)HttpStatusCode.BadRequest,
   };
@@ -53,6 +56,21 @@ public abstract class FunctionBase
     ConfigureServices(services);
 
     return services.BuildServiceProvider();
+  }
+
+  public T? TryDeserialize<T>(APIGatewayProxyRequest apiGatewayProxyRequest)
+  {
+    if (string.IsNullOrEmpty(apiGatewayProxyRequest.Body))
+    {
+      return default;
+    }
+
+    return JsonSerializer.Deserialize<T>(
+      apiGatewayProxyRequest.Body,
+      new JsonSerializerOptions
+      {
+        PropertyNameCaseInsensitive = true,
+      });
   }
 
   public async Task<APIGatewayHttpApiV2ProxyResponse> Respond<T>(IRequest<IResponse<T>>? request)

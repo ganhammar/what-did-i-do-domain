@@ -1,5 +1,4 @@
 ﻿using System.Reflection;
-using System.Text.Json;
 using Amazon.Lambda.APIGatewayEvents;
 using Amazon.Lambda.Core;
 using Amazon.Lambda.Serialization.SystemTextJson;
@@ -31,11 +30,6 @@ public class Function : FunctionBase
   {
     AppendLookup(apiGatewayProxyRequest);
 
-    return await Respond(JsonSerializer.Deserialize<CreateAccountCommand.Command>(
-      apiGatewayProxyRequest.Body,
-      new JsonSerializerOptions
-      {
-        PropertyNameCaseInsensitive = true,
-      }));
+    return await Respond(TryDeserialize<CreateAccountCommand.Command>(apiGatewayProxyRequest));
   }
 }
