@@ -65,6 +65,7 @@ services
 
 var config = configuration.GetSection("ClientOptions");
 services.Configure<ClientOptions>(configuration.GetSection(nameof(ClientOptions)));
+services.Configure<ScopeOptions>(configuration.GetSection(nameof(ScopeOptions)));
 
 var serviceProvider = services.BuildServiceProvider();
 
@@ -117,11 +118,11 @@ var clientOptions = serviceProvider.GetRequiredService<IOptionsMonitor<ClientOpt
 
 if (clientOptions.CurrentValue.Clients?.Any() == true)
 {
+  var applicationManager = serviceProvider.GetRequiredService<IOpenIddictApplicationManager>();
+
   foreach (var internalClient in clientOptions.CurrentValue.Clients)
   {
     ArgumentNullException.ThrowIfNull(internalClient.Id);
-
-    var applicationManager = serviceProvider.GetRequiredService<IOpenIddictApplicationManager>();
 
     var application = (OpenIddictDynamoDbApplication?)applicationManager
       .FindByClientIdAsync(internalClient.Id, CancellationToken.None).GetAwaiter().GetResult();
@@ -171,6 +172,33 @@ if (clientOptions.CurrentValue.Clients?.Any() == true)
       else
       {
         Console.WriteLine("Skipping create client in development");
+      }
+    }
+  }
+}
+
+var scopeOptions = serviceProvider.GetRequiredService<IOptionsMonitor<ScopeOptions>>();
+
+if (scopeOptions.CurrentValue.Scopes?.Any() == true)
+{
+  var scopeManager = serviceProvider.GetRequiredService<IOpenIddictScopeManager>();
+
+  foreach (var scope in scopeOptions.CurrentValue.Scopes)
+  {
+    ArgumentNullException.ThrowIfNull(scope.Name);
+
+    if (await scopeManager.FindByNameAsync(scope.Name) == null)
+    {
+      Console.WriteLine($"Attempting to create scope with name \"{scope.Name}\"");
+
+      if (!isDevelopment)
+      {
+        await scopeManager.CreateAsync(scope);
+        Console.WriteLine("Scope created");
+      }
+      else
+      {
+        Console.WriteLine("Skipping create scope in development");
       }
     }
   }
