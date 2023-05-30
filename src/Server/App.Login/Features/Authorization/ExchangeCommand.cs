@@ -207,6 +207,11 @@ public class ExchangeCommand
 
           yield break;
 
+        case Claims.Scope:
+          yield return Destinations.AccessToken;
+          yield return Destinations.IdentityToken;
+          yield break;
+
         // Never include the security stamp in the access and identity tokens, as it's a secret value.
         case "AspNet.Identity.SecurityStamp": yield break;
 
