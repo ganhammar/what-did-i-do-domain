@@ -8,6 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Protocols;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
+using Microsoft.IdentityModel.Tokens;
 
 [assembly: LambdaSerializer(typeof(CamelCaseLambdaJsonSerializer))]
 
@@ -31,13 +32,17 @@ public class Function : FunctionBase
     headers.TryGetValue("authorization", out var token);
 
     var options = ServiceProvider.GetRequiredService<IOptionsMonitor<AuthorizationOptions>>();
-    var valid = await ValidateTokenAsync(
+    var result = await ValidateTokenAsync(
       options.CurrentValue.Issuer, options.CurrentValue.Audiences, token);
 
-    if (!valid)
+    if (result == default)
     {
       throw new Exception("Unauthorized");
     }
+
+    var scopes = string.Join(' ', result.Claims
+      .Where(x => x.Key == "scopes" && x.Value != default)
+      .SelectMany(x => (List<object>)x.Value));
 
     return new()
     {
@@ -55,15 +60,19 @@ public class Function : FunctionBase
           },
         },
       },
+      Context = new()
+      {
+        { "Scopes", scopes },
+      },
     };
   }
 
-  private async Task<bool> ValidateTokenAsync(string? issuer, List<string>? audiences, string? token)
+  private async Task<TokenValidationResult?> ValidateTokenAsync(string? issuer, List<string>? audiences, string? token)
   {
     if (string.IsNullOrEmpty(token))
     {
       Logger.LogInformation("Token is not set, validation failed");
-      return false;
+      return default;
     }
 
     ArgumentNullException.ThrowIfNull(issuer);
@@ -94,6 +103,6 @@ public class Function : FunctionBase
       Logger.LogWarning(result.Exception, $"Could not validate token for issuer {issuer}");
     }
 
-    return result.IsValid;
+    return result;
   }
 }

@@ -13,7 +13,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace App.Api.ListEvents;
 
-public class Function : FunctionBase
+public class Function : APIGatewayProxyRequestBase
 {
   protected override void ConfigureServices(IServiceCollection services)
   {
@@ -23,13 +23,9 @@ public class Function : FunctionBase
     services.AddTransient<IValidator<ListEventsCommand.Command>, ListEventsCommand.CommandValidator>();
   }
 
-  [Logging(LogEvent = true)]
-  public async Task<APIGatewayHttpApiV2ProxyResponse> FunctionHandler(
-    APIGatewayProxyRequest apiGatewayProxyRequest,
-    ILambdaContext context)
+  protected override async Task<APIGatewayHttpApiV2ProxyResponse> Handler(
+    APIGatewayProxyRequest apiGatewayProxyRequest)
   {
-    AppendLookup(apiGatewayProxyRequest);
-
     var queryStringParameters = new Dictionary<string, string>(
       apiGatewayProxyRequest.QueryStringParameters ?? new Dictionary<string, string>(),
       StringComparer.OrdinalIgnoreCase);

@@ -4,7 +4,6 @@ using Amazon.Lambda.Core;
 using Amazon.Lambda.Serialization.SystemTextJson;
 using App.Api.Shared.Infrastructure;
 using App.Api.Shared.Models;
-using AWS.Lambda.Powertools.Logging;
 using FluentValidation;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
@@ -13,7 +12,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace App.Api.CreateEvent;
 
-public class Function : FunctionBase
+public class Function : APIGatewayProxyRequestBase
 {
   protected override void ConfigureServices(IServiceCollection services)
   {
@@ -23,13 +22,9 @@ public class Function : FunctionBase
     services.AddTransient<IValidator<CreateEventCommand.Command>, CreateEventCommand.CommandValidator>();
   }
 
-  [Logging(LogEvent = true)]
-  public async Task<APIGatewayHttpApiV2ProxyResponse> FunctionHandler(
-    APIGatewayProxyRequest apiGatewayProxyRequest,
-    ILambdaContext context)
+  protected override async Task<APIGatewayHttpApiV2ProxyResponse> Handler(
+    APIGatewayProxyRequest apiGatewayProxyRequest)
   {
-    AppendLookup(apiGatewayProxyRequest);
-
     return await Respond(TryDeserialize<CreateEventCommand.Command>(apiGatewayProxyRequest));
   }
 }

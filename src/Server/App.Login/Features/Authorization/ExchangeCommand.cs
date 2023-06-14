@@ -161,6 +161,8 @@ public class ExchangeCommand
         nameType: Claims.Name,
         roleType: Claims.Role);
 
+      identity.SetScopes(openIddictRequest.GetScopes());
+
       // Override the user claims present in the principal in case they
       // changed since the authorization code/refresh token was issued.
       identity.SetClaim(Claims.Subject, await _userManager.GetUserIdAsync(user))
