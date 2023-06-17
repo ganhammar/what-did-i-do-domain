@@ -1,4 +1,5 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 using Amazon.Lambda.APIGatewayEvents;
 using Amazon.Lambda.Core;
 using Amazon.Lambda.Serialization.SystemTextJson;
@@ -41,7 +42,7 @@ public class Function : FunctionBase
     }
 
     result.Claims.TryGetValue("scope", out var scope);
-    result.Claims.TryGetValue("sub", out var sub);
+    result.Claims.TryGetValue(ClaimTypes.NameIdentifier, out var sub);
 
     return new()
     {
@@ -61,7 +62,7 @@ public class Function : FunctionBase
       },
       Context = new()
       {
-        { "scope", scope },
+        { "scope", string.Join(" ", scope) },
         { "sub", sub },
       },
     };
