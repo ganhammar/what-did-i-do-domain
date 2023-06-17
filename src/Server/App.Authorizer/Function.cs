@@ -40,9 +40,10 @@ public class Function : FunctionBase
       throw new Exception("Unauthorized");
     }
 
-    var scopes = string.Join(' ', result.Claims
-      .Where(x => x.Key == "scopes" && x.Value != default)
-      .SelectMany(x => (List<object>)x.Value));
+    var scopes = result.Claims
+      .Where(x => x.Key == "scope")
+      .Select(x => x.Value)
+      .FirstOrDefault();
 
     return new()
     {
