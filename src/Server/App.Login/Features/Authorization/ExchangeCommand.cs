@@ -166,7 +166,8 @@ public class ExchangeCommand
       identity.SetClaim(Claims.Subject, await _userManager.GetUserIdAsync(user))
         .SetClaim(Claims.Email, await _userManager.GetEmailAsync(user))
         .SetClaim(Claims.Name, await _userManager.GetUserNameAsync(user))
-        .SetClaims(Claims.Role, (await _userManager.GetRolesAsync(user)).ToImmutableArray());
+        .SetClaims(Claims.Role, (await _userManager.GetRolesAsync(user)).ToImmutableArray())
+        .SetClaims(Claims.Scope, identity.GetClaims("oi_scp"));
 
       identity.SetDestinations(GetDestinations);
 

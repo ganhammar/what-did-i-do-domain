@@ -52,13 +52,6 @@ public static class ServiceCollectionExtensions
       })
       .AddServer(builder =>
       {
-        builder.AddEventHandler<OpenIddictServerEvents.GenerateTokenContext>(eventsBuilder =>
-        {
-          eventsBuilder.UseSingletonHandler<ScopeEventHandler>();
-          // Ensure that handler is executed before internal handlers
-          eventsBuilder.SetOrder(int.MinValue);
-        });
-
         builder
           .SetAuthorizationEndpointUris($"{Constants.BasePath}/connect/authorize")
           .SetLogoutEndpointUris($"{Constants.BasePath}/connect/logout")
@@ -73,6 +66,9 @@ public static class ServiceCollectionExtensions
         builder.AllowRefreshTokenFlow();
         builder.AllowClientCredentialsFlow();
         builder.AllowAuthorizationCodeFlow();
+
+        builder.UseReferenceAccessTokens();
+        builder.UseReferenceRefreshTokens();
 
         builder.RegisterScopes(Scopes.Email, Scopes.Profile, Scopes.Roles);
 
