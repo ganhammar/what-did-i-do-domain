@@ -36,7 +36,7 @@ public class Function : FunctionBase
     var result = await ValidateTokenAsync(
       options.CurrentValue.Issuer, options.CurrentValue.Audiences, token);
 
-    if (result == default)
+    if (result == default || result.IsValid == false)
     {
       throw new Exception("Unauthorized");
     }
