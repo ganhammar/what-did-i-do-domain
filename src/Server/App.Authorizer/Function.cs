@@ -40,10 +40,8 @@ public class Function : FunctionBase
       throw new Exception("Unauthorized");
     }
 
-    var scopes = result.Claims
-      .Where(x => x.Key == "scope")
-      .Select(x => x.Value)
-      .FirstOrDefault();
+    result.Claims.TryGetValue("scope", out var scope);
+    result.Claims.TryGetValue("sub", out var sub);
 
     return new()
     {
@@ -63,7 +61,8 @@ public class Function : FunctionBase
       },
       Context = new()
       {
-        { "Scopes", scopes },
+        { "scope", scope },
+        { "sub", sub },
       },
     };
   }
