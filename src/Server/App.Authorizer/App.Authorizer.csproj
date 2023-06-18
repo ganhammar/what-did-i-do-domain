@@ -31,10 +31,4 @@
       Include="..\..\Server\Shared\Shared.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Content Include="..\..\Server\Shared\appsettings*.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
-
 </Project>
