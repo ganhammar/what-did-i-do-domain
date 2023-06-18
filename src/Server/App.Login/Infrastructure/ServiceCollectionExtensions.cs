@@ -67,9 +67,6 @@ public static class ServiceCollectionExtensions
         builder.AllowClientCredentialsFlow();
         builder.AllowAuthorizationCodeFlow();
 
-        builder.UseReferenceAccessTokens();
-        builder.UseReferenceRefreshTokens();
-
         builder.RegisterScopes(Scopes.Email, Scopes.Profile, Scopes.Roles);
 
         builder.SetAccessTokenLifetime(TimeSpan.FromMinutes(30));
