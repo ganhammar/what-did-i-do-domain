@@ -172,6 +172,7 @@ jobs:
         working-directory: ./src/Server/Helpers/App.Login.EnsureInitialized
         env:
           ASPNETCORE_ENVIRONMENT: ci
+          ClientOptions__Clients__0__Secret: ${{ secrets.CLIENT_AUTHORIZER_SECRET }}
 
       - name: Install node
         uses: actions/setup-node@v3

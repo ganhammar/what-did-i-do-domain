@@ -1,6 +1,8 @@
-﻿namespace App.Login.EnsureInitialized;
+﻿using OpenIddict.Abstractions;
+
+namespace App.Login.EnsureInitialized;
 
 public class ClientOptions
 {
-  public List<Client>? Clients { get; set; }
+  public List<OpenIddictApplicationDescriptor>? Clients { get; set; }
 }
