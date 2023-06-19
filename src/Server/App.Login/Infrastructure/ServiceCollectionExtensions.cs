@@ -5,7 +5,6 @@ using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using OpenIddict.Abstractions;
-using OpenIddict.Server;
 using static OpenIddict.Abstractions.OpenIddictConstants;
 using static OpenIddict.Server.OpenIddictServerEvents;
 
@@ -62,6 +61,8 @@ public static class ServiceCollectionExtensions
             return default;
           });
         });
+
+        builder.AcceptAnonymousClients();
 
         builder
           .SetAuthorizationEndpointUris($"{Constants.BasePath}/connect/authorize")
