@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Identity;
 using OpenIddict.Abstractions;
 using OpenIddict.Server;
 using static OpenIddict.Abstractions.OpenIddictConstants;
+using static OpenIddict.Server.OpenIddictServerEvents;
 
 namespace App.Login.Infrastructure;
 
@@ -52,10 +53,19 @@ public static class ServiceCollectionExtensions
       })
       .AddServer(builder =>
       {
+        builder.AddEventHandler<HandleIntrospectionRequestContext>(builder =>
+        {
+          builder.UseInlineHandler(context =>
+          {
+            context.Claims[Claims.Scope] = context.Principal.GetClaim(Claims.Scope);
+
+            return default;
+          });
+        });
+
         builder
           .SetAuthorizationEndpointUris($"{Constants.BasePath}/connect/authorize")
           .SetLogoutEndpointUris($"{Constants.BasePath}/connect/logout")
-          .SetIntrospectionEndpointUris($"{Constants.BasePath}/connect/introspect")
           .SetUserinfoEndpointUris($"{Constants.BasePath}/connect/userinfo")
           .SetTokenEndpointUris($"{Constants.BasePath}/connect/token")
           .SetIntrospectionEndpointUris($"{Constants.BasePath}/connect/introspect")
