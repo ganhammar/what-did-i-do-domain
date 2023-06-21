@@ -1,15 +1,10 @@
-﻿using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using Amazon.Lambda.APIGatewayEvents;
+﻿using Amazon.Lambda.APIGatewayEvents;
 using Amazon.Lambda.Core;
 using Amazon.Lambda.Serialization.SystemTextJson;
 using App.Api.Shared.Infrastructure;
 using AWS.Lambda.Powertools.Logging;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Protocols;
-using Microsoft.IdentityModel.Protocols.OpenIdConnect;
-using Microsoft.IdentityModel.Tokens;
 
 [assembly: LambdaSerializer(typeof(CamelCaseLambdaJsonSerializer))]
 
@@ -20,6 +15,8 @@ public class Function : FunctionBase
   protected override void ConfigureServices(IServiceCollection services)
   {
     services.Configure<AuthorizationOptions>(Configuration.GetSection(nameof(AuthorizationOptions)));
+    services.AddMemoryCache();
+    services.AddHttpClient<TokenClient>();
   }
 
   [Logging(LogEvent = true)]
@@ -33,16 +30,14 @@ public class Function : FunctionBase
     headers.TryGetValue("authorization", out var token);
 
     var options = ServiceProvider.GetRequiredService<IOptionsMonitor<AuthorizationOptions>>();
-    var result = await ValidateTokenAsync(
-      options.CurrentValue.Issuer, options.CurrentValue.Audiences, token);
+    var tokenClient = ServiceProvider.GetRequiredService<TokenClient>();
 
-    if (result == default || result.IsValid == false)
+    if (token == default)
     {
       throw new Exception("Unauthorized");
     }
 
-    result.Claims.TryGetValue("scope", out var scope);
-    result.Claims.TryGetValue(ClaimTypes.NameIdentifier, out var sub);
+    var result = await tokenClient.Validate(options.CurrentValue, token);
 
     return new()
     {
@@ -62,48 +57,9 @@ public class Function : FunctionBase
       },
       Context = new()
       {
-        { "scope", string.Join(" ", scope) },
-        { "sub", sub },
+        { "scope", result.Scope },
+        { "sub", result.Subject },
       },
     };
-  }
-
-  private async Task<TokenValidationResult?> ValidateTokenAsync(string? issuer, List<string>? audiences, string? token)
-  {
-    if (string.IsNullOrEmpty(token))
-    {
-      Logger.LogInformation("Token is not set, validation failed");
-      return default;
-    }
-
-    ArgumentNullException.ThrowIfNull(issuer);
-
-    var configurationManager = new ConfigurationManager<OpenIdConnectConfiguration>(
-      $"{issuer}/.well-known/openid-configuration", new OpenIdConnectConfigurationRetriever());
-
-    var config = await configurationManager.GetConfigurationAsync();
-
-    token = token?.Replace("Bearer ", "");
-    var validIssuer = $"{new Uri(issuer).GetLeftPart(UriPartial.Authority)}/";
-
-    var tokenHandler = new JwtSecurityTokenHandler();
-    var result = await tokenHandler.ValidateTokenAsync(token, new()
-    {
-      ValidateIssuerSigningKey = true,
-      IssuerSigningKeys = config.SigningKeys,
-      ValidIssuer = validIssuer,
-      ValidAudiences = audiences,
-    });
-
-    if (result.IsValid)
-    {
-      Logger.LogInformation("Token successfully validated");
-    }
-    else
-    {
-      Logger.LogWarning(result.Exception, $"Could not validate token for issuer {issuer}");
-    }
-
-    return result;
   }
 }
