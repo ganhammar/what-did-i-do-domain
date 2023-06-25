@@ -16,7 +16,7 @@ public class Function : FunctionBase
   {
     services.Configure<AuthorizationOptions>(Configuration.GetSection(nameof(AuthorizationOptions)));
     services.AddMemoryCache();
-    services.AddHttpClient<TokenClient>();
+    services.AddHttpClient<ITokenClient, TokenClient>();
   }
 
   [Logging(LogEvent = true)]
@@ -30,14 +30,19 @@ public class Function : FunctionBase
     headers.TryGetValue("authorization", out var token);
 
     var options = ServiceProvider.GetRequiredService<IOptionsMonitor<AuthorizationOptions>>();
-    var tokenClient = ServiceProvider.GetRequiredService<TokenClient>();
+    var tokenClient = ServiceProvider.GetRequiredService<ITokenClient>();
 
     if (token == default)
     {
-      throw new Exception("Unauthorized");
+      throw new UnauthorizedAccessException("Unauthorized");
     }
 
     var result = await tokenClient.Validate(options.CurrentValue, token);
+
+    if (result.Active == false)
+    {
+      throw new UnauthorizedAccessException("Unauthorized");
+    }
 
     return new()
     {

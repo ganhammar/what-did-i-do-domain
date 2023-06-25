@@ -58,7 +58,7 @@ public abstract class FunctionBase
     return services.BuildServiceProvider();
   }
 
-  public T? TryDeserialize<T>(APIGatewayProxyRequest apiGatewayProxyRequest)
+  protected T? TryDeserialize<T>(APIGatewayProxyRequest apiGatewayProxyRequest)
   {
     if (string.IsNullOrEmpty(apiGatewayProxyRequest.Body))
     {
@@ -73,7 +73,7 @@ public abstract class FunctionBase
       });
   }
 
-  public async Task<APIGatewayHttpApiV2ProxyResponse> Respond<T>(IRequest<IResponse<T>>? request)
+  protected async Task<APIGatewayHttpApiV2ProxyResponse> Respond<T>(IRequest<IResponse<T>>? request)
   {
     if (request == default)
     {
@@ -96,7 +96,7 @@ public abstract class FunctionBase
     return HandleErrorResponse(response);
   }
 
-  public async Task<APIGatewayHttpApiV2ProxyResponse> Respond(IRequest<IResponse>? request)
+  protected async Task<APIGatewayHttpApiV2ProxyResponse> Respond(IRequest<IResponse>? request)
   {
     if (request == default)
     {
@@ -117,13 +117,13 @@ public abstract class FunctionBase
     return HandleErrorResponse(response);
   }
 
-  public void AppendLookup(APIGatewayProxyRequest apiGatewayProxyRequest)
+  protected void AppendLookup(APIGatewayProxyRequest apiGatewayProxyRequest)
   {
     var requestContextRequestId = apiGatewayProxyRequest.RequestContext.RequestId;
     AppendLookup(requestContextRequestId);
   }
 
-  public void AppendLookup(string lookupId)
+  protected void AppendLookup(string lookupId)
   {
     var lookupInfo = new Dictionary<string, object>()
     {

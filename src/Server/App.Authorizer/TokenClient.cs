@@ -6,7 +6,7 @@ using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 
 namespace App.Authorizer;
 
-public class TokenClient
+public class TokenClient : ITokenClient
 {
   private readonly HttpClient _httpClient;
   private readonly IMemoryCache _memoryCache;
@@ -21,10 +21,10 @@ public class TokenClient
 
   public async Task<IntrospectionResult> Validate(AuthorizationOptions authorizationOptions, string token)
   {
-    ArgumentNullException.ThrowIfNull(authorizationOptions.Issuer);
+    ArgumentNullException.ThrowIfNull(authorizationOptions.Issuer, nameof(AuthorizationOptions.Issuer));
 
     var configurationManager = new ConfigurationManager<OpenIdConnectConfiguration>(
-      $"{authorizationOptions.Issuer}/.well-known/openid-configuration", new OpenIdConnectConfigurationRetriever());
+      $"{authorizationOptions.Issuer}/.well-known/openid-configuration", new OpenIdConnectConfigurationRetriever(), _httpClient);
 
     var config = await configurationManager.GetConfigurationAsync();
 
@@ -42,7 +42,7 @@ public class TokenClient
       var contentStream = await response.Content.ReadAsStreamAsync();
       var introspectionResult = await JsonSerializer.DeserializeAsync<IntrospectionResult>(contentStream);
 
-      ArgumentNullException.ThrowIfNull(authorizationOptions.Audiences);
+      ArgumentNullException.ThrowIfNull(authorizationOptions.Audiences, nameof(AuthorizationOptions.Audiences));
 
       if (introspectionResult?.Active == true && introspectionResult?.TokenUsage == "access_token"
         && introspectionResult?.Audience != default && authorizationOptions.Audiences.Contains(introspectionResult?.Audience!))
@@ -54,7 +54,7 @@ public class TokenClient
       Logger.LogInformation($"Token could not be validated, result: {JsonSerializer.Serialize(introspectionResult)}");
     }
 
-    throw new Exception("Unauthorized");
+    throw new UnauthorizedAccessException("Unauthorized");
   }
 
   private async Task<string> GetTokenForIntrospection(AuthorizationOptions authorizationOptions, string uri)
@@ -66,8 +66,8 @@ public class TokenClient
     }
 
     Logger.LogInformation("Internal token not found in cache, requesting");
-    ArgumentNullException.ThrowIfNull(authorizationOptions.ClientId);
-    ArgumentNullException.ThrowIfNull(authorizationOptions.ClientSecret);
+    ArgumentNullException.ThrowIfNull(authorizationOptions.ClientId, nameof(AuthorizationOptions.ClientId));
+    ArgumentNullException.ThrowIfNull(authorizationOptions.ClientSecret, nameof(AuthorizationOptions.ClientSecret));
 
     var form = new FormUrlEncodedContent(new[]
     {
@@ -80,18 +80,16 @@ public class TokenClient
 
     if (response.IsSuccessStatusCode)
     {
+      var content = await response.Content.ReadAsStringAsync();
       var contentStream = await response.Content.ReadAsStreamAsync();
       var tokenResult = await JsonSerializer.DeserializeAsync<TokenResult>(contentStream);
 
-      if (tokenResult?.AccessToken != default)
-      {
-        var expiresAt = DateTimeOffset.UtcNow.AddSeconds(Convert.ToDouble(tokenResult.ExpiresIn - 60));
-        _memoryCache.Set(_cacheKey, tokenResult.AccessToken, expiresAt);
+      var expiresAt = DateTimeOffset.UtcNow.AddSeconds(Convert.ToDouble(tokenResult!.ExpiresIn - 60));
+      _memoryCache.Set(_cacheKey, tokenResult.AccessToken, expiresAt);
 
-        Logger.LogInformation($"Internal token fetched, cached until {expiresAt}");
+      Logger.LogInformation($"Internal token fetched, cached until {expiresAt}");
 
-        return tokenResult.AccessToken;
-      }
+      return tokenResult!.AccessToken!;
     }
 
     throw new Exception("Could not get token for introspection");
