@@ -1,5 +1,6 @@
 ﻿using Amazon.CDK;
 using Amazon.CDK.AWS.Lambda;
+using Amazon.CDK.AWS.Logs;
 using Constructs;
 
 namespace AppStack.Constructs;
@@ -15,6 +16,7 @@ public class AppFunction : Function
       Code = Code.FromAsset($"./{id}.zip"),
       Timeout = Duration.Minutes(1),
       MemorySize = props.MemorySize,
+      LogRetention = RetentionDays.ONE_DAY,
       Environment = new Dictionary<string, string>
       {
         { "TABLE_NAME", props.TableName ?? "" },
