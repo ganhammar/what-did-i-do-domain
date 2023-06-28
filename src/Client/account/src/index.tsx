@@ -4,7 +4,7 @@ import { App } from './App';
 import { reportWebVitals } from '@wdid/shared';
 import { userManager } from '@wdid/shared/src/components/Auth/userManager';
 
-if (window.location.pathname === '/login/silent-renew') {
+if (window.location.pathname.replace(`/account`, '') === '/login/silent-renew') {
   userManager.signinSilentCallback();
 } else {
   const root = ReactDOM.createRoot(
