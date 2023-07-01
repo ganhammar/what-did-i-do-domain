@@ -20,6 +20,8 @@ public class Function : APIGatewayProxyRequestBase
     services.AddTransient<IResponse<AccountDto>, Response<AccountDto>>();
     services.AddTransient<IRequestHandler<CreateAccountCommand.Command, IResponse<AccountDto>>, CreateAccountCommand.CommandHandler>();
     services.AddTransient<IValidator<CreateAccountCommand.Command>, CreateAccountCommand.CommandValidator>();
+
+    this.RequiredScopes.Add("account");
   }
 
   protected override async Task<APIGatewayHttpApiV2ProxyResponse> Handler(
