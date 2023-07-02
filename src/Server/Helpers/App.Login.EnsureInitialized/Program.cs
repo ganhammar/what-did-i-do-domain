@@ -105,6 +105,22 @@ if (exists == false)
       new("PartitionKey", ScalarAttributeType.S),
       new("SortKey", ScalarAttributeType.S),
     },
+    GlobalSecondaryIndexes = new()
+    {
+      new()
+      {
+        IndexName = "Subject-index",
+        KeySchema = new List<KeySchemaElement>
+        {
+          new KeySchemaElement("Subject", KeyType.HASH),
+          new KeySchemaElement("PartitionKey", KeyType.RANGE),
+        },
+        Projection = new Projection
+        {
+          ProjectionType = ProjectionType.ALL,
+        },
+      },
+    },
   }).GetAwaiter().GetResult();
 }
 
