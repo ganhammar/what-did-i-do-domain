@@ -57,6 +57,7 @@ public static class ServiceCollectionExtensions
           builder.UseInlineHandler(context =>
           {
             context.Claims[Claims.Scope] = context.Principal.GetClaim(Claims.Scope);
+            context.Claims[Claims.Email] = context.Principal.GetClaim(Claims.Email);
 
             return default;
           });
