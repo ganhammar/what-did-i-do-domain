@@ -64,6 +64,7 @@ public class Function : FunctionBase
       {
         { "scope", result.Scope },
         { "sub", result.Subject },
+        { "email", result.Email },
       },
     };
   }

@@ -88,6 +88,7 @@ public class FunctionTests
             Scope = "test",
             Audience = "test",
             Subject = "123",
+            Email = "test@wdid.fyi",
             TokenUsage = "access_token",
           }));
         services.AddSingleton<ITokenClient>(mockedTokenClient.Object);
