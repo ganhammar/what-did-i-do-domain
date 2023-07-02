@@ -107,9 +107,14 @@ public class FunctionTests
   {
     var function = new Function();
     var context = new TestLambdaContext();
+    var data = new CreateAccountCommand.Command
+    {
+      Name = "Testing Testing",
+    };
     var request = new APIGatewayProxyRequest
     {
       HttpMethod = HttpMethod.Post.Method,
+      Body = JsonSerializer.Serialize(data),
       RequestContext = new APIGatewayProxyRequest.ProxyRequestContext
       {
         RequestId = Guid.NewGuid().ToString(),
@@ -118,7 +123,7 @@ public class FunctionTests
     };
     var response = await function.FunctionHandler(request, context);
 
-    Assert.Equal((int)HttpStatusCode.Unauthorized, response.StatusCode);
+    Assert.Equal((int)HttpStatusCode.BadRequest, response.StatusCode);
 
     var errors = JsonSerializer.Deserialize<List<ValidationFailure>>(response.Body);
 
@@ -131,9 +136,14 @@ public class FunctionTests
   {
     var function = new Function();
     var context = new TestLambdaContext();
+    var data = new CreateAccountCommand.Command
+    {
+      Name = "Testing Testing",
+    };
     var request = new APIGatewayProxyRequest
     {
       HttpMethod = HttpMethod.Post.Method,
+      Body = JsonSerializer.Serialize(data),
       RequestContext = new APIGatewayProxyRequest.ProxyRequestContext
       {
         RequestId = Guid.NewGuid().ToString(),
@@ -145,7 +155,7 @@ public class FunctionTests
     };
     var response = await function.FunctionHandler(request, context);
 
-    Assert.Equal((int)HttpStatusCode.Unauthorized, response.StatusCode);
+    Assert.Equal((int)HttpStatusCode.BadRequest, response.StatusCode);
 
     var errors = JsonSerializer.Deserialize<List<ValidationFailure>>(response.Body);
 
