@@ -1,9 +1,6 @@
-﻿using System.Net;
-using System.Text.Json;
-using Amazon.Lambda.APIGatewayEvents;
+﻿using Amazon.Lambda.APIGatewayEvents;
 using Amazon.Lambda.Core;
 using AWS.Lambda.Powertools.Logging;
-using FluentValidation.Results;
 
 namespace App.Api.Shared.Infrastructure;
 

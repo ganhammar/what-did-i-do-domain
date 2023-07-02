@@ -104,6 +104,7 @@ if (exists == false)
     {
       new("PartitionKey", ScalarAttributeType.S),
       new("SortKey", ScalarAttributeType.S),
+      new("Subject", ScalarAttributeType.S),
     },
     GlobalSecondaryIndexes = new()
     {

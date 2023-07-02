@@ -14,4 +14,6 @@ public class IntrospectionResult
   public string? Subject { get; set; }
   [JsonPropertyName("scope")]
   public string? Scope { get; set; }
+  [JsonPropertyName("email")]
+  public string? Email { get; set; }
 }

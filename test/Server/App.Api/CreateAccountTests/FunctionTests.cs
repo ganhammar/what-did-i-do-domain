@@ -31,6 +31,8 @@ public class FunctionTests
         Authorizer = new()
         {
           { "scope", "email test account" },
+          { "sub", Guid.NewGuid() },
+          { "email", "test@wdid.fyi" },
         },
       },
     };
@@ -61,6 +63,8 @@ public class FunctionTests
         Authorizer = new()
         {
           { "scope", "email test account" },
+          { "sub", Guid.NewGuid() },
+          { "email", "test@wdid.fyi" },
         },
       },
     };
@@ -89,6 +93,8 @@ public class FunctionTests
         Authorizer = new()
         {
           { "scope", "email test account" },
+          { "sub", Guid.NewGuid() },
+          { "email", "test@wdid.fyi" },
         },
       },
     };
@@ -118,7 +124,11 @@ public class FunctionTests
       RequestContext = new APIGatewayProxyRequest.ProxyRequestContext
       {
         RequestId = Guid.NewGuid().ToString(),
-        Authorizer = new(),
+        Authorizer = new()
+        {
+          { "sub", Guid.NewGuid() },
+          { "email", "test@wdid.fyi" },
+        },
       },
     };
     var response = await function.FunctionHandler(request, context);
@@ -150,6 +160,8 @@ public class FunctionTests
         Authorizer = new()
         {
           { "scope", "email test event" },
+          { "sub", Guid.NewGuid() },
+          { "email", "test@wdid.fyi" },
         },
       },
     };
@@ -161,5 +173,63 @@ public class FunctionTests
 
     Assert.NotNull(errors);
     Assert.Contains(errors, error => error.ErrorCode == "UnauthorizedRequest");
+  }
+
+  [Fact]
+  public async Task Should_Throw_When_SubIsMissingInAuthorizerContext()
+  {
+    var function = new Function();
+    var context = new TestLambdaContext();
+    var data = new CreateAccountCommand.Command
+    {
+      Name = "Testing Testing",
+    };
+    var request = new APIGatewayProxyRequest
+    {
+      HttpMethod = HttpMethod.Post.Method,
+      Body = JsonSerializer.Serialize(data),
+      RequestContext = new APIGatewayProxyRequest.ProxyRequestContext
+      {
+        RequestId = Guid.NewGuid().ToString(),
+        Authorizer = new()
+        {
+          { "scope", "email test account" },
+          { "email", "test@wdid.fyi" },
+        },
+      },
+    };
+
+    var response = await Assert.ThrowsAsync<ArgumentNullException>(async () => await function.FunctionHandler(request, context));
+
+    Assert.Equal("Subject", response.ParamName);
+  }
+
+  [Fact]
+  public async Task Should_Throw_When_EmailIsMissingInAuthorizerContext()
+  {
+    var function = new Function();
+    var context = new TestLambdaContext();
+    var data = new CreateAccountCommand.Command
+    {
+      Name = "Testing Testing",
+    };
+    var request = new APIGatewayProxyRequest
+    {
+      HttpMethod = HttpMethod.Post.Method,
+      Body = JsonSerializer.Serialize(data),
+      RequestContext = new APIGatewayProxyRequest.ProxyRequestContext
+      {
+        RequestId = Guid.NewGuid().ToString(),
+        Authorizer = new()
+        {
+          { "scope", "email test account" },
+          { "sub", Guid.NewGuid() },
+        },
+      },
+    };
+
+    var response = await Assert.ThrowsAsync<ArgumentNullException>(async () => await function.FunctionHandler(request, context));
+
+    Assert.Equal("Email", response.ParamName);
   }
 }
