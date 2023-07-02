@@ -1,5 +1,4 @@
-﻿using System.Globalization;
-using Amazon.DynamoDBv2.DataModel;
+﻿using Amazon.DynamoDBv2.DataModel;
 using Amazon.DynamoDBv2.DocumentModel;
 using App.Api.Shared.Extensions;
 
@@ -17,7 +16,7 @@ public static class AccountMapper
   public static Account FromDto(AccountDto instance) => new()
   {
     PartitionKey = GetAccountId(instance.Id!),
-    SortKey = instance.CreateDate.ToString("o", CultureInfo.InvariantCulture),
+    SortKey = GetSortKey(instance),
     CreateDate = instance.CreateDate,
     Name = instance.Name,
   };
@@ -27,6 +26,8 @@ public static class AccountMapper
 
   public static string GetAccountId(string id)
     => $"ACCOUNT#{id}";
+
+  public static string GetSortKey(AccountDto instance) => "#";
 
   public static async Task<string> GetUniqueId(string name, DynamoDBContext context, CancellationToken cancellationToken)
   {

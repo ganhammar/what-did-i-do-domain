@@ -9,18 +9,18 @@ using MediatR;
 
 namespace App.Api.ListEvents;
 
-public class ListEventsCommand
+public class ListEventsQuery
 {
-  public class Command : IRequest<IResponse<List<EventDto>>>
+  public class Query : IRequest<IResponse<List<EventDto>>>
   {
     public string? AccountId { get; set; }
     public DateTime? FromDate { get; set; }
     public DateTime? ToDate { get; set; }
   }
 
-  public class CommandValidator : AbstractValidator<Command>
+  public class QueryValidator : AbstractValidator<Query>
   {
-    public CommandValidator()
+    public QueryValidator()
     {
       RuleFor(x => x.AccountId)
         .NotEmpty();
@@ -40,16 +40,16 @@ public class ListEventsCommand
     }
   }
 
-  public class CommandHandler : Handler<Command, IResponse<List<EventDto>>>
+  public class QueryHandler : Handler<Query, IResponse<List<EventDto>>>
   {
     private readonly DynamoDBContext _client;
 
-    public CommandHandler(IAmazonDynamoDB database)
+    public QueryHandler(IAmazonDynamoDB database)
     {
       _client = new DynamoDBContext(database);
     }
 
-    public override async Task<IResponse<List<EventDto>>> Handle(Command request, CancellationToken cancellationToken)
+    public override async Task<IResponse<List<EventDto>>> Handle(Query request, CancellationToken cancellationToken)
     {
       var fromDate = request.FromDate.HasValue
         ? request.FromDate.Value : DateTime.UtcNow.Date;

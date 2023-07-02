@@ -19,8 +19,8 @@ public class Function : APIGatewayProxyRequestBase
   {
     services.AddMediatR(Assembly.GetCallingAssembly());
     services.AddTransient<IResponse<List<EventDto>>, Response<List<EventDto>>>();
-    services.AddTransient<IRequestHandler<ListEventsCommand.Command, IResponse<List<EventDto>>>, ListEventsCommand.CommandHandler>();
-    services.AddTransient<IValidator<ListEventsCommand.Command>, ListEventsCommand.CommandValidator>();
+    services.AddTransient<IRequestHandler<ListEventsQuery.Query, IResponse<List<EventDto>>>, ListEventsQuery.QueryHandler>();
+    services.AddTransient<IValidator<ListEventsQuery.Query>, ListEventsQuery.QueryValidator>();
   }
 
   protected override async Task<APIGatewayHttpApiV2ProxyResponse> Handler(
@@ -37,7 +37,7 @@ public class Function : APIGatewayProxyRequestBase
     var fromDate = TryParseDateTime(fromDateRaw);
     var toDate = TryParseDateTime(toDateRaw);
 
-    return await Respond(new ListEventsCommand.Command
+    return await Respond(new ListEventsQuery.Query
     {
       AccountId = accountId,
       FromDate = fromDate,

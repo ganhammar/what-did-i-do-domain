@@ -185,9 +185,20 @@ public class AppStack : Stack
       "CreateAccount::App.Api.CreateAccount.Function::FunctionHandler",
       tableName
     ));
-
     applicationTable.GrantReadWriteData(createAccountFunction);
     accountResource.AddMethod("POST", new LambdaIntegration(createAccountFunction), new MethodOptions
+    {
+      AuthorizationType = AuthorizationType.CUSTOM,
+      Authorizer = authorizer,
+    });
+
+    // List
+    var listAccountsFunction = new AppFunction(this, "ListAccounts", new AppFunction.Props(
+      "CreateAccount::App.Api.CreateAccount.Function::FunctionHandler",
+      tableName
+    ));
+    applicationTable.GrantReadWriteData(listAccountsFunction);
+    accountResource.AddMethod("GET", new LambdaIntegration(listAccountsFunction), new MethodOptions
     {
       AuthorizationType = AuthorizationType.CUSTOM,
       Authorizer = authorizer,

@@ -106,7 +106,7 @@ public class FunctionTests
     var errors = JsonSerializer.Deserialize<List<ValidationFailure>>(response.Body);
 
     Assert.NotNull(errors);
-    Assert.Contains(errors, error => error.PropertyName == nameof(ListEventsCommand.Command.AccountId)
+    Assert.Contains(errors, error => error.PropertyName == nameof(ListEventsQuery.Query.AccountId)
       && error.ErrorCode == "NotEmptyValidator");
   }
 
@@ -136,7 +136,7 @@ public class FunctionTests
     var errors = JsonSerializer.Deserialize<List<ValidationFailure>>(response.Body);
 
     Assert.NotNull(errors);
-    Assert.Contains(errors, error => error.PropertyName == nameof(ListEventsCommand.Command.ToDate)
+    Assert.Contains(errors, error => error.PropertyName == nameof(ListEventsQuery.Query.ToDate)
       && error.ErrorCode == "NotEmptyValidator");
   }
 
@@ -166,7 +166,7 @@ public class FunctionTests
     var errors = JsonSerializer.Deserialize<List<ValidationFailure>>(response.Body);
 
     Assert.NotNull(errors);
-    Assert.Contains(errors, error => error.PropertyName == nameof(ListEventsCommand.Command.FromDate)
+    Assert.Contains(errors, error => error.PropertyName == nameof(ListEventsQuery.Query.FromDate)
       && error.ErrorCode == "NotEmptyValidator");
   }
 
@@ -197,7 +197,7 @@ public class FunctionTests
     var errors = JsonSerializer.Deserialize<List<ValidationFailure>>(response.Body);
 
     Assert.NotNull(errors);
-    Assert.Contains(errors, error => error.PropertyName == nameof(ListEventsCommand.Command.FromDate)
+    Assert.Contains(errors, error => error.PropertyName == nameof(ListEventsQuery.Query.FromDate)
       && error.ErrorCode == "LessThanValidator");
   }
 }

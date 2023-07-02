@@ -199,7 +199,8 @@ public class FunctionTests
       },
     };
 
-    var response = await Assert.ThrowsAsync<ArgumentNullException>(async () => await function.FunctionHandler(request, context));
+    var response = await Assert.ThrowsAsync<ArgumentNullException>(async () =>
+      await function.FunctionHandler(request, context));
 
     Assert.Equal("Subject", response.ParamName);
   }

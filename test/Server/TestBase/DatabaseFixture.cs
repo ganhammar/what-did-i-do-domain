@@ -30,30 +30,31 @@ public class DatabaseFixture : IDisposable
     {
       TableName = _tableName,
       BillingMode = BillingMode.PAY_PER_REQUEST,
-      KeySchema = new List<KeySchemaElement>
+      KeySchema = new()
       {
-        new KeySchemaElement
-        {
-          AttributeName = "PartitionKey",
-          KeyType = KeyType.HASH,
-        },
-        new KeySchemaElement
-        {
-          AttributeName = "SortKey",
-          KeyType = KeyType.RANGE,
-        },
+        new("PartitionKey", KeyType.HASH),
+        new("SortKey", KeyType.RANGE),
       },
-      AttributeDefinitions = new List<AttributeDefinition>
+      AttributeDefinitions = new()
       {
-        new AttributeDefinition
+        new("PartitionKey", ScalarAttributeType.S),
+        new("SortKey", ScalarAttributeType.S),
+        new("Subject", ScalarAttributeType.S),
+      },
+      GlobalSecondaryIndexes = new()
+      {
+        new()
         {
-          AttributeName = "PartitionKey",
-          AttributeType = ScalarAttributeType.S,
-        },
-        new AttributeDefinition
-        {
-          AttributeName = "SortKey",
-          AttributeType = ScalarAttributeType.S,
+          IndexName = "Subject-index",
+          KeySchema = new List<KeySchemaElement>
+          {
+            new KeySchemaElement("Subject", KeyType.HASH),
+            new KeySchemaElement("PartitionKey", KeyType.RANGE),
+          },
+          Projection = new Projection
+          {
+            ProjectionType = ProjectionType.ALL,
+          },
         },
       },
     });

@@ -95,12 +95,12 @@ if (exists == false)
   {
     BillingMode = BillingMode.PAY_PER_REQUEST,
     TableName = tableName,
-    KeySchema = new List<KeySchemaElement>
+    KeySchema = new()
     {
       new("PartitionKey", KeyType.HASH),
       new("SortKey", KeyType.RANGE),
     },
-    AttributeDefinitions = new List<AttributeDefinition>
+    AttributeDefinitions = new()
     {
       new("PartitionKey", ScalarAttributeType.S),
       new("SortKey", ScalarAttributeType.S),
