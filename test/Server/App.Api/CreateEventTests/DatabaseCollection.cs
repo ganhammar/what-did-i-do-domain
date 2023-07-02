@@ -1,5 +1,4 @@
 ﻿using TestBase;
-using Xunit;
 
 namespace CreateEventTests;
 

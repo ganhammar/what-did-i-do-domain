@@ -1,5 +1,6 @@
 ﻿using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.DataModel;
+using Amazon.DynamoDBv2.DocumentModel;
 using App.Api.Shared.Models;
 
 namespace TestBase.Helpers;
@@ -39,6 +40,37 @@ public static class AccountHelpers
       OverrideTableName = tableName,
     }, CancellationToken.None).GetAwaiter().GetResult();
 
+    while (IsIndexUpdated(client, subject) == false)
+    {
+      Thread.Sleep(1000);
+    }
+
     return item;
+  }
+
+  private static bool IsIndexUpdated(AmazonDynamoDBClient client, string subject)
+  {
+    var context = new DynamoDBContext(client);
+    var config = new DynamoDBOperationConfig
+    {
+      OverrideTableName = Environment.GetEnvironmentVariable("TABLE_NAME"),
+    };
+    var search = context.FromQueryAsync<Member>(new()
+    {
+      IndexName = "Subject-index",
+      KeyExpression = new Expression
+      {
+        ExpressionStatement = "Subject = :subject AND begins_with(PartitionKey, :partitionKey)",
+        ExpressionAttributeValues = new Dictionary<string, DynamoDBEntry>
+        {
+          { ":subject", subject },
+          { ":partitionKey", "MEMBER#" },
+        }
+      },
+    }, config);
+
+    var result = search.GetRemainingAsync().GetAwaiter().GetResult();
+
+    return result.Any();
   }
 }
