@@ -25,6 +25,7 @@
     <FluentValidationVersion>11.4.0</FluentValidationVersion>
     <MediatRVersion>11.1.0</MediatRVersion>
     <MediatRExtensionsMicrosoftDependencyInjectionVersion>11.0.0</MediatRExtensionsMicrosoftDependencyInjectionVersion>
+    <MicrosoftAspNetCoreTestHostVersion>6.0.19</MicrosoftAspNetCoreTestHostVersion>
     <MicrosoftExtensionsConfigurationBinderVersion>7.0.1</MicrosoftExtensionsConfigurationBinderVersion>
     <MicrosoftExtensionsConfigurationEnvironmentVariablesVersion>7.0.0</MicrosoftExtensionsConfigurationEnvironmentVariablesVersion>
     <MicrosoftExtensionsConfigurationFileExtensionsVersion>7.0.0</MicrosoftExtensionsConfigurationFileExtensionsVersion>
