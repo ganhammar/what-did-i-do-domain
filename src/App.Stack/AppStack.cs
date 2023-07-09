@@ -194,7 +194,7 @@ public class AppStack : Stack
 
     // List
     var listAccountsFunction = new AppFunction(this, "ListAccounts", new AppFunction.Props(
-      "CreateAccount::App.Api.CreateAccount.Function::FunctionHandler",
+      "ListAccounts::App.Api.ListAccounts.Function::FunctionHandler",
       tableName
     ));
     applicationTable.GrantReadWriteData(listAccountsFunction);
