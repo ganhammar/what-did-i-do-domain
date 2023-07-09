@@ -94,7 +94,7 @@ public class AppStack : Stack
     var loginFunction = new AppFunction(this, "App.Login", new AppFunction.Props(
       "App.Login::App.Login.LambdaEntryPoint::FunctionHandlerAsync",
       tableName,
-      768
+      2048
     ));
 
     var identityTable = Table.FromTableAttributes(this, "IdentityTable", new TableAttributes

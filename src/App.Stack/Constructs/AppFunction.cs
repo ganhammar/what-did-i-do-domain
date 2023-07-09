@@ -26,7 +26,7 @@ public class AppFunction : Function
 
   public class Props
   {
-    public Props(string handler, string? tableName = default, int memorySize = 256)
+    public Props(string handler, string? tableName = default, int memorySize = 1024)
     {
       Handler = handler;
       TableName = tableName;
