@@ -5,26 +5,26 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <AmazonAspNetCoreDataProtectionSSMVersion>3.1.0</AmazonAspNetCoreDataProtectionSSMVersion>
-    <AmazonCDKLibVersion>2.57.0</AmazonCDKLibVersion>
+    <AmazonAspNetCoreDataProtectionSSMVersion>3.1.1</AmazonAspNetCoreDataProtectionSSMVersion>
+    <AmazonCDKLibVersion>2.87.0</AmazonCDKLibVersion>
     <AmazonLambdaAspNetCoreServerVersion>7.3.0</AmazonLambdaAspNetCoreServerVersion>
     <AmazonLambdaCoreVersion>2.1.0</AmazonLambdaCoreVersion>
-    <AmazonLambdaAPIGatewayEventsVersion>2.5.0</AmazonLambdaAPIGatewayEventsVersion>
-    <AmazonLambdaSerializationSystemTextJsonVersion>2.3.0</AmazonLambdaSerializationSystemTextJsonVersion>
+    <AmazonLambdaAPIGatewayEventsVersion>2.6.0</AmazonLambdaAPIGatewayEventsVersion>
+    <AmazonLambdaSerializationSystemTextJsonVersion>2.3.1</AmazonLambdaSerializationSystemTextJsonVersion>
     <AmazonLambdaTestUtilitiesVersion>2.0.0</AmazonLambdaTestUtilitiesVersion>
     <AspNetCoreIdentityAmazonDynamoDBVersion>1.0.1</AspNetCoreIdentityAmazonDynamoDBVersion>
-    <AWSLambdaPowertoolsLoggingVersion>0.0.2-preview</AWSLambdaPowertoolsLoggingVersion>
-    <AWSSDKDynamoDBv2Version>3.7.101.29</AWSSDKDynamoDBv2Version>
-    <AWSSDKExtensionsNETCoreSetupVersion>3.7.2</AWSSDKExtensionsNETCoreSetupVersion>
-    <AWSSDKSimpleEmailVersion>3.7.100.67</AWSSDKSimpleEmailVersion>
-    <AWSXRayRecorderCoreVersion>2.13.0</AWSXRayRecorderCoreVersion>
-    <AWSXRayRecorderHandlersAwsSdkVersion>2.11.0</AWSXRayRecorderHandlersAwsSdkVersion>
-    <ConstructsVersion>10.1.203</ConstructsVersion>
+    <AWSLambdaPowertoolsLoggingVersion>1.1.1</AWSLambdaPowertoolsLoggingVersion>
+    <AWSSDKDynamoDBv2Version>3.7.105.5</AWSSDKDynamoDBv2Version>
+    <AWSSDKExtensionsNETCoreSetupVersion>3.7.7</AWSSDKExtensionsNETCoreSetupVersion>
+    <AWSSDKSimpleEmailVersion>3.7.100.152</AWSSDKSimpleEmailVersion>
+    <AWSXRayRecorderCoreVersion>2.14.0</AWSXRayRecorderCoreVersion>
+    <AWSXRayRecorderHandlersAwsSdkVersion>2.12.0</AWSXRayRecorderHandlersAwsSdkVersion>
+    <ConstructsVersion>10.2.69</ConstructsVersion>
     <CommunityOpenIddictAmazonDynamoDBVersion>1.0.2</CommunityOpenIddictAmazonDynamoDBVersion>
-    <CoverletMsbuildVersion>3.2.0</CoverletMsbuildVersion>
-    <FluentValidationVersion>11.4.0</FluentValidationVersion>
+    <CoverletMsbuildVersion>6.0.0</CoverletMsbuildVersion>
+    <FluentValidationVersion>11.6.0</FluentValidationVersion>
     <MediatRVersion>11.1.0</MediatRVersion>
-    <MediatRExtensionsMicrosoftDependencyInjectionVersion>11.0.0</MediatRExtensionsMicrosoftDependencyInjectionVersion>
+    <MediatRExtensionsMicrosoftDependencyInjectionVersion>11.1.0</MediatRExtensionsMicrosoftDependencyInjectionVersion>
     <MicrosoftAspNetCoreTestHostVersion>6.0.19</MicrosoftAspNetCoreTestHostVersion>
     <MicrosoftExtensionsConfigurationBinderVersion>7.0.1</MicrosoftExtensionsConfigurationBinderVersion>
     <MicrosoftExtensionsConfigurationEnvironmentVariablesVersion>7.0.0</MicrosoftExtensionsConfigurationEnvironmentVariablesVersion>
@@ -32,18 +32,18 @@
     <MicrosoftExtensionsConfigurationJsonVersion>7.0.0</MicrosoftExtensionsConfigurationJsonVersion>
     <MicrosoftExtensionsDependencyInjectionVersion>7.0.0</MicrosoftExtensionsDependencyInjectionVersion>
     <MicrosoftExtensionsOptionsVersion>7.0.1</MicrosoftExtensionsOptionsVersion>
-    <MicrosoftIdentityModelProtocolsVersion>6.30.0</MicrosoftIdentityModelProtocolsVersion>
-    <MicrosoftIdentityModelProtocolsVersionOpenIdConnect>6.30.0</MicrosoftIdentityModelProtocolsVersionOpenIdConnect>
-    <MicrosoftNETTestSdkVersion>17.4.1</MicrosoftNETTestSdkVersion>
+    <MicrosoftIdentityModelProtocolsVersion>6.31.0</MicrosoftIdentityModelProtocolsVersion>
+    <MicrosoftIdentityModelProtocolsVersionOpenIdConnect>6.31.0</MicrosoftIdentityModelProtocolsVersionOpenIdConnect>
+    <MicrosoftNETTestSdkVersion>17.6.3</MicrosoftNETTestSdkVersion>
     <MoqVersion>4.18.4</MoqVersion>
     <OdeToCodeAddFeatureFoldersVersion>2.0.3</OdeToCodeAddFeatureFoldersVersion>
-    <OpenIddictAspNetCoreVersion>4.0.0</OpenIddictAspNetCoreVersion>
-    <OpenIddictCoreVersion>4.0.0</OpenIddictCoreVersion>
-    <ScrutorVersion>4.2.0</ScrutorVersion>
-    <SystemIdentityModelTokensJwtVersion>6.30.0</SystemIdentityModelTokensJwtVersion>
+    <OpenIddictAspNetCoreVersion>4.5.0</OpenIddictAspNetCoreVersion>
+    <OpenIddictCoreVersion>4.5.0</OpenIddictCoreVersion>
+    <ScrutorVersion>4.2.2</ScrutorVersion>
+    <SystemIdentityModelTokensJwtVersion>6.31.0</SystemIdentityModelTokensJwtVersion>
     <SwashbuckleAspNetCoreVersion>6.5.0</SwashbuckleAspNetCoreVersion>
-    <XunitVersion>2.4.2</XunitVersion>
-    <XunitRunnerVisualstudioVersion>2.4.5</XunitRunnerVisualstudioVersion>
+    <XunitVersion>2.5.0</XunitVersion>
+    <XunitRunnerVisualstudioVersion>2.5.0</XunitRunnerVisualstudioVersion>
   </PropertyGroup>
 
 </Project>
