@@ -70,7 +70,8 @@ public class AppStack : Stack
   }
 
   private Table CreateTable(string tableName)
-    => new Table(this, "ApplicationTable", new TableProps
+  {
+    var table = new Table(this, "ApplicationTable", new TableProps
     {
       TableName = tableName,
       RemovalPolicy = RemovalPolicy.DESTROY, //Delete DynamoDB table on CDK destroy
@@ -87,6 +88,25 @@ public class AppStack : Stack
       PointInTimeRecovery = true,
       BillingMode = BillingMode.PAY_PER_REQUEST,
     });
+
+    table.AddGlobalSecondaryIndex(new GlobalSecondaryIndexProps
+    {
+      IndexName = "Subject-index",
+      PartitionKey = new Amazon.CDK.AWS.DynamoDB.Attribute
+      {
+        Name = "Subject",
+        Type = AttributeType.STRING,
+      },
+      SortKey = new Amazon.CDK.AWS.DynamoDB.Attribute
+      {
+        Name = "PartitionKey",
+        Type = AttributeType.STRING,
+      },
+      ProjectionType = ProjectionType.ALL,
+    });
+
+    return table;
+  }
 
   private void HandleLoginResource(
     Amazon.CDK.AWS.APIGateway.Resource loginResource, string tableName)

@@ -72,59 +72,6 @@ var serviceProvider = services.BuildServiceProvider();
 AspNetCoreIdentityDynamoDbSetup.EnsureInitialized(serviceProvider);
 OpenIddictDynamoDbSetup.EnsureInitialized(serviceProvider);
 
-var tableName = "what-did-i-do";
-var exists = false;
-
-try
-{
-  var tableResponse = client.DescribeTableAsync(tableName).GetAwaiter().GetResult();
-
-  if (tableResponse.Table != default)
-  {
-    exists = true;
-  }
-}
-catch (Exception)
-{
-  Console.WriteLine($"Table \"{tableName}\" does not exists, attempting to create");
-}
-
-if (exists == false)
-{
-  client.CreateTableAsync(new CreateTableRequest
-  {
-    BillingMode = BillingMode.PAY_PER_REQUEST,
-    TableName = tableName,
-    KeySchema = new()
-    {
-      new("PartitionKey", KeyType.HASH),
-      new("SortKey", KeyType.RANGE),
-    },
-    AttributeDefinitions = new()
-    {
-      new("PartitionKey", ScalarAttributeType.S),
-      new("SortKey", ScalarAttributeType.S),
-      new("Subject", ScalarAttributeType.S),
-    },
-    GlobalSecondaryIndexes = new()
-    {
-      new()
-      {
-        IndexName = "Subject-index",
-        KeySchema = new List<KeySchemaElement>
-        {
-          new KeySchemaElement("Subject", KeyType.HASH),
-          new KeySchemaElement("PartitionKey", KeyType.RANGE),
-        },
-        Projection = new Projection
-        {
-          ProjectionType = ProjectionType.ALL,
-        },
-      },
-    },
-  }).GetAwaiter().GetResult();
-}
-
 var tables = client.ListTablesAsync().GetAwaiter().GetResult();
 
 Console.WriteLine("Tables initialized, the following tables exists:");
