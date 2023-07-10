@@ -7,7 +7,7 @@
   <PropertyGroup>
     <AmazonAspNetCoreDataProtectionSSMVersion>3.1.1</AmazonAspNetCoreDataProtectionSSMVersion>
     <AmazonCDKLibVersion>2.87.0</AmazonCDKLibVersion>
-    <AmazonLambdaAspNetCoreServerVersion>7.3.0</AmazonLambdaAspNetCoreServerVersion>
+    <AmazonLambdaAspNetCoreServerVersion>8.1.0</AmazonLambdaAspNetCoreServerVersion>
     <AmazonLambdaCoreVersion>2.1.0</AmazonLambdaCoreVersion>
     <AmazonLambdaAPIGatewayEventsVersion>2.6.0</AmazonLambdaAPIGatewayEventsVersion>
     <AmazonLambdaSerializationSystemTextJsonVersion>2.3.1</AmazonLambdaSerializationSystemTextJsonVersion>
@@ -26,7 +26,7 @@
     <MediatRVersion>11.1.0</MediatRVersion>
     <MediatRExtensionsMicrosoftDependencyInjectionVersion>11.1.0</MediatRExtensionsMicrosoftDependencyInjectionVersion>
     <MicrosoftAspNetCoreTestHostVersion>6.0.19</MicrosoftAspNetCoreTestHostVersion>
-    <MicrosoftExtensionsConfigurationBinderVersion>7.0.1</MicrosoftExtensionsConfigurationBinderVersion>
+    <MicrosoftExtensionsConfigurationBinderVersion>7.0.4</MicrosoftExtensionsConfigurationBinderVersion>
     <MicrosoftExtensionsConfigurationEnvironmentVariablesVersion>7.0.0</MicrosoftExtensionsConfigurationEnvironmentVariablesVersion>
     <MicrosoftExtensionsConfigurationFileExtensionsVersion>7.0.0</MicrosoftExtensionsConfigurationFileExtensionsVersion>
     <MicrosoftExtensionsConfigurationJsonVersion>7.0.0</MicrosoftExtensionsConfigurationJsonVersion>
