@@ -184,6 +184,10 @@ jobs:
 
       - name: CDK Bootstrap
         run: cdk bootstrap
+        env:
+          Login__SigningCertificate: ${{ secrets.LOGIN_SIGNING_CERTIFICATE }}
+          Login__EncryptionCertificate: ${{ secrets.LOGIN_ENCRYPTION_CERTIFICATE }}
+          Authorizer__ClientSecret: ${{ secrets.CLIENT_AUTHORIZER_SECRET }}
       - name: CDK Deploy
         run: cdk deploy --require-approval never --all
         env:
