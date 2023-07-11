@@ -16,7 +16,7 @@ public abstract class FunctionBase
 {
   protected readonly IServiceProvider ServiceProvider;
   protected readonly IConfiguration Configuration;
-  protected string? SystemsManagerPath;
+  private readonly string? _systemsManagerPath;
   private readonly APIGatewayHttpApiV2ProxyResponse _noBodyResponse = new APIGatewayHttpApiV2ProxyResponse
   {
     Body = JsonSerializer.Serialize(new[]
@@ -29,8 +29,9 @@ public abstract class FunctionBase
     StatusCode = (int)HttpStatusCode.BadRequest,
   };
 
-  public FunctionBase()
+  public FunctionBase(string? systemsManagerPath = default)
   {
+    _systemsManagerPath = systemsManagerPath;
     Configuration = BuildConfiguration();
     ServiceProvider = BuildServiceProvider();
   }
@@ -45,9 +46,9 @@ public abstract class FunctionBase
       .AddJsonFile($"appsettings.{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")}.json", optional: true)
       .AddEnvironmentVariables();
 
-    if (string.IsNullOrEmpty(this.SystemsManagerPath) == false)
+    if (string.IsNullOrEmpty(_systemsManagerPath) == false)
     {
-      configuration.AddSystemsManager(this.SystemsManagerPath);
+      configuration.AddSystemsManager(_systemsManagerPath);
     }
 
     return configuration.Build();

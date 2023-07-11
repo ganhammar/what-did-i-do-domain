@@ -108,7 +108,7 @@ public class AppStack : Stack
 
   private RequestAuthorizer CreateAuthorizerFunction()
   {
-    var parameter = new StringParameter(this, "Parameter", new StringParameterProps
+    var parameter = new StringParameter(this, "AuthorizerClientSecretParameter", new StringParameterProps
     {
       ParameterName = "/WhatDidIDo/Authorizer/AuthorizationOptions/ClientSecret",
       StringValue = _configuration.GetSection("Authorizer").GetValue<string>("ClientSecret")!,
@@ -118,7 +118,19 @@ public class AppStack : Stack
     var authorizerFunction = new AppFunction(this, "App.Authorizer", new AppFunction.Props(
       "App.Authorizer::App.Authorizer.Function::FunctionHandler"
     ));
-    parameter.GrantRead(authorizerFunction);
+    var parametersPolicy = new PolicyStatement(new PolicyStatementProps
+    {
+      Effect = Effect.ALLOW,
+      Actions = new[]
+      {
+        "ssm:GetParametersByPath",
+      },
+      Resources = new[]
+      {
+        $"arn:aws:ssm:{this.Region}:{this.Account}:parameter/WhatDidIDo/Authorizer*",
+      },
+    });
+    authorizerFunction.AddToRolePolicy(parametersPolicy);
 
     return new RequestAuthorizer(this, "ApiAuthorizer", new RequestAuthorizerProps
     {

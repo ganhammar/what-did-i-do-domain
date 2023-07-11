@@ -12,7 +12,7 @@ namespace App.Authorizer;
 
 public class Function : FunctionBase
 {
-  public Function() => SystemsManagerPath = "/WhatDidIDo/Authorizer";
+  public Function() : base("/WhatDidIDo/Authorizer") { }
 
   protected override void ConfigureServices(IServiceCollection services)
   {
