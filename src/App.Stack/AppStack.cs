@@ -110,7 +110,7 @@ public class AppStack : Stack
   {
     var parameter = new StringParameter(this, "AuthorizerClientSecretParameter", new StringParameterProps
     {
-      ParameterName = "/WhatDidIDo/Authorizer/AuthorizationOptions/ClientSecret",
+      ParameterName = "/WDID/Authorizer/AuthorizationOptions/ClientSecret",
       StringValue = _configuration.GetSection("Authorizer").GetValue<string>("ClientSecret")!,
       Tier = ParameterTier.STANDARD,
     });
@@ -127,7 +127,7 @@ public class AppStack : Stack
       },
       Resources = new[]
       {
-        $"arn:aws:ssm:{this.Region}:{this.Account}:parameter/WhatDidIDo/Authorizer*",
+        $"arn:aws:ssm:{this.Region}:{this.Account}:parameter/WDID/Authorizer*",
       },
     });
     authorizerFunction.AddToRolePolicy(parametersPolicy);
