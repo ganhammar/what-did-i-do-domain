@@ -12,6 +12,8 @@ namespace App.Authorizer;
 
 public class Function : FunctionBase
 {
+  public Function() => SystemsManagerPath = "/WhatDidIDo/Authorizer";
+
   protected override void ConfigureServices(IServiceCollection services)
   {
     services.Configure<AuthorizationOptions>(Configuration.GetSection(nameof(AuthorizationOptions)));

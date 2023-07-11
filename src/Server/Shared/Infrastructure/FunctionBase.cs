@@ -15,12 +15,8 @@ namespace App.Api.Shared.Infrastructure;
 public abstract class FunctionBase
 {
   protected readonly IServiceProvider ServiceProvider;
-  protected readonly IConfiguration Configuration = new ConfigurationBuilder()
-    .SetBasePath(Directory.GetCurrentDirectory())
-    .AddJsonFile("appsettings.json", optional: true)
-    .AddJsonFile($"appsettings.{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")}.json", optional: true)
-    .AddEnvironmentVariables()
-    .Build();
+  protected readonly IConfiguration Configuration;
+  protected string? SystemsManagerPath;
   private readonly APIGatewayHttpApiV2ProxyResponse _noBodyResponse = new APIGatewayHttpApiV2ProxyResponse
   {
     Body = JsonSerializer.Serialize(new[]
@@ -33,9 +29,29 @@ public abstract class FunctionBase
     StatusCode = (int)HttpStatusCode.BadRequest,
   };
 
-  public FunctionBase() => ServiceProvider = BuildServiceProvider();
+  public FunctionBase()
+  {
+    Configuration = BuildConfiguration();
+    ServiceProvider = BuildServiceProvider();
+  }
 
   protected virtual void ConfigureServices(IServiceCollection services) { }
+
+  private IConfiguration BuildConfiguration()
+  {
+    var configuration = new ConfigurationBuilder()
+      .SetBasePath(Directory.GetCurrentDirectory())
+      .AddJsonFile("appsettings.json", optional: true)
+      .AddJsonFile($"appsettings.{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")}.json", optional: true)
+      .AddEnvironmentVariables();
+
+    if (string.IsNullOrEmpty(this.SystemsManagerPath) == false)
+    {
+      configuration.AddSystemsManager(this.SystemsManagerPath);
+    }
+
+    return configuration.Build();
+  }
 
   private IServiceProvider BuildServiceProvider()
   {

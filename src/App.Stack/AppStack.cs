@@ -110,7 +110,7 @@ public class AppStack : Stack
   {
     var parameter = new StringParameter(this, "Parameter", new StringParameterProps
     {
-      ParameterName = "/WhatDidIDo/Authorizer/AuthorizationOptions__ClientSecret",
+      ParameterName = "/WhatDidIDo/Authorizer/AuthorizationOptions/ClientSecret",
       StringValue = _configuration.GetSection("Authorizer").GetValue<string>("ClientSecret")!,
       Tier = ParameterTier.STANDARD,
     });
