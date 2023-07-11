@@ -10,20 +10,26 @@ using Amazon.CDK.AWS.Route53;
 using Amazon.CDK.AWS.Route53.Targets;
 using Amazon.CDK.AWS.S3;
 using Amazon.CDK.AWS.S3.Deployment;
+using Amazon.CDK.AWS.SSM;
 using AppStack.Constructs;
 using Constructs;
+using Microsoft.Extensions.Configuration;
 using static Amazon.CDK.AWS.CloudFront.CfnDistribution;
 
 namespace AppStack;
 
 public class AppStack : Stack
 {
-  internal AppStack(Construct scope, string id, IStackProps props)
+  private const string _tableName = "what-did-i-do";
+  private readonly IConfiguration _configuration;
+
+  internal AppStack(Construct scope, string id, IStackProps props, IConfiguration configuration)
     : base(scope, id, props)
   {
+    _configuration = configuration;
+
     // DynamoDB
-    var tableName = "what-did-i-do";
-    var applicationTable = CreateTable(tableName);
+    var applicationTable = CreateTable();
 
     // API Gateway
     var apiGateway = new RestApi(this, "what-did-i-do", new RestApiProps
@@ -33,27 +39,19 @@ public class AppStack : Stack
     var apiResource = apiGateway.Root.AddResource("api");
 
     // Authorizer
-    var authorizerFunction = new AppFunction(this, "App.Authorizer", new AppFunction.Props(
-      "App.Authorizer::App.Authorizer.Function::FunctionHandler"
-    ));
-    var authorizer = new RequestAuthorizer(this, "ApiAuthorizer", new RequestAuthorizerProps
-    {
-      Handler = authorizerFunction,
-      IdentitySources = new[] { IdentitySource.Header("authorization") },
-      ResultsCacheTtl = Duration.Seconds(0),
-    });
+    var authorizer = CreateAuthorizerFunction();
 
     // Resource: Login
     var loginResource = apiResource.AddResource("login");
-    HandleLoginResource(loginResource, tableName);
+    HandleLoginResource(loginResource);
 
     // Resource: Account
     var accountResource = apiResource.AddResource("account");
-    HandleAccountResource(accountResource, tableName, applicationTable, authorizer);
+    HandleAccountResource(accountResource, applicationTable, authorizer);
 
     // Resource: Event
     var eventResource = apiResource.AddResource("event");
-    HandleEventResource(eventResource, tableName, applicationTable, authorizer);
+    HandleEventResource(eventResource, applicationTable, authorizer);
 
     // CloudFront Distribution
     var cloudFrontDistribution = CreateCloudFrontWebDistribution(apiGateway);
@@ -69,11 +67,11 @@ public class AppStack : Stack
     });
   }
 
-  private Table CreateTable(string tableName)
+  private Table CreateTable()
   {
     var table = new Table(this, "ApplicationTable", new TableProps
     {
-      TableName = tableName,
+      TableName = _tableName,
       RemovalPolicy = RemovalPolicy.DESTROY, //Delete DynamoDB table on CDK destroy
       PartitionKey = new Amazon.CDK.AWS.DynamoDB.Attribute
       {
@@ -108,12 +106,34 @@ public class AppStack : Stack
     return table;
   }
 
+  private RequestAuthorizer CreateAuthorizerFunction()
+  {
+    var parameter = new StringParameter(this, "Parameter", new StringParameterProps
+    {
+      ParameterName = "/WhatDidIDo/Authorizer/AuthorizationOptions__ClientSecret",
+      StringValue = _configuration.GetSection("Authorizer").GetValue<string>("ClientSecret")!,
+      Tier = ParameterTier.STANDARD,
+    });
+
+    var authorizerFunction = new AppFunction(this, "App.Authorizer", new AppFunction.Props(
+      "App.Authorizer::App.Authorizer.Function::FunctionHandler"
+    ));
+    parameter.GrantRead(authorizerFunction);
+
+    return new RequestAuthorizer(this, "ApiAuthorizer", new RequestAuthorizerProps
+    {
+      Handler = authorizerFunction,
+      IdentitySources = new[] { IdentitySource.Header("authorization") },
+      ResultsCacheTtl = Duration.Seconds(0),
+    });
+  }
+
   private void HandleLoginResource(
-    Amazon.CDK.AWS.APIGateway.Resource loginResource, string tableName)
+    Amazon.CDK.AWS.APIGateway.Resource loginResource)
   {
     var loginFunction = new AppFunction(this, "App.Login", new AppFunction.Props(
       "App.Login::App.Login.LambdaEntryPoint::FunctionHandlerAsync",
-      tableName,
+      _tableName,
       2048
     ));
 
@@ -196,14 +216,13 @@ public class AppStack : Stack
 
   private void HandleAccountResource(
     Amazon.CDK.AWS.APIGateway.Resource accountResource,
-    string tableName,
     Table applicationTable,
     RequestAuthorizer authorizer)
   {
     // Create
     var createAccountFunction = new AppFunction(this, "CreateAccount", new AppFunction.Props(
       "CreateAccount::App.Api.CreateAccount.Function::FunctionHandler",
-      tableName
+      _tableName
     ));
     applicationTable.GrantReadWriteData(createAccountFunction);
     accountResource.AddMethod("POST", new LambdaIntegration(createAccountFunction), new MethodOptions
@@ -215,7 +234,7 @@ public class AppStack : Stack
     // List
     var listAccountsFunction = new AppFunction(this, "ListAccounts", new AppFunction.Props(
       "ListAccounts::App.Api.ListAccounts.Function::FunctionHandler",
-      tableName
+      _tableName
     ));
     applicationTable.GrantReadWriteData(listAccountsFunction);
     accountResource.AddMethod("GET", new LambdaIntegration(listAccountsFunction), new MethodOptions
@@ -227,14 +246,13 @@ public class AppStack : Stack
 
   private void HandleEventResource(
     Amazon.CDK.AWS.APIGateway.Resource eventResource,
-    string tableName,
     Table applicationTable,
     RequestAuthorizer authorizer)
   {
     // Create
     var createEventFunction = new AppFunction(this, "CreateEvent", new AppFunction.Props(
       "CreateEvent::App.Api.CreateEvent.Function::FunctionHandler",
-      tableName
+      _tableName
     ));
     applicationTable.GrantReadWriteData(createEventFunction);
     eventResource.AddMethod("POST", new LambdaIntegration(createEventFunction), new MethodOptions
@@ -246,7 +264,7 @@ public class AppStack : Stack
     // Delete
     var deleteEventFunction = new AppFunction(this, "DeleteEvent", new AppFunction.Props(
       "DeleteEvent::App.Api.DeleteEvent.Function::FunctionHandler",
-      tableName
+      _tableName
     ));
     applicationTable.GrantReadWriteData(deleteEventFunction);
     eventResource.AddMethod("DELETE", new LambdaIntegration(deleteEventFunction), new MethodOptions
@@ -258,7 +276,7 @@ public class AppStack : Stack
     // List
     var listEventsFunction = new AppFunction(this, "ListEvents", new AppFunction.Props(
       "ListEvents::App.Api.ListEvents.Function::FunctionHandler",
-      tableName
+      _tableName
     ));
     applicationTable.GrantReadData(listEventsFunction);
     eventResource.AddMethod("GET", new LambdaIntegration(listEventsFunction), new MethodOptions
