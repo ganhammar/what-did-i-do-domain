@@ -123,7 +123,7 @@ public class AppStack : Stack
       Effect = Effect.ALLOW,
       Actions = new[]
       {
-        "ssm:GetParametersByPath",
+        "ssm:GetParameter*",
       },
       Resources = new[]
       {
@@ -162,22 +162,6 @@ public class AppStack : Stack
       GrantIndexPermissions = true,
     });
     openiddictTable.GrantReadWriteData(loginFunction);
-
-    var mailPolicy = new PolicyStatement(new PolicyStatementProps
-    {
-      Effect = Effect.ALLOW,
-      Actions = new[]
-      {
-        "ses:SendEmail",
-        "ses:SendRawEmail",
-        "ses:SendTemplatedEmail",
-      },
-      Resources = new[]
-      {
-        "*",
-      },
-    });
-    loginFunction.AddToRolePolicy(mailPolicy);
 
     AllowSes(loginFunction);
     AllowSsm(loginFunction);
