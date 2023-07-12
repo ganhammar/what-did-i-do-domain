@@ -108,7 +108,7 @@ public class AppStack : Stack
 
   private RequestAuthorizer CreateAuthorizerFunction()
   {
-    var parameter = new StringParameter(this, "AuthorizerClientSecretParameter", new StringParameterProps
+    new StringParameter(this, "AuthorizerClientSecretParameter", new StringParameterProps
     {
       ParameterName = "/WDID/Authorizer/AuthorizationOptions/ClientSecret",
       StringValue = _configuration.GetSection("Authorizer").GetValue<string>("ClientSecret")!,
@@ -118,19 +118,8 @@ public class AppStack : Stack
     var authorizerFunction = new AppFunction(this, "App.Authorizer", new AppFunction.Props(
       "App.Authorizer::App.Authorizer.Function::FunctionHandler"
     ));
-    var parametersPolicy = new PolicyStatement(new PolicyStatementProps
-    {
-      Effect = Effect.ALLOW,
-      Actions = new[]
-      {
-        "ssm:GetParametersByPath",
-      },
-      Resources = new[]
-      {
-        $"arn:aws:ssm:{this.Region}:{this.Account}:parameter/WDID/Authorizer*",
-      },
-    });
-    authorizerFunction.AddToRolePolicy(parametersPolicy);
+
+    AllowSsm(authorizerFunction, "/WDID/Authorizer*", false);
 
     return new RequestAuthorizer(this, "ApiAuthorizer", new RequestAuthorizerProps
     {
@@ -143,6 +132,20 @@ public class AppStack : Stack
   private void HandleLoginResource(
     Amazon.CDK.AWS.APIGateway.Resource loginResource)
   {
+    var loginConfiguration = _configuration.GetSection("Login");
+    new StringParameter(this, "LoginSigningCertificateParameter", new StringParameterProps
+    {
+      ParameterName = "/WDID/Login/SigningCertificate",
+      StringValue = loginConfiguration.GetValue<string>("SigningCertificate")!,
+      Tier = ParameterTier.STANDARD,
+    });
+    new StringParameter(this, "LoginEncryptionCertificateParameter", new StringParameterProps
+    {
+      ParameterName = "/WDID/Login/EncryptionCertificate",
+      StringValue = loginConfiguration.GetValue<string>("EncryptionCertificate")!,
+      Tier = ParameterTier.STANDARD,
+    });
+
     var loginFunction = new AppFunction(this, "App.Login", new AppFunction.Props(
       "App.Login::App.Login.LambdaEntryPoint::FunctionHandlerAsync",
       _tableName,
@@ -164,7 +167,8 @@ public class AppStack : Stack
     openiddictTable.GrantReadWriteData(loginFunction);
 
     AllowSes(loginFunction);
-    AllowSsm(loginFunction);
+    AllowSsm(loginFunction, "/WhatDidIDo/DataProtection*", true);
+    AllowSsm(loginFunction, "/WDID/Login*", false);
 
     loginResource.AddProxy(new ProxyResourceOptions
     {
@@ -173,21 +177,26 @@ public class AppStack : Stack
     });
   }
 
-  private void AllowSsm(AppFunction function)
+  private void AllowSsm(AppFunction function, string resource, bool allowPut)
   {
     var ssmPolicy = new PolicyStatement(new PolicyStatementProps
     {
       Effect = Effect.ALLOW,
       Actions = new[]
       {
-        "ssm:PutParameter",
         "ssm:GetParametersByPath",
       },
       Resources = new[]
       {
-        "*",
+        $"arn:aws:ssm:{this.Region}:{this.Account}:parameter{resource}",
       },
     });
+
+    if (allowPut)
+    {
+      ssmPolicy.Actions.Append("ssm:PutParameter");
+    }
+
     function.AddToRolePolicy(ssmPolicy);
   }
 
