@@ -9,6 +9,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Amazon.Extensions.Configuration.SystemsManager"
+      Version="$(AmazonExtensionsConfigurationSystemsManagerVersion)" />
     <PackageReference Include="AspNetCore.Identity.AmazonDynamoDB"
       Version="$(AspNetCoreIdentityAmazonDynamoDBVersion)" />
     <PackageReference Include="AWSSDK.DynamoDBv2" Version="$(AWSSDKDynamoDBv2Version)" />
