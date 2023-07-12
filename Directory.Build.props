@@ -6,6 +6,7 @@
 
   <PropertyGroup>
     <AmazonAspNetCoreDataProtectionSSMVersion>3.1.1</AmazonAspNetCoreDataProtectionSSMVersion>
+    <AmazonExtensionsConfigurationSystemsManagerVersion>5.1.0</AmazonExtensionsConfigurationSystemsManagerVersion>
     <AmazonCDKLibVersion>2.87.0</AmazonCDKLibVersion>
     <AmazonLambdaAspNetCoreServerVersion>8.1.0</AmazonLambdaAspNetCoreServerVersion>
     <AmazonLambdaCoreVersion>2.1.0</AmazonLambdaCoreVersion>

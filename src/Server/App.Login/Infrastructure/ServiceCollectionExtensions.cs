@@ -40,7 +40,7 @@ public static class ServiceCollectionExtensions
       });
   }
 
-  public static void AddOpenIddict(this IServiceCollection services, bool isDevelopment)
+  public static void AddOpenIddict(this IServiceCollection services, IConfiguration configuration, bool isDevelopment)
   {
     services
       .AddOpenIddict()
@@ -84,18 +84,12 @@ public static class ServiceCollectionExtensions
         builder.SetAccessTokenLifetime(TimeSpan.FromMinutes(30));
         builder.SetRefreshTokenLifetime(TimeSpan.FromDays(1));
 
-        if (isDevelopment)
-        {
-          builder
-            .AddDevelopmentEncryptionCertificate()
-            .AddDevelopmentSigningCertificate();
-        }
-        else
-        {
-          builder
-            .AddSigningCertificate(new X509Certificate2("./signing-certificate.pfx"))
-            .AddEncryptionCertificate(new X509Certificate2("./encryption-certificate.pfx"));
-        }
+        var signingCertificate = configuration.GetValue<string>("SigningCertificate");
+        var encryptionCertificate = configuration.GetValue<string>("EncryptionCertificate");
+
+        builder
+          .AddSigningCertificate(new X509Certificate2(Convert.FromBase64String(signingCertificate)))
+          .AddEncryptionCertificate(new X509Certificate2(Convert.FromBase64String(encryptionCertificate)));
 
         var aspNetCoreBuilder = builder
           .UseAspNetCore()

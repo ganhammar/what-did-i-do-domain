@@ -86,14 +86,6 @@ jobs:
       - name: Install Lambda Tools
         run: dotnet tool install -g Amazon.Lambda.Tools
 
-      - name: Create Certificate Files
-        uses: ./.github/actions/certificates
-        with:
-          signing-certificate-content: ${{ secrets.LOGIN_SIGNING_CERTIFICATE }}
-          encryption-certificate-content: ${{ secrets.LOGIN_ENCRYPTION_CERTIFICATE }}
-          target-dir: './src/Server/App.Login'
-        if: ${{ matrix.project == './src/Server/App.Login' }}
-
       - name: Package Project
         uses: ./.github/actions/package-project
         with:

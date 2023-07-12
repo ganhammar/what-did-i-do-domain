@@ -6,7 +6,12 @@ public class LambdaEntryPoint : APIGatewayProxyFunction
 {
   protected override void Init(IWebHostBuilder builder)
   {
-    builder.UseStartup<Startup>();
+    builder
+      .ConfigureAppConfiguration(builder =>
+      {
+        builder.AddSystemsManager("/WDID/Login");
+      })
+      .UseStartup<Startup>();
   }
 
   protected override void Init(IHostBuilder builder) { }

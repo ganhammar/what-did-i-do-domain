@@ -10,6 +10,8 @@
   <ItemGroup>
     <PackageReference Include="Amazon.AspNetCore.DataProtection.SSM"
       Version="$(AmazonAspNetCoreDataProtectionSSMVersion)" />
+    <PackageReference Include="Amazon.Extensions.Configuration.SystemsManager"
+      Version="$(AmazonExtensionsConfigurationSystemsManagerVersion)" />
     <PackageReference Include="Amazon.Lambda.AspNetCoreServer"
       Version="$(AmazonLambdaAspNetCoreServerVersion)" />
     <PackageReference Include="AspNetCore.Identity.AmazonDynamoDB"

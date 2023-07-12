@@ -52,7 +52,7 @@ public class Startup
             .AllowAnyMethod();
         });
     });
-    services.AddOpenIddict(Environment.IsDevelopment());
+    services.AddOpenIddict(Configuration, Environment.IsDevelopment());
     services.AddMediatR();
     services.AddSingleton<IEmailSender, EmailSender>();
 
