@@ -123,7 +123,7 @@ public class AppStack : Stack
       Effect = Effect.ALLOW,
       Actions = new[]
       {
-        "ssm:GetParameter*",
+        "ssm:GetParametersByPath",
       },
       Resources = new[]
       {

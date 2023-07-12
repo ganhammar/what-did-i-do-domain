@@ -12,7 +12,7 @@ namespace App.Authorizer;
 
 public class Function : FunctionBase
 {
-  public Function() : base("/WhatDidIDo/Authorizer") { }
+  public Function() : base("/WDID/Authorizer") { }
 
   protected override void ConfigureServices(IServiceCollection services)
   {
