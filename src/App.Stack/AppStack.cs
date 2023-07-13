@@ -35,6 +35,13 @@ public class AppStack : Stack
     var apiGateway = new RestApi(this, "what-did-i-do", new RestApiProps
     {
       RestApiName = "what-did-i-do",
+      DefaultCorsPreflightOptions = new CorsOptions
+      {
+        AllowOrigins = new[]
+        {
+          "http://localhost:3000",
+        },
+      },
     });
     var apiResource = apiGateway.Root.AddResource("api");
 
