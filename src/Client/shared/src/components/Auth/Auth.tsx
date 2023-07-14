@@ -1,6 +1,6 @@
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { useRecoilValue } from 'recoil';
+import { useRecoilValueLoadable, useSetRecoilState } from 'recoil';
 import { userManager } from './userManager';
 import { currentUserAtom } from './currentUserAtom';
 import { Loader } from '../Loader';
@@ -22,15 +22,18 @@ interface Props extends LoginPropsWithChildren {
 }
 
 function RenderIfLoggedIn({ children, defaultView }: LoginPropsWithChildren) {
-  const user = useRecoilValue(currentUserAtom);
+  const initialized = useRef(false); // Avoid running twice in dev (strictMode)
+  const user = useRecoilValueLoadable(currentUserAtom);
   const { pathname } = useLocation();
   const navigate = useNavigate();
 
   const login = useCallback(() => {
     new Promise((resolve, reject) => {
-      if (!user || user.expired === true) {
+      const fiveMinuteAgo = (new Date((new Date()).getTime() - 5 * 60000)).getTime();
+
+      if (!user.contents || user.contents.expired === true) {
         reject(new Error('login_required'));
-      } else {
+      } else if ((new Date(user.contents.expires_at * 1000)).getTime() < fiveMinuteAgo) {
         userManager.signinSilent()
           .then(resolve)
           .catch(reject);
@@ -53,10 +56,13 @@ function RenderIfLoggedIn({ children, defaultView }: LoginPropsWithChildren) {
   }, [user, defaultView, pathname, navigate]);
 
   useEffect(() => {
-    login();
-  }, [login]);
+    if (user.state === 'hasValue' && !initialized.current) {
+      initialized.current = true;
+      login();
+    }
+  }, [login, user]);
 
-  if (user && children) {
+  if (user.state === 'hasValue' && user.contents?.expired === false) {
     return children;
   }
 
@@ -64,14 +70,26 @@ function RenderIfLoggedIn({ children, defaultView }: LoginPropsWithChildren) {
 }
 
 function LoginCallback({ defaultView }: LoginProps) {
+  const initialized = useRef(false); // Avoid running twice in dev (strictMode)
+  const setCurrentUser = useSetRecoilState(currentUserAtom);
   const navigate = useNavigate();
 
   useEffect(() => {
-    userManager.signinRedirectCallback()
-      .then((response) => {
-        navigate((response.state as State).from || defaultView);
-      });
-  }, [navigate, defaultView]);
+    if (!initialized.current) {
+      initialized.current = true;
+
+      userManager.signinRedirectCallback()
+        .then(async (response) => {
+          const user = await userManager.getUser();
+
+          if (user) {
+            setCurrentUser(user);
+          }
+
+          navigate((response.state as State).from || defaultView);
+        });
+    }
+  }, [navigate, defaultView, setCurrentUser]);
 
   return <Loader />;
 }

@@ -21,7 +21,7 @@ export interface LoginResult {
 }
 
 export class UserService extends FetchBase {
-  baseUrl = `/api/login/user`;
+  baseUrl = '/api/login/user';
 
   async register(data: RegisterParamters) {
     return await this.post<User>(`${this.baseUrl}/register`, data);

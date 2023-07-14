@@ -6,7 +6,7 @@ import {
   Button, Checkbox, TextInput, isEmail, useAsyncError,
 } from '@wdid/shared';
 import { UserService } from '../User/UserService';
-import useUser from './useUser';
+import useUser from './currentUserSelector';
 
 const Form = styled.form`
   display: flex;

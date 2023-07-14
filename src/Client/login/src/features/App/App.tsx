@@ -5,7 +5,7 @@ import { AppRoutes } from './AppRoutes';
 import {
   appTheme, ErrorBoundry, Layout, Loader,
 } from '@wdid/shared';
-import useUser from '../Auth/useUser';
+import useUser from '../Auth/currentUserSelector';
 import { Suspense } from 'react';
 
 function AppLayout() {

@@ -17,7 +17,7 @@ public abstract class FunctionBase
   protected readonly IServiceProvider ServiceProvider;
   protected readonly IConfiguration Configuration;
   private readonly string? _systemsManagerPath;
-  private readonly APIGatewayHttpApiV2ProxyResponse _noBodyResponse = new APIGatewayHttpApiV2ProxyResponse
+  private static readonly APIGatewayHttpApiV2ProxyResponse _noBodyResponse = new APIGatewayHttpApiV2ProxyResponse
   {
     Body = JsonSerializer.Serialize(new[]
     {
@@ -25,8 +25,19 @@ public abstract class FunctionBase
       {
         ErrorCode = "InvalidRequest",
       },
-    }),
+    }, _defaultSerializerOptions),
     StatusCode = (int)HttpStatusCode.BadRequest,
+  };
+  private static readonly Dictionary<string, string> _defaultHeaders = new()
+  {
+    { "Content-Type", "application/json" },
+    { "Access-Control-Allow-Origin", "http://localhost:3000" },
+    { "Access-Control-Allow-Methods", "GET,POST,PATCH,DELETE,OPTIONS,HEAD" },
+    { "Access-Control-Allow-Headers", "content-type" }
+  };
+  private static readonly JsonSerializerOptions _defaultSerializerOptions = new()
+  {
+    PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
   };
 
   public FunctionBase(string? systemsManagerPath = default)
@@ -105,8 +116,8 @@ public abstract class FunctionBase
       return new APIGatewayHttpApiV2ProxyResponse
       {
         StatusCode = (int)HttpStatusCode.OK,
-        Body = JsonSerializer.Serialize(response.Result),
-        Headers = new Dictionary<string, string> { { "Content-Type", "application/json" } }
+        Body = JsonSerializer.Serialize(response.Result, _defaultSerializerOptions),
+        Headers = _defaultHeaders
       };
     }
 
@@ -153,7 +164,7 @@ public abstract class FunctionBase
     => new APIGatewayHttpApiV2ProxyResponse
     {
       StatusCode = (int)HttpStatusCode.BadRequest,
-      Body = JsonSerializer.Serialize(response.Errors),
-      Headers = new Dictionary<string, string> { { "Content-Type", "application/json" } }
+      Body = JsonSerializer.Serialize(response.Errors, _defaultSerializerOptions),
+      Headers = _defaultHeaders
     };
 }

@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import {
   Button, TextInput, isEmail, useAsyncError,
 } from '@wdid/shared';
-import { UserService } from './UserService';
+import { UserService } from './';
 
 const MIN_PASSWORD_LENGTH = 8;
 const RETURN_URL = '/dashboard';

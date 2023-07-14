@@ -2,16 +2,16 @@ import { ReactElement, useEffect, useMemo } from 'react';
 import { Navigate, Route, Routes, useNavigate } from 'react-router-dom';
 import { useRecoilRefresher_UNSTABLE, useRecoilValue } from 'recoil';
 import { Loader } from '@wdid/shared';
-import { UserService } from '../User/UserService';
+import { UserService } from '../User';
 import { Login } from '.';
-import useUser from './useUser';
+import currentUserSelector from './currentUserSelector';
 
 interface AuthProps {
   children: ReactElement;
 }
 
 function RenderIfLoggedIn({ children }: AuthProps) {
-  const user = useRecoilValue(useUser);
+  const user = useRecoilValue(currentUserSelector);
 
   if (user && children) {
     return children;
@@ -21,8 +21,8 @@ function RenderIfLoggedIn({ children }: AuthProps) {
 }
 
 function Logout() {
-  const user = useRecoilValue(useUser);
-  const refresh = useRecoilRefresher_UNSTABLE(useUser);
+  const user = useRecoilValue(currentUserSelector);
+  const refresh = useRecoilRefresher_UNSTABLE(currentUserSelector);
   const userService = useMemo(() => new UserService(), []);
   const navigate = useNavigate();
 

@@ -6,6 +6,7 @@ using Amazon.CDK.AWS.CloudFront.Experimental;
 using Amazon.CDK.AWS.DynamoDB;
 using Amazon.CDK.AWS.IAM;
 using Amazon.CDK.AWS.Lambda;
+using Amazon.CDK.AWS.Logs;
 using Amazon.CDK.AWS.Route53;
 using Amazon.CDK.AWS.Route53.Targets;
 using Amazon.CDK.AWS.S3;
@@ -344,6 +345,7 @@ public class AppStack : Stack
       Code = Code.FromAsset("./src/App.Stack/Router"),
       Handler = "index.handler",
       Runtime = Runtime.NODEJS_18_X,
+      LogRetention = RetentionDays.ONE_DAY,
     });
 
     // Add X-Forwarded-Host Header
@@ -352,6 +354,7 @@ public class AppStack : Stack
       Code = Code.FromAsset("./src/App.Stack/ForwardedHostHeader"),
       Handler = "index.handler",
       Runtime = Runtime.NODEJS_18_X,
+      LogRetention = RetentionDays.ONE_DAY,
     });
 
     // S3: Login
