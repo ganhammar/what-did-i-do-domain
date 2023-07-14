@@ -35,7 +35,10 @@ public class FunctionTests
 
     Assert.Equal((int)HttpStatusCode.OK, response.StatusCode);
 
-    var body = JsonSerializer.Deserialize<EventDto>(response.Body);
+    var body = JsonSerializer.Deserialize<EventDto>(response.Body, new JsonSerializerOptions()
+    {
+      PropertyNameCaseInsensitive = true,
+    });
 
     Assert.NotNull(body);
     Assert.Equal(data.Title, body!.Title);
@@ -67,7 +70,10 @@ public class FunctionTests
 
     Assert.Equal((int)HttpStatusCode.OK, response.StatusCode);
 
-    var body = JsonSerializer.Deserialize<EventDto>(response.Body);
+    var body = JsonSerializer.Deserialize<EventDto>(response.Body, new JsonSerializerOptions()
+    {
+      PropertyNameCaseInsensitive = true,
+    });
 
     Assert.NotNull(body);
     Assert.Equal(data.Title, body!.Title);
@@ -97,7 +103,10 @@ public class FunctionTests
 
     Assert.Equal((int)HttpStatusCode.BadRequest, response.StatusCode);
 
-    var errors = JsonSerializer.Deserialize<List<ValidationFailure>>(response.Body);
+    var errors = JsonSerializer.Deserialize<List<ValidationFailure>>(response.Body, new JsonSerializerOptions()
+    {
+      PropertyNameCaseInsensitive = true,
+    });
 
     Assert.NotNull(errors);
     Assert.Contains(errors, error => error.PropertyName == nameof(CreateEventCommand.Command.Title)
@@ -126,7 +135,10 @@ public class FunctionTests
 
     Assert.Equal((int)HttpStatusCode.BadRequest, response.StatusCode);
 
-    var errors = JsonSerializer.Deserialize<List<ValidationFailure>>(response.Body);
+    var errors = JsonSerializer.Deserialize<List<ValidationFailure>>(response.Body, new JsonSerializerOptions()
+    {
+      PropertyNameCaseInsensitive = true,
+    });
 
     Assert.NotNull(errors);
     Assert.Contains(errors, error => error.PropertyName == nameof(CreateEventCommand.Command.AccountId)

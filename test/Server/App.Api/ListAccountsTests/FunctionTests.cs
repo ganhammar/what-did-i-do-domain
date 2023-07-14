@@ -49,7 +49,10 @@ public class FunctionTests
 
     Assert.Equal((int)HttpStatusCode.OK, response.StatusCode);
 
-    var body = JsonSerializer.Deserialize<List<AccountDto>>(response.Body);
+    var body = JsonSerializer.Deserialize<List<AccountDto>>(response.Body, new JsonSerializerOptions()
+    {
+      PropertyNameCaseInsensitive = true,
+    });
 
     Assert.NotNull(body);
     Assert.Single(body);

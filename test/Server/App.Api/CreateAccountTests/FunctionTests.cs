@@ -40,7 +40,10 @@ public class FunctionTests
 
     Assert.Equal((int)HttpStatusCode.OK, response.StatusCode);
 
-    var body = JsonSerializer.Deserialize<AccountDto>(response.Body);
+    var body = JsonSerializer.Deserialize<AccountDto>(response.Body, new JsonSerializerOptions()
+    {
+      PropertyNameCaseInsensitive = true,
+    });
 
     Assert.NotNull(body);
     Assert.Equal(data.Name, body!.Name);
@@ -72,7 +75,10 @@ public class FunctionTests
 
     Assert.Equal((int)HttpStatusCode.BadRequest, response.StatusCode);
 
-    var errors = JsonSerializer.Deserialize<List<ValidationFailure>>(response.Body);
+    var errors = JsonSerializer.Deserialize<List<ValidationFailure>>(response.Body, new JsonSerializerOptions()
+    {
+      PropertyNameCaseInsensitive = true,
+    });
 
     Assert.NotNull(errors);
     Assert.Contains(errors, error => error.PropertyName == nameof(CreateAccountCommand.Command.Name)
@@ -102,7 +108,10 @@ public class FunctionTests
 
     Assert.Equal((int)HttpStatusCode.BadRequest, response.StatusCode);
 
-    var errors = JsonSerializer.Deserialize<List<ValidationFailure>>(response.Body);
+    var errors = JsonSerializer.Deserialize<List<ValidationFailure>>(response.Body, new JsonSerializerOptions()
+    {
+      PropertyNameCaseInsensitive = true,
+    });
 
     Assert.NotNull(errors);
     Assert.Contains(errors, error => error.ErrorCode == "InvalidRequest");
@@ -135,7 +144,10 @@ public class FunctionTests
 
     Assert.Equal((int)HttpStatusCode.BadRequest, response.StatusCode);
 
-    var errors = JsonSerializer.Deserialize<List<ValidationFailure>>(response.Body);
+    var errors = JsonSerializer.Deserialize<List<ValidationFailure>>(response.Body, new JsonSerializerOptions()
+    {
+      PropertyNameCaseInsensitive = true,
+    });
 
     Assert.NotNull(errors);
     Assert.Contains(errors, error => error.ErrorCode == "UnauthorizedRequest");
@@ -169,7 +181,10 @@ public class FunctionTests
 
     Assert.Equal((int)HttpStatusCode.BadRequest, response.StatusCode);
 
-    var errors = JsonSerializer.Deserialize<List<ValidationFailure>>(response.Body);
+    var errors = JsonSerializer.Deserialize<List<ValidationFailure>>(response.Body, new JsonSerializerOptions()
+    {
+      PropertyNameCaseInsensitive = true,
+    });
 
     Assert.NotNull(errors);
     Assert.Contains(errors, error => error.ErrorCode == "UnauthorizedRequest");

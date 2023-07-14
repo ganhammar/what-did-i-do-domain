@@ -42,7 +42,10 @@ public class FunctionTests
 
     Assert.Equal((int)HttpStatusCode.OK, response.StatusCode);
 
-    var body = JsonSerializer.Deserialize<List<EventDto>>(response.Body);
+    var body = JsonSerializer.Deserialize<List<EventDto>>(response.Body, new JsonSerializerOptions()
+    {
+      PropertyNameCaseInsensitive = true,
+    });
 
     Assert.NotNull(body);
     Assert.Single(body);
@@ -80,7 +83,10 @@ public class FunctionTests
 
     Assert.Equal((int)HttpStatusCode.OK, response.StatusCode);
 
-    var body = JsonSerializer.Deserialize<List<EventDto>>(response.Body);
+    var body = JsonSerializer.Deserialize<List<EventDto>>(response.Body, new JsonSerializerOptions()
+    {
+      PropertyNameCaseInsensitive = true,
+    });
 
     Assert.NotNull(body);
     Assert.Empty(body);
@@ -103,7 +109,10 @@ public class FunctionTests
 
     Assert.Equal((int)HttpStatusCode.BadRequest, response.StatusCode);
 
-    var errors = JsonSerializer.Deserialize<List<ValidationFailure>>(response.Body);
+    var errors = JsonSerializer.Deserialize<List<ValidationFailure>>(response.Body, new JsonSerializerOptions()
+    {
+      PropertyNameCaseInsensitive = true,
+    });
 
     Assert.NotNull(errors);
     Assert.Contains(errors, error => error.PropertyName == nameof(ListEventsQuery.Query.AccountId)
@@ -133,7 +142,10 @@ public class FunctionTests
 
     Assert.Equal((int)HttpStatusCode.BadRequest, response.StatusCode);
 
-    var errors = JsonSerializer.Deserialize<List<ValidationFailure>>(response.Body);
+    var errors = JsonSerializer.Deserialize<List<ValidationFailure>>(response.Body, new JsonSerializerOptions()
+    {
+      PropertyNameCaseInsensitive = true,
+    });
 
     Assert.NotNull(errors);
     Assert.Contains(errors, error => error.PropertyName == nameof(ListEventsQuery.Query.ToDate)
@@ -163,7 +175,10 @@ public class FunctionTests
 
     Assert.Equal((int)HttpStatusCode.BadRequest, response.StatusCode);
 
-    var errors = JsonSerializer.Deserialize<List<ValidationFailure>>(response.Body);
+    var errors = JsonSerializer.Deserialize<List<ValidationFailure>>(response.Body, new JsonSerializerOptions()
+    {
+      PropertyNameCaseInsensitive = true,
+    });
 
     Assert.NotNull(errors);
     Assert.Contains(errors, error => error.PropertyName == nameof(ListEventsQuery.Query.FromDate)
@@ -194,7 +209,10 @@ public class FunctionTests
 
     Assert.Equal((int)HttpStatusCode.BadRequest, response.StatusCode);
 
-    var errors = JsonSerializer.Deserialize<List<ValidationFailure>>(response.Body);
+    var errors = JsonSerializer.Deserialize<List<ValidationFailure>>(response.Body, new JsonSerializerOptions()
+    {
+      PropertyNameCaseInsensitive = true,
+    });
 
     Assert.NotNull(errors);
     Assert.Contains(errors, error => error.PropertyName == nameof(ListEventsQuery.Query.FromDate)
