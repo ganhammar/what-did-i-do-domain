@@ -52,6 +52,9 @@ jobs:
       - name: 'Client: Lint'
         run: npm run lint:ci
         working-directory: ./src/Client
+      - name: 'Client: Styling'
+        run: npm run styling
+        working-directory: ./src/Client
       - name: 'Client: Test'
         run: npm test
         working-directory: ./src/Client

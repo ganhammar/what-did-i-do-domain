@@ -37,11 +37,6 @@ declare module 'styled-components' {
       l: string;
       xl: string;
     };
-    shadows: [
-      string,
-      string,
-      string,
-      string,
-    ];
+    shadows: [string, string, string, string];
   }
 }

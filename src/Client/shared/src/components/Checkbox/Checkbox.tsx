@@ -18,15 +18,14 @@ interface Props {
   position: 'left' | 'right';
 }
 
-export function Checkbox({
-  title,
-  isChecked,
-  onChange,
-  position,
-}: Props) {
+export function Checkbox({ title, isChecked, onChange, position }: Props) {
   return (
     <Fieldset onClick={onChange}>
-      <CheckboxElement type="checkbox" checked={isChecked} onChange={onChange} />
+      <CheckboxElement
+        type="checkbox"
+        checked={isChecked}
+        onChange={onChange}
+      />
       <Label>{title}</Label>
     </Fieldset>
   );

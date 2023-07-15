@@ -11,7 +11,8 @@
     "build": "npm run build -w @wdid/landing -w @wdid/login -w @wdid/account",
     "lint:ci": "npm run lint:ci --ws",
     "lint": "npm run lint --ws",
-    "test": "npm run test --ws"
+    "test": "npm run test --ws",
+    "styling": "npm run styling --ws"
   },
   "dependencies": {
     "@testing-library/jest-dom": "^5.16.5",
@@ -34,5 +35,8 @@
   },
   "overrides": {
     "nth-check": "^2.1.1"
+  },
+  "devDependencies": {
+    "prettier": "^3.0.0"
   }
 }

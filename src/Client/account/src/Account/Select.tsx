@@ -6,7 +6,8 @@ import { currentAccountAtom } from 'src/Dashboard/currentAccountAtom';
 
 export function Select() {
   const navigate = useNavigate();
-  const [currentAccount, setCurrentAccount] = useRecoilState(currentAccountAtom);
+  const [currentAccount, setCurrentAccount] =
+    useRecoilState(currentAccountAtom);
   const accounts = useRecoilValue(accountsSelector);
 
   useEffect(() => {
@@ -17,7 +18,7 @@ export function Select() {
     } else if (accounts.result?.length === 1) {
       setCurrentAccount(accounts.result[0]);
     }
-  }, [accounts, currentAccount, setCurrentAccount, navigate])
+  }, [accounts, currentAccount, setCurrentAccount, navigate]);
 
   return <>Select Account</>;
 }

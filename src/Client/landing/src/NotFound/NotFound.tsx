@@ -15,9 +15,7 @@ export function NotFound() {
   return (
     <Main>
       <h2>Not Found?</h2>
-      <Paragraph>
-        It seems like I can't help you, weird..
-      </Paragraph>
+      <Paragraph>It seems like I can't help you, weird..</Paragraph>
       <SadParagraph>😓</SadParagraph>
     </Main>
   );

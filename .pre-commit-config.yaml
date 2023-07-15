@@ -9,6 +9,6 @@ repos:
       - id: eslint
         name: eslint
         language: system
-        entry: cd src/Client && npm run lint:ci
+        entry: cd src/Client && npm run lint:ci && npm run styling
         files: ^src/Client/
         types_or: ["ts", "tsx"]

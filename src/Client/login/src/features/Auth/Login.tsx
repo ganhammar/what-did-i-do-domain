@@ -3,7 +3,11 @@ import { Navigate, useNavigate } from 'react-router-dom';
 import { useRecoilRefresher_UNSTABLE, useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 import {
-  Button, Checkbox, TextInput, isEmail, useAsyncError,
+  Button,
+  Checkbox,
+  TextInput,
+  isEmail,
+  useAsyncError,
 } from '@wdid/shared';
 import { UserService } from '../User/UserService';
 import useUser from './currentUserSelector';

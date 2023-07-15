@@ -1,8 +1,6 @@
 import { useState } from 'react';
 import styled from 'styled-components';
-import {
-  Button, TextInput, isEmail, useAsyncError,
-} from '@wdid/shared';
+import { Button, TextInput, isEmail, useAsyncError } from '@wdid/shared';
 import { UserService } from './';
 
 const MIN_PASSWORD_LENGTH = 8;

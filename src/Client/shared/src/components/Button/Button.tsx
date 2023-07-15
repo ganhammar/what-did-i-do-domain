@@ -92,7 +92,9 @@ const Element = styled.button<ElementProps>`
   box-shadow: ${({ theme, isDisabled }) =>
     isDisabled ? theme.shadows[0] : theme.shadows[1]};
   cursor: ${({ isDisabled }) => (isDisabled ? 'not-allowed' : 'pointer')};
-  transition: box-shadow 0.5s, opacity 0.5s;
+  transition:
+    box-shadow 0.5s,
+    opacity 0.5s;
   &:hover {
     box-shadow: ${({ theme }) => theme.shadows[0]};
     opacity: 0.9;
@@ -100,7 +102,8 @@ const Element = styled.button<ElementProps>`
   ${({ theme, buttonWidth, isLoading }) =>
     isLoading &&
     css`
-      animation: ${initLoading(theme, buttonWidth)} 0.3s forwards,
+      animation:
+        ${initLoading(theme, buttonWidth)} 0.3s forwards,
         ${pulse} 1s infinite;
       cursor: not-allowed;
     `}

@@ -6,8 +6,8 @@ test('renders application title', async () => {
   global.fetch = jest.fn(() =>
     Promise.resolve({
       ok: false,
-      text: () => { },
-    }),
+      text: () => {},
+    })
   ) as jest.Mock;
 
   render(<App />);

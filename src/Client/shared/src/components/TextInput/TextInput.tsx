@@ -22,7 +22,9 @@ const Fieldset = styled.fieldset<TextInputStyleProps>`
     background-color: ${({ theme: { palette }, hasError }) =>
       hasError ? palette.warning.main : palette.primary.main};
     z-index: 1;
-    transition: width 0.5s, background-color 0.5s;
+    transition:
+      width 0.5s,
+      background-color 0.5s;
   }
   ${({ isFocused }) =>
     isFocused &&
@@ -36,7 +38,9 @@ const Label = styled.label<TextInputStyleProps>`
   position: absolute;
   left: ${({ theme }) => theme.spacing.xs};
   top: 24px;
-  transition: top 0.5s, font-size 0.5s;
+  transition:
+    top 0.5s,
+    font-size 0.5s;
   ${({ isFocused, hasValue }) =>
     (isFocused || hasValue) &&
     `

@@ -25,7 +25,7 @@ const LoadingIndicator = styled.div`
   height: 40px;
   border-radius: 20px;
   background-color: ${({ theme }) => theme.palette.primary.main};
-  animation: ${fade} 1.0s infinite ease-in-out;
+  animation: ${fade} 1s infinite ease-in-out;
 `;
 
 export function Loader() {

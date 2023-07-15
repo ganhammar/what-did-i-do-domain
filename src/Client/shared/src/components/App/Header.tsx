@@ -22,7 +22,8 @@ const LinkStyle = css`
     position: absolute;
     right: ${({ theme }) => theme.spacing.s};
   }
-  &:hover, &.active {
+  &:hover,
+  &.active {
     font-weight: bold;
     color: ${({ theme }) => theme.palette.primary.main};
   }
@@ -35,9 +36,9 @@ const StyledALink = styled.a`
 `;
 
 interface Props {
-  links: { to: string, title: string, serverSide: boolean }[];
+  links: { to: string; title: string; serverSide: boolean }[];
   isLoggedIn: boolean;
-};
+}
 
 export function Header({ links, isLoggedIn }: Props) {
   const { pathname } = useLocation();
@@ -74,9 +75,7 @@ export function Header({ links, isLoggedIn }: Props) {
             Login
           </StyledALink>
         )}
-        {isLoggedIn && (
-          <StyledALink href="/login/logout">Logout</StyledALink>
-        )}
+        {isLoggedIn && <StyledALink href="/login/logout">Logout</StyledALink>}
       </Nav>
     </Wrapper>
   );
