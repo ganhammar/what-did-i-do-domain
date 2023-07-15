@@ -30,9 +30,15 @@
   },
   "devDependencies": {
     "customize-cra": "^1.0.0",
-    "react-app-rewired": "^2.2.1"
+    "react-app-rewired": "^2.2.1",
+    "recoil-mock": "^0.1.4"
   },
   "dependencies": {
     "oidc-client-ts": "^2.2.4"
+  },
+  "jest": {
+    "moduleNameMapper": {
+      "^recoil$": "recoil-mock"
+    }
   }
 }
