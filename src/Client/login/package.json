@@ -9,7 +9,8 @@
     "test": "react-app-rewired test",
     "lint:ci": "eslint",
     "lint": "eslint --fix",
-    "styling": "prettier . --check"
+    "styling": "prettier . --write",
+    "styling:ci": "prettier . --check"
   },
   "eslintConfig": {
     "extends": [

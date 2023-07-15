@@ -9,10 +9,11 @@
   ],
   "scripts": {
     "build": "npm run build -w @wdid/landing -w @wdid/login -w @wdid/account",
-    "lint:ci": "npm run lint:ci --ws",
     "lint": "npm run lint --ws",
+    "lint:ci": "npm run lint:ci --ws",
     "test": "npm run test --ws",
-    "styling": "npm run styling --ws"
+    "styling": "npm run styling --ws",
+    "styling:ci": "npm run styling:ci --ws"
   },
   "dependencies": {
     "@testing-library/jest-dom": "^5.16.5",
