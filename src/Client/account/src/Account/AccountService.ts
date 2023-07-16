@@ -13,4 +13,8 @@ export class AccountService extends FetchBase {
   async accounts() {
     return await this.get<Account[]>(this.baseUrl, this.accessToken);
   }
+
+  async create(name: string) {
+    return await this.post<Account>(this.baseUrl, { name }, this.accessToken);
+  }
 }
