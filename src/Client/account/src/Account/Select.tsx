@@ -1,8 +1,7 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import accountsSelector from 'src/Dashboard/accountsSelector';
-import { currentAccountAtom } from 'src/Dashboard/currentAccountAtom';
+import { accountsSelector, currentAccountAtom } from 'src/Dashboard';
 import styled from 'styled-components';
 
 const List = styled.div`

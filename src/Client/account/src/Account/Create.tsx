@@ -5,6 +5,7 @@ import styled from 'styled-components';
 import { accountServiceSelector } from './';
 import { currentUserAtom } from '@wdid/shared/src/components/Auth/currentUserAtom';
 import { useNavigate } from 'react-router-dom';
+import { accountsSelector } from 'src/Dashboard';
 
 const Form = styled.form`
   display: flex;
@@ -21,8 +22,9 @@ const ACCOUNT_NAME_MIN_LENGTH = 3;
 export function Create() {
   const throwError = useAsyncError();
   const navigate = useNavigate();
-  const [isLoading, setIsLoading] = useState(false);
+  const accounts = useRecoilValue(accountsSelector);
   const user = useRecoilValue(currentUserAtom);
+  const [isLoading, setIsLoading] = useState(false);
   const [name, setName] = useState<string>('');
 
   const accountService = useRecoilValue(accountServiceSelector);
@@ -39,6 +41,12 @@ export function Create() {
       throwError(error);
     }
   };
+
+  useEffect(() => {
+    if (accounts.result?.length) {
+      navigate('/account/select');
+    }
+  }, [accounts, navigate]);
 
   useEffect(() => {
     if (user && user.profile.email) {

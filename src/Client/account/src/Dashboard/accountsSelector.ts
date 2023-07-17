@@ -2,7 +2,7 @@ import accessTokenSelector from '@wdid/shared/src/components/Auth/accessTokenSel
 import { selector } from 'recoil';
 import { AccountService } from 'src/Account';
 
-const accountsSelector = selector({
+export const accountsSelector = selector({
   key: 'accounts',
   get: async ({ get }) => {
     const accessToken = get(accessTokenSelector);
@@ -15,5 +15,3 @@ const accountsSelector = selector({
     return await accountService.accounts();
   },
 });
-
-export default accountsSelector;

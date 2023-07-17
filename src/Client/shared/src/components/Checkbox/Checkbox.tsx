@@ -10,10 +10,10 @@ const Fieldset = styled.fieldset`
 `;
 
 const CheckboxElement = styled.input`
-  width: 1.2em;
-  height: 1.2em;
+  width: 1.2rem;
+  height: 1.2rem;
   border: none;
-  margin-right: 8px;
+  margin-right: 0.6rem;
   appearance: none;
   &:after {
     content: '';
