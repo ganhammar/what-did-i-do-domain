@@ -74,7 +74,7 @@ export function Create() {
           isLoading={isLoading}
           isAsync
         >
-          Register
+          Create
         </Submit>
       </Form>
     </>

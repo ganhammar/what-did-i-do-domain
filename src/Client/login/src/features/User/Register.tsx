@@ -2,7 +2,6 @@ import { useState } from 'react';
 import styled from 'styled-components';
 import { Button, TextInput, isEmail, useAsyncError } from '@wdid/shared';
 import { UserService } from './';
-import { useNavigate } from 'react-router-dom';
 
 const MIN_PASSWORD_LENGTH = 8;
 const RETURN_URL = '/account/dashboard';
@@ -18,7 +17,6 @@ const Submit = styled(Button)`
 
 export function Register() {
   const throwError = useAsyncError();
-  const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
@@ -36,7 +34,7 @@ export function Register() {
 
       setIsLoading(false);
 
-      navigate('/account/dashboard');
+      window.location.href = RETURN_URL;
     } catch (error) {
       throwError(error);
     }
