@@ -1,5 +1,5 @@
-import { useMemo, useState } from 'react';
-import { Navigate, useNavigate } from 'react-router-dom';
+import { useEffect, useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useRecoilRefresher_UNSTABLE, useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 import {
@@ -22,8 +22,8 @@ const Submit = styled(Button)`
 `;
 
 export function Login() {
-  const navigate = useNavigate();
   const throwError = useAsyncError();
+  const navigate = useNavigate();
   const user = useRecoilValue(useUser);
   const refresh = useRecoilRefresher_UNSTABLE(useUser);
   const [email, setEmail] = useState('');
@@ -46,15 +46,11 @@ export function Login() {
         rememberMe,
       });
 
-      setIsLoading(false);
-
       if (response.success && response.result?.succeeded) {
-        refresh();
-
         if (returnUrl) {
           window.location.href = returnUrl;
         } else {
-          navigate('/account/dashboard');
+          refresh();
         }
       } else {
         console.log(response);
@@ -64,9 +60,11 @@ export function Login() {
     }
   };
 
-  if (user) {
-    return <Navigate to="/account/dashboard" />;
-  }
+  useEffect(() => {
+    if (user) {
+      navigate('/account/dashboard');
+    }
+  }, [user, navigate]);
 
   return (
     <Form>
