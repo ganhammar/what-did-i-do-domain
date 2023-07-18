@@ -16,6 +16,7 @@ public class ListEventsQuery
     public string? AccountId { get; set; }
     public DateTime? FromDate { get; set; }
     public DateTime? ToDate { get; set; }
+    public int Limit { get; set; }
   }
 
   public class QueryValidator : AbstractValidator<Query>
@@ -24,6 +25,11 @@ public class ListEventsQuery
     {
       RuleFor(x => x.AccountId)
         .NotEmpty();
+
+      RuleFor(x => x.Limit)
+        .NotEmpty()
+        .GreaterThan(0)
+        .LessThanOrEqualTo(200);
 
       When(x => x.ToDate.HasValue, () =>
       {
@@ -71,6 +77,7 @@ public class ListEventsQuery
               { ":toDate", toDate },
             }
           },
+          Limit = request.Limit,
         },
         new()
         {

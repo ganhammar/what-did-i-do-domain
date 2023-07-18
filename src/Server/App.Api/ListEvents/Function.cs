@@ -32,15 +32,18 @@ public class Function : APIGatewayProxyRequestBase
     queryStringParameters.TryGetValue("accountid", out var accountId);
     queryStringParameters.TryGetValue("fromdate", out var fromDateRaw);
     queryStringParameters.TryGetValue("todate", out var toDateRaw);
+    queryStringParameters.TryGetValue("limit", out var limitRaw);
 
     var fromDate = TryParseDateTime(fromDateRaw);
     var toDate = TryParseDateTime(toDateRaw);
+    int.TryParse(limitRaw, out var limit);
 
     return await Respond(new ListEventsQuery.Query
     {
       AccountId = accountId,
       FromDate = fromDate,
       ToDate = toDate,
+      Limit = limit,
     });
   }
 
