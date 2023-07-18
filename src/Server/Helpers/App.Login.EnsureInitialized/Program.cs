@@ -1,6 +1,5 @@
 ﻿using System.Security.Cryptography.X509Certificates;
 using Amazon.DynamoDBv2;
-using Amazon.DynamoDBv2.Model;
 using App.Login.EnsureInitialized;
 using AspNetCore.Identity.AmazonDynamoDB;
 using Microsoft.Extensions.Configuration;

@@ -47,7 +47,7 @@ export function Select() {
         you want to use?
       </p>
       <List>
-        {accounts.result!.map((account) => (
+        {accounts.result?.map((account) => (
           <Item onClick={() => selectAccount(account)} key={account.id}>
             {account.name}
           </Item>
