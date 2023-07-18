@@ -2,6 +2,7 @@
 using Amazon.DynamoDBv2.DataModel;
 using App.Api.Shared.Infrastructure;
 using App.Api.Shared.Models;
+using App.Api.Shared.Validators;
 using AWS.Lambda.Powertools.Logging;
 using FluentValidation;
 using MediatR;
@@ -28,6 +29,9 @@ public class CreateEventCommand
 
       RuleFor(x => x.Title)
         .NotEmpty();
+
+      RuleFor(x => x)
+        .HasRequiredScopes("event");
     }
   }
 

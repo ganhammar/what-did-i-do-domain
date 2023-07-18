@@ -37,6 +37,12 @@ public class FunctionTests
       RequestContext = new APIGatewayProxyRequest.ProxyRequestContext
       {
         RequestId = Guid.NewGuid().ToString(),
+        Authorizer = new()
+        {
+          { "scope", "email test event" },
+          { "sub", Guid.NewGuid() },
+          { "email", "test@wdid.fyi" },
+        },
       },
     };
     var response = await function.FunctionHandler(request, context);
@@ -79,6 +85,12 @@ public class FunctionTests
       RequestContext = new APIGatewayProxyRequest.ProxyRequestContext
       {
         RequestId = Guid.NewGuid().ToString(),
+        Authorizer = new()
+        {
+          { "scope", "email test event" },
+          { "sub", Guid.NewGuid() },
+          { "email", "test@wdid.fyi" },
+        },
       },
     };
     var response = await function.FunctionHandler(request, context);
@@ -105,6 +117,12 @@ public class FunctionTests
       RequestContext = new APIGatewayProxyRequest.ProxyRequestContext
       {
         RequestId = Guid.NewGuid().ToString(),
+        Authorizer = new()
+        {
+          { "scope", "email test event" },
+          { "sub", Guid.NewGuid() },
+          { "email", "test@wdid.fyi" },
+        },
       },
     };
     var response = await function.FunctionHandler(request, context);
@@ -139,6 +157,12 @@ public class FunctionTests
       RequestContext = new APIGatewayProxyRequest.ProxyRequestContext
       {
         RequestId = Guid.NewGuid().ToString(),
+        Authorizer = new()
+        {
+          { "scope", "email test event" },
+          { "sub", Guid.NewGuid() },
+          { "email", "test@wdid.fyi" },
+        },
       },
     };
     var response = await function.FunctionHandler(request, context);
@@ -173,6 +197,12 @@ public class FunctionTests
       RequestContext = new APIGatewayProxyRequest.ProxyRequestContext
       {
         RequestId = Guid.NewGuid().ToString(),
+        Authorizer = new()
+        {
+          { "scope", "email test event" },
+          { "sub", Guid.NewGuid() },
+          { "email", "test@wdid.fyi" },
+        },
       },
     };
     var response = await function.FunctionHandler(request, context);
@@ -208,6 +238,12 @@ public class FunctionTests
       RequestContext = new APIGatewayProxyRequest.ProxyRequestContext
       {
         RequestId = Guid.NewGuid().ToString(),
+        Authorizer = new()
+        {
+          { "scope", "email test event" },
+          { "sub", Guid.NewGuid() },
+          { "email", "test@wdid.fyi" },
+        },
       },
     };
     var response = await function.FunctionHandler(request, context);
@@ -242,6 +278,12 @@ public class FunctionTests
       RequestContext = new APIGatewayProxyRequest.ProxyRequestContext
       {
         RequestId = Guid.NewGuid().ToString(),
+        Authorizer = new()
+        {
+          { "scope", "email test event" },
+          { "sub", Guid.NewGuid() },
+          { "email", "test@wdid.fyi" },
+        },
       },
     };
     var response = await function.FunctionHandler(request, context);
@@ -280,6 +322,12 @@ public class FunctionTests
       RequestContext = new APIGatewayProxyRequest.ProxyRequestContext
       {
         RequestId = Guid.NewGuid().ToString(),
+        Authorizer = new()
+        {
+          { "scope", "email test event" },
+          { "sub", Guid.NewGuid() },
+          { "email", "test@wdid.fyi" },
+        },
       },
     };
     var response = await function.FunctionHandler(request, context);
@@ -294,5 +342,43 @@ public class FunctionTests
     Assert.NotNull(errors);
     Assert.Contains(errors, error => error.PropertyName == nameof(ListEventsQuery.Query.Limit)
       && error.ErrorCode == expectedErrorCode);
+  }
+
+  [Fact]
+  public async Task Should_ReturnUnauthorized_When_RequiredScopeIsMissing()
+  {
+    var function = new Function();
+    var context = new TestLambdaContext();
+    var data = new Dictionary<string, string>
+    {
+      { "AccountId", Guid.NewGuid().ToString() },
+      { "Limit", "100" },
+    };
+    var request = new APIGatewayProxyRequest
+    {
+      HttpMethod = HttpMethod.Post.Method,
+      Body = JsonSerializer.Serialize(data),
+      RequestContext = new APIGatewayProxyRequest.ProxyRequestContext
+      {
+        RequestId = Guid.NewGuid().ToString(),
+        Authorizer = new()
+        {
+          { "scope", "email test account" },
+          { "sub", Guid.NewGuid() },
+          { "email", "test@wdid.fyi" },
+        },
+      },
+    };
+    var response = await function.FunctionHandler(request, context);
+
+    Assert.Equal((int)HttpStatusCode.BadRequest, response.StatusCode);
+
+    var errors = JsonSerializer.Deserialize<List<ValidationFailure>>(response.Body, new JsonSerializerOptions()
+    {
+      PropertyNameCaseInsensitive = true,
+    });
+
+    Assert.NotNull(errors);
+    Assert.Contains(errors, error => error.ErrorCode == "UnauthorizedRequest");
   }
 }

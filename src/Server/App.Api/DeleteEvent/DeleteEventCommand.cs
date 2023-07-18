@@ -2,6 +2,7 @@
 using Amazon.DynamoDBv2.DataModel;
 using App.Api.Shared.Infrastructure;
 using App.Api.Shared.Models;
+using App.Api.Shared.Validators;
 using AWS.Lambda.Powertools.Logging;
 using FluentValidation;
 using MediatR;
@@ -30,6 +31,9 @@ public class DeleteEventCommand
         })
         .WithErrorCode(InvalidId)
         .WithMessage("The Id format is invalid");
+
+      RuleFor(x => x)
+        .HasRequiredScopes("event");
     }
   }
 
