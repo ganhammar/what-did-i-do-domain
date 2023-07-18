@@ -31,6 +31,9 @@ export function Login() {
   const [rememberMe, setRememberMe] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
+  const params = new URLSearchParams(window.location.search);
+  const returnUrl = params.get('ReturnUrl');
+
   const userService = useMemo(() => new UserService(), []);
 
   const submit = async () => {
@@ -47,7 +50,12 @@ export function Login() {
 
       if (response.success && response.result?.succeeded) {
         refresh();
-        navigate('/dashboard');
+
+        if (returnUrl) {
+          window.location.href = returnUrl;
+        } else {
+          navigate('/account/dashboard');
+        }
       } else {
         console.log(response);
       }
@@ -57,7 +65,7 @@ export function Login() {
   };
 
   if (user) {
-    return <Navigate to="/dashboard" />;
+    return <Navigate to="/account/dashboard" />;
   }
 
   return (

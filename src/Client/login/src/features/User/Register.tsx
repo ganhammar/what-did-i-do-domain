@@ -5,7 +5,7 @@ import { UserService } from './';
 import { useNavigate } from 'react-router-dom';
 
 const MIN_PASSWORD_LENGTH = 8;
-const RETURN_URL = '/dashboard';
+const RETURN_URL = '/account/dashboard';
 
 const Form = styled.form`
   display: flex;
