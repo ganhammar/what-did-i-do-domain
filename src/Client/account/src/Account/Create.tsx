@@ -1,6 +1,6 @@
 import { Button, TextInput, useAsyncError } from '@wdid/shared';
 import { useEffect, useState } from 'react';
-import { useRecoilValue } from 'recoil';
+import { useRecoilRefresher_UNSTABLE, useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 import { accountServiceSelector } from './';
 import { currentUserAtom } from '@wdid/shared/src/components/Auth/currentUserAtom';
@@ -23,6 +23,7 @@ export function Create() {
   const throwError = useAsyncError();
   const navigate = useNavigate();
   const accounts = useRecoilValue(accountsSelector);
+  const refresh = useRecoilRefresher_UNSTABLE(accountsSelector);
   const user = useRecoilValue(currentUserAtom);
   const [isLoading, setIsLoading] = useState(false);
   const [name, setName] = useState<string>('');
@@ -34,9 +35,7 @@ export function Create() {
 
       await accountService.create(name);
 
-      setIsLoading(false);
-
-      navigate('/account/dashboard');
+      refresh();
     } catch (error) {
       throwError(error);
     }
