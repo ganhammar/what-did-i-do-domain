@@ -3,6 +3,10 @@ import { BrowserRouter } from 'react-router-dom';
 import { createRecoilMockWrapper } from 'recoil-mock';
 import { Dashboard } from '../Dashboard';
 import { currentAccountAtom } from '../../Account';
+import { eventsSelector } from 'src/Event';
+import { IntlProvider } from 'react-intl';
+import { ThemeProvider } from 'styled-components';
+import { appTheme } from '@wdid/shared';
 
 test('renders application title', async () => {
   const name = 'test-account-name';
@@ -12,11 +16,19 @@ test('renders application title', async () => {
     id: name,
     createDate: new Date().toISOString(),
   });
+  context.set(eventsSelector, {
+    success: true,
+    result: [],
+  });
 
   render(
-    <BrowserRouter>
-      <Dashboard />
-    </BrowserRouter>,
+    <IntlProvider locale={navigator.language}>
+      <BrowserRouter>
+        <ThemeProvider theme={appTheme}>
+          <Dashboard />
+        </ThemeProvider>
+      </BrowserRouter>
+    </IntlProvider>,
     { wrapper }
   );
 
