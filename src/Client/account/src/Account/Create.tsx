@@ -2,10 +2,9 @@ import { Button, TextInput, useAsyncError } from '@wdid/shared';
 import { useEffect, useState } from 'react';
 import { useRecoilRefresher_UNSTABLE, useRecoilValue } from 'recoil';
 import styled from 'styled-components';
-import { accountServiceSelector } from './';
+import { accountServiceSelector, accountsSelector } from './';
 import { currentUserAtom } from '@wdid/shared/src/components/Auth/currentUserAtom';
 import { useNavigate } from 'react-router-dom';
-import { accountsSelector } from 'src/Dashboard';
 
 const Form = styled.form`
   display: flex;

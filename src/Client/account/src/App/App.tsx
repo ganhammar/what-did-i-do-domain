@@ -4,6 +4,7 @@ import { AppRoutes } from './AppRoutes';
 import { Auth, appTheme, ErrorBoundry, Layout, Loader } from '@wdid/shared';
 import { RecoilRoot } from 'recoil';
 import { Suspense } from 'react';
+import { IntlProvider } from 'react-intl';
 
 export function App() {
   const links = [
@@ -11,20 +12,22 @@ export function App() {
   ];
 
   return (
-    <RecoilRoot>
-      <BrowserRouter>
-        <ThemeProvider theme={appTheme}>
-          <Suspense fallback={<Loader />}>
-            <Auth defaultView="/account/dashboard" pathPrefix="account">
-              <Layout isLoggedIn={true} links={links}>
-                <ErrorBoundry>
-                  <AppRoutes />
-                </ErrorBoundry>
-              </Layout>
-            </Auth>
-          </Suspense>
-        </ThemeProvider>
-      </BrowserRouter>
-    </RecoilRoot>
+    <IntlProvider locale={navigator.language}>
+      <RecoilRoot>
+        <BrowserRouter>
+          <ThemeProvider theme={appTheme}>
+            <Suspense fallback={<Loader />}>
+              <Auth defaultView="/account/dashboard" pathPrefix="account">
+                <Layout isLoggedIn={true} links={links}>
+                  <ErrorBoundry>
+                    <AppRoutes />
+                  </ErrorBoundry>
+                </Layout>
+              </Auth>
+            </Suspense>
+          </ThemeProvider>
+        </BrowserRouter>
+      </RecoilRoot>
+    </IntlProvider>
   );
 }

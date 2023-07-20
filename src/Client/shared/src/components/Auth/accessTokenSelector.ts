@@ -1,7 +1,7 @@
 import { selector } from 'recoil';
 import { currentUserAtom } from './currentUserAtom';
 
-const accessTokenSelector = selector({
+export const accessTokenSelector = selector({
   key: 'AccessToken',
   get: async ({ get }) => {
     const user = get(currentUserAtom);
@@ -9,5 +9,3 @@ const accessTokenSelector = selector({
     return user?.access_token;
   },
 });
-
-export default accessTokenSelector;

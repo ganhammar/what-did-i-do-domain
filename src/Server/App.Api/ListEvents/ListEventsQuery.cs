@@ -79,9 +79,10 @@ public class ListEventsQuery
               { ":partitionKey", EventMapper.GetPartitionKey(request.AccountId!) },
               { ":fromDate", fromDate },
               { ":toDate", toDate },
-            }
+            },
           },
           Limit = request.Limit,
+          BackwardSearch = true,
         },
         new()
         {

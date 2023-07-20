@@ -1,7 +1,7 @@
 import { FetchBase } from '@wdid/shared';
 
 export class AccountService extends FetchBase {
-  baseUrl = process.env.REACT_APP_BASE_API_URL as string;
+  baseUrl = `${process.env.REACT_APP_BASE_API_URL}/account`;
   private readonly accessToken: string;
 
   constructor(accessToken: string) {
@@ -10,7 +10,7 @@ export class AccountService extends FetchBase {
     this.accessToken = accessToken;
   }
 
-  async accounts() {
+  async list() {
     return await this.get<Account[]>(this.baseUrl, this.accessToken);
   }
 

@@ -1,3 +1,4 @@
-export { flushPromisesAndTimers } from './flushPromisesAndTimers';
-export { isEmail } from './isEmail';
-export { useAsyncError } from './useAsyncError';
+export * from './flushPromisesAndTimers';
+export * from './isEmail';
+export * from './timeFromNow';
+export * from './useAsyncError';

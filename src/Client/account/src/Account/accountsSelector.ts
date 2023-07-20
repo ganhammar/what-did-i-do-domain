@@ -1,4 +1,4 @@
-import accessTokenSelector from '@wdid/shared/src/components/Auth/accessTokenSelector';
+import { accessTokenSelector } from '@wdid/shared/src/components/Auth';
 import { selector } from 'recoil';
 import { AccountService } from 'src/Account';
 
@@ -12,6 +12,6 @@ export const accountsSelector = selector({
     }
 
     const accountService = new AccountService(accessToken);
-    return await accountService.accounts();
+    return await accountService.list();
   },
 });

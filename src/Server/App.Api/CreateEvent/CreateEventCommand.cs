@@ -13,7 +13,7 @@ public class CreateEventCommand
 {
   public class Command : IRequest<IResponse<EventDto>>
   {
-    public Guid AccountId { get; set; }
+    public string? AccountId { get; set; }
     public string? Title { get; set; }
     public string? Description { get; set; }
     public DateTime? Date { get; set; }
@@ -50,6 +50,7 @@ public class CreateEventCommand
 
       var item = EventMapper.FromDto(new EventDto
       {
+        AccountId = request.AccountId,
         Title = request.Title,
         Description = request.Description,
         Date = request.Date?.ToUniversalTime() ?? DateTime.UtcNow,

@@ -19,7 +19,7 @@ public class FunctionTests
     var context = new TestLambdaContext();
     var data = new CreateEventCommand.Command
     {
-      AccountId = Guid.NewGuid(),
+      AccountId = "test-account",
       Title = "Testing Testing",
     };
     var request = new APIGatewayProxyRequest
@@ -59,7 +59,7 @@ public class FunctionTests
     var date = DateTime.Now.AddDays(-1337).ToUniversalTime();
     var data = new CreateEventCommand.Command
     {
-      AccountId = Guid.NewGuid(),
+      AccountId = "test-account",
       Title = "Testing Testing",
       Date = date,
     };
@@ -100,7 +100,7 @@ public class FunctionTests
     var context = new TestLambdaContext();
     var data = new CreateEventCommand.Command
     {
-      AccountId = Guid.NewGuid(),
+      AccountId = "test-account",
     };
     var request = new APIGatewayProxyRequest
     {

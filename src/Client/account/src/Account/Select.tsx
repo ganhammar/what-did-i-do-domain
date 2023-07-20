@@ -1,8 +1,8 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { accountsSelector, currentAccountAtom } from 'src/Dashboard';
 import styled from 'styled-components';
+import { accountsSelector, currentAccountAtom } from './';
 
 const List = styled.div`
   margin: 2rem 0;
