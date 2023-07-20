@@ -54,9 +54,10 @@ const Input = styled.input<TextInputStyleProps>`
     ${({ theme: { palette }, hasError }) =>
       hasError ? palette.warning.main : palette.divider.main};
   background: none;
-  padding: 0 4px 2px 4px;
+  padding: ${({ theme }) =>
+    `0 ${theme.spacing.xs} ${theme.spacing.xs} ${theme.spacing.xs}`};
   width: 100%;
-  height: 2.1rem;
+  height: 2.6rem;
   margin: 1.1rem 0 0 0;
   transition: border-bottom-color 0.5s;
   &:focus {
@@ -65,9 +66,9 @@ const Input = styled.input<TextInputStyleProps>`
 `;
 const Tip = styled.div<TextInputStyleProps>`
   position: absolute;
-  bottom: -1.3rem;
+  bottom: -1.5rem;
   left: ${({ theme }) => theme.spacing.xs};
-  font-size: 0.7rem;
+  font-size: 0.8rem;
   z-index: 2;
   transition: opacity 0.5s;
   opacity: 0;

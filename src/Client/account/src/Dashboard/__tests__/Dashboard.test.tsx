@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
 import { createRecoilMockWrapper } from 'recoil-mock';
-import { Dashboard } from '../Dashboard';
+import Dashboard from '../Dashboard';
 import { currentAccountAtom } from '../../Account';
 import { eventsSelector } from 'src/Event';
 import { IntlProvider } from 'react-intl';

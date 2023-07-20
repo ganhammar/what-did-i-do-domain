@@ -9,6 +9,6 @@ interface EventListParamters {
 export const eventListParamtersAtom = atom<EventListParamters>({
   key: 'eventListParamtersAtom',
   default: {
-    limit: 30,
+    limit: 20,
   },
 });

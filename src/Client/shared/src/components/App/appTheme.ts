@@ -1,19 +1,19 @@
 import { DefaultTheme } from 'styled-components';
 
 export const appTheme: DefaultTheme = {
-  borderRadius: '4px',
+  borderRadius: '6px',
   palette: {
     common: {
-      black: '#222222',
+      black: '#333333',
       white: '#f9f9f9',
     },
     background: {
       main: '#eee',
-      contrastText: '#222222',
+      contrastText: '#333333',
     },
     backgroundHighlight: {
       main: '#f9f9f9',
-      contrastText: '#333333',
+      contrastText: '#444444',
     },
     primary: {
       main: '#5e50a1',
@@ -38,17 +38,17 @@ export const appTheme: DefaultTheme = {
   },
   typography: {
     fontFamily: 'Roboto, "Helvetica Neue", sans-serif',
-    fontSize: '18px',
+    fontSize: '20px',
     lineHeight: '1.6',
     h1: '4rem',
-    h2: '2.5rem',
-    h3: '2rem',
+    h2: '2rem',
+    h3: '1.6rem',
   },
   spacing: {
-    xs: '4px',
-    s: '8px',
-    m: '16px',
-    l: '24px',
+    xs: '8px',
+    s: '16px',
+    m: '24px',
+    l: '32px',
     xl: '40px',
   },
   shadows: [

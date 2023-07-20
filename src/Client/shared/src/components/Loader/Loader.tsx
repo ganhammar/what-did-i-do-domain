@@ -1,11 +1,15 @@
 import styled, { keyframes } from 'styled-components';
 
-const LoadingIndicatorWrapper = styled.div`
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  margin-left: -20px;
-  margin-top: -20px;
+const LoadingIndicatorWrapper = styled.div<{ partial?: boolean }>`
+  ${({ partial }) =>
+    partial !== true &&
+    `
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    margin-left: -20px;
+    margin-top: -20px;
+  `}
   display: flex;
   flex-direction: row;
 `;
@@ -28,9 +32,14 @@ const LoadingIndicator = styled.div`
   animation: ${fade} 1s infinite ease-in-out;
 `;
 
-export function Loader() {
+interface LoaderProps {
+  partial?: boolean;
+  className?: string;
+}
+
+export function Loader({ partial, className }: LoaderProps) {
   return (
-    <LoadingIndicatorWrapper>
+    <LoadingIndicatorWrapper partial={partial} className={className}>
       <LoadingIndicator />
     </LoadingIndicatorWrapper>
   );

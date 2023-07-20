@@ -2,6 +2,7 @@ import { useRecoilValue } from 'recoil';
 import { Navigate } from 'react-router-dom';
 import { currentAccountAtom } from '../Account';
 import { Log } from 'src/Event';
+import { Header } from '@wdid/shared';
 
 export function Dashboard() {
   const account = useRecoilValue(currentAccountAtom);
@@ -12,8 +13,8 @@ export function Dashboard() {
 
   return (
     <>
-      <h2>Welcome! 👋</h2>
-      <p>Showing data for the account "{account.name}"</p>
+      <Header size="H2">Welcome! 👋</Header>
+      <p>Showing data for the account "{account.name}".</p>
       <Log />
     </>
   );

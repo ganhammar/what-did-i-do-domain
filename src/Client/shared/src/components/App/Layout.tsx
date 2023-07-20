@@ -7,7 +7,6 @@ const GlobalStyle = createGlobalStyle`
     box-sizing: border-box;
     margin: 0;
     padding: 0;
-    color: ${({ theme }) => theme.palette.background.contrastText};
     font-family: ${({ theme }) => theme.typography.fontFamily};
     font-size: ${({ theme }) => theme.typography.fontSize};
     line-height: ${({ theme }) => theme.typography.lineHeight};
@@ -18,6 +17,7 @@ const GlobalStyle = createGlobalStyle`
   }
   body {
     background: ${({ theme }) => theme.palette.background.main};
+    color: ${({ theme }) => theme.palette.background.contrastText};
   }
   h1 {
     font-size: ${({ theme }) => theme.typography.h1};

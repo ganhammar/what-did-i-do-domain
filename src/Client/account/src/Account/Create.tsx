@@ -9,11 +9,11 @@ import { useNavigate } from 'react-router-dom';
 const Form = styled.form`
   display: flex;
   flex-direction: column;
-  margin-top: 2rem;
+  margin-top: ${({ theme }) => theme.spacing.xl};
 `;
 const Submit = styled(Button)`
   margin-left: auto;
-  margin-top: 0.5rem;
+  margin-top: ${({ theme }) => theme.spacing.l};
 `;
 
 const ACCOUNT_NAME_MIN_LENGTH = 3;
