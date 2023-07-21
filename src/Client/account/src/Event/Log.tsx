@@ -2,14 +2,11 @@ import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { eventsSelector } from './';
 import styled from 'styled-components';
 import { useIntl } from 'react-intl';
-import { Header, Loader, Select, timeFromNow } from '@wdid/shared';
+import { Loader, Select, timeFromNow } from '@wdid/shared';
 import { eventListParamtersAtom } from './eventListParamtersAtom';
 import { Suspense, useEffect, useState } from 'react';
 import { Tag } from './Tag';
 
-const Wrapper = styled.div`
-  margin: ${({ theme }) => `${theme.spacing.xl} 0`};
-`;
 const Filters = styled.div`
   padding: ${({ theme }) => `${theme.spacing.s} ${theme.spacing.m}`};
   background-color: ${({ theme }) => theme.palette.paper.main};
@@ -140,8 +137,7 @@ export const Log = () => {
   }, [timePeriod, setParameters, limit]);
 
   return (
-    <Wrapper>
-      <Header size="H3">Last Events</Header>
+    <>
       <Filters>
         <Select
           value={limit}
@@ -161,6 +157,6 @@ export const Log = () => {
           <LogList />
         </Suspense>
       </ListWrapper>
-    </Wrapper>
+    </>
   );
 };

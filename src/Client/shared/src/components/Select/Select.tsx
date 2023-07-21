@@ -1,7 +1,7 @@
 import { useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { useClickOutside } from '@wdid/shared';
-import styled from 'styled-components';
+import { useClickOutside, useKeyPress } from '@wdid/shared';
+import styled, { keyframes } from 'styled-components';
 
 interface SelectOption {
   value: string;
@@ -25,6 +25,11 @@ interface SelectBoxProps {
   top: number;
   width: number;
   height: number;
+}
+
+interface OptionProps {
+  isSelected: boolean;
+  isHovered: boolean;
 }
 
 const OuterWrapper = styled.div``;
@@ -72,6 +77,18 @@ const ActualSelect = styled.select`
 const Value = styled.div`
   cursor: pointer;
 `;
+
+const fade = keyframes`
+  0% {
+    opacity: 0;
+    margin-top: -20px;
+  }
+  100% {
+    opacity: 1;
+    margin-top: 0;
+  }
+`;
+
 const SelectBox = styled.div<SelectBoxProps>`
   position: absolute;
   left: ${({ left }) => `${left}px`};
@@ -81,15 +98,25 @@ const SelectBox = styled.div<SelectBoxProps>`
   color: ${({ theme }) => theme.palette.paperHighlight.contrastText};
   box-shadow: ${({ theme }) => theme.shadows[3]};
   border-radius: ${({ theme }) => theme.borderRadius};
+  animation: ${fade} 200ms forwards ease-in-out;
 `;
 const Options = styled.div``;
-const Option = styled.div`
+const Option = styled.div<OptionProps>`
   border-top: 2px solid ${({ theme }) => theme.palette.background.main};
   cursor: pointer;
   padding: ${({ theme }) => theme.spacing.xs};
-  &:hover {
-    background-color: ${({ theme }) => theme.palette.background.main};
-  }
+  ${({ theme, isHovered }) =>
+    isHovered &&
+    `
+    background-color: ${theme.palette.paper.main};
+    color: ${theme.palette.paper.contrastText};
+  `}
+  ${({ theme, isSelected }) =>
+    isSelected &&
+    `
+    background-color: ${theme.palette.background.main};
+    color: ${theme.palette.background.contrastText};
+  `}
 `;
 
 export const Select = ({
@@ -100,19 +127,59 @@ export const Select = ({
   onChange,
 }: SelectProps) => {
   const [isOpen, setIsOpen] = useState(false);
+  const [hovered, setIsHovered] = useState<string>();
   const selectBoxRef = useRef<HTMLDivElement>(null);
   const wrapperRef = useRef<HTMLDivElement>(null);
 
   const toggle = () => {
+    if (isOpen) {
+      setIsHovered(undefined);
+    }
+
     setIsOpen(!isOpen);
   };
 
   const callback = (value: string) => {
+    setIsHovered(undefined);
     setIsOpen(false);
     onChange(value);
   };
 
   useClickOutside([wrapperRef, selectBoxRef], () => isOpen && toggle());
+  useKeyPress(['Escape', 'Enter', 'ArrowDown', 'ArrowUp'], (key) => {
+    if (!isOpen) {
+      return;
+    }
+
+    const hoveredIndex = options.findIndex(
+      (option) => option.value === hovered
+    );
+
+    switch (key) {
+      case 'Escape':
+        toggle();
+        break;
+      case 'ArrowDown':
+        if (!hovered) {
+          setIsHovered(options.at(-1)?.value);
+        }
+
+        setIsHovered(options.at(hoveredIndex + 1)?.value);
+        break;
+      case 'ArrowUp':
+        if (!hovered) {
+          setIsHovered(options.at(1)?.value);
+        }
+
+        setIsHovered(options.at(hoveredIndex - 1)?.value);
+        break;
+      case 'Enter':
+        if (hovered) {
+          callback(hovered);
+        }
+        break;
+    }
+  });
 
   return (
     <OuterWrapper className={className}>
@@ -138,10 +205,17 @@ export const Select = ({
             width={wrapperRef.current!.clientWidth}
             height={wrapperRef.current!.clientHeight}
             ref={selectBoxRef}
+            onMouseLeave={() => setIsHovered(undefined)}
           >
             <Options>
-              {options.map(({ value, title }) => (
-                <Option key={value} onClick={() => callback(value)}>
+              {options.map(({ value: optionValue, title }) => (
+                <Option
+                  key={optionValue}
+                  onClick={() => callback(optionValue)}
+                  onMouseEnter={() => setIsHovered(optionValue)}
+                  isSelected={value === optionValue}
+                  isHovered={hovered === optionValue}
+                >
                   {title}
                 </Option>
               ))}

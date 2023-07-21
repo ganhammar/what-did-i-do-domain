@@ -16,7 +16,7 @@ export const appTheme: DefaultTheme = {
       contrastText: '#444444',
     },
     paperHighlight: {
-      main: '#f9f9f9',
+      main: '#f7f7f7',
       contrastText: '#444444',
     },
     primary: {
