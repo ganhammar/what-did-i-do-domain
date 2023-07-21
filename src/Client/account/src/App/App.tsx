@@ -16,15 +16,15 @@ export function App() {
       <RecoilRoot>
         <BrowserRouter>
           <ThemeProvider theme={appTheme}>
-            <Suspense fallback={<Loader />}>
-              <Auth defaultView="/account/dashboard" pathPrefix="account">
-                <Layout isLoggedIn={true} links={links}>
-                  <ErrorBoundry>
+            <Auth defaultView="/account/dashboard" pathPrefix="account">
+              <Layout isLoggedIn={true} links={links}>
+                <ErrorBoundry>
+                  <Suspense fallback={<Loader />}>
                     <AppRoutes />
-                  </ErrorBoundry>
-                </Layout>
-              </Auth>
-            </Suspense>
+                  </Suspense>
+                </ErrorBoundry>
+              </Layout>
+            </Auth>
           </ThemeProvider>
         </BrowserRouter>
       </RecoilRoot>

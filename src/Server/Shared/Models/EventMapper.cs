@@ -26,6 +26,7 @@ public static class EventMapper
     Date = instance.Date,
     Title = instance.Title,
     Description = instance.Description,
+    Tags = instance.Tags,
   };
 
   public static string GetAccountId(Event instance)

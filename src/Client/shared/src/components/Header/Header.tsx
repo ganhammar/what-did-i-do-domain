@@ -7,7 +7,7 @@ interface HeaderProps {
 }
 
 const H2 = styled.h2`
-  margin-bottom: ${({ theme }) => theme.spacing.xl};
+  margin-bottom: ${({ theme }) => theme.spacing.m};
 `;
 
 const H3 = styled.h3`

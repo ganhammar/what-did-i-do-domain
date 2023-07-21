@@ -1,32 +1,30 @@
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { eventsSelector } from './';
 import styled from 'styled-components';
 import { useIntl } from 'react-intl';
 import { Header, Loader, Select, timeFromNow } from '@wdid/shared';
 import { eventListParamtersAtom } from './eventListParamtersAtom';
-import { Suspense } from 'react';
+import { Suspense, useEffect, useState } from 'react';
+import { Tag } from './Tag';
 
 const Wrapper = styled.div`
   margin: ${({ theme }) => `${theme.spacing.xl} 0`};
 `;
 const Filters = styled.div`
   padding: ${({ theme }) => `${theme.spacing.s} ${theme.spacing.m}`};
-  background-color: ${({ theme }) => theme.palette.backgroundHighlight.main};
-  color: ${({ theme }) => theme.palette.backgroundHighlight.contrastText};
+  background-color: ${({ theme }) => theme.palette.paper.main};
+  color: ${({ theme }) => theme.palette.paper.contrastText};
   border-radius: ${({ theme }) => theme.borderRadius};
   border-bottom: 2px solid ${({ theme }) => theme.palette.background.main};
   border-bottom-left-radius: 0;
   border-bottom-right-radius: 0;
-`;
-const Fieldset = styled.fieldset`
-  border: none;
-`;
-const Label = styled.label`
-  margin-right: ${({ theme }) => theme.spacing.s};
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: ${({ theme }) => theme.spacing.s};
 `;
 const ListWrapper = styled.div`
-  background-color: ${({ theme }) => theme.palette.backgroundHighlight.main};
-  color: ${({ theme }) => theme.palette.backgroundHighlight.contrastText};
+  background-color: ${({ theme }) => theme.palette.paper.main};
+  color: ${({ theme }) => theme.palette.paper.contrastText};
   border-radius: ${({ theme }) => theme.borderRadius};
   border-top-left-radius: 0;
   border-top-right-radius: 0;
@@ -55,6 +53,11 @@ const Time = styled.p`
   font-size: 0.8rem;
 `;
 const Description = styled.p``;
+const Tags = styled.div`
+  display: flex;
+  flex-direction: row;
+  margin-top: ${({ theme }) => theme.spacing.xs};
+`;
 
 const LogList = () => {
   const events = useRecoilValue(eventsSelector);
@@ -62,20 +65,35 @@ const LogList = () => {
 
   return (
     <List>
-      {events.result?.map(({ id, title, date, description }) => (
-        <Item key={id}>
-          <Title>{title}</Title>
-          <Time>{timeFromNow(new Date(date), intl)}</Time>
-          <Description>{description}</Description>
+      {(events.result?.length ?? 0) > 0 &&
+        events.result?.map(({ id, title, date, description, tags }) => (
+          <Item key={id}>
+            <Title>{title}</Title>
+            <Time>{timeFromNow(new Date(date), intl)}</Time>
+            <Description>{description}</Description>
+            {tags && (
+              <Tags>
+                {tags.map((tag) => (
+                  <Tag key={tag}>{tag}</Tag>
+                ))}
+              </Tags>
+            )}
+          </Item>
+        ))}
+      {events.result?.length === 0 && (
+        <Item>
+          <em>No events during the selected period</em>
         </Item>
-      ))}
+      )}
     </List>
   );
 };
 
 export const Log = () => {
-  const [parameters, setParameters] = useRecoilState(eventListParamtersAtom);
-  const options = [
+  const setParameters = useSetRecoilState(eventListParamtersAtom);
+  const [timePeriod, setTimePeriod] = useState('day');
+  const [limit, setLimit] = useState('20');
+  const limitOpptions = [
     { value: '10', title: '10' },
     { value: '20', title: '20' },
     { value: '30', title: '30' },
@@ -83,26 +101,60 @@ export const Log = () => {
     { value: '100', title: '100' },
     { value: '200', title: '200' },
   ];
+  const timePeriodOptions = [
+    { value: 'day', title: 'Day' },
+    { value: 'two-days', title: 'Two days' },
+    { value: 'three-days', title: 'Three days' },
+    { value: 'week', title: 'Week' },
+    { value: 'month', title: 'Month' },
+  ];
 
-  const updateLimit = (limit: string) => {
+  useEffect(() => {
+    const to = new Date();
+    const from = new Date();
+
+    switch (timePeriod) {
+      case 'day':
+        from.setDate(to.getDate() - 1);
+        break;
+      case 'two-days':
+        from.setDate(to.getDate() - 2);
+        break;
+      case 'three-days':
+        from.setDate(to.getDate() - 3);
+        break;
+      case 'week':
+        const first = to.getDate() - to.getDay();
+        from.setDate(first);
+        break;
+      case 'month':
+        from.setDate(to.getDate() - 30);
+        break;
+    }
+
     setParameters({
-      ...parameters,
       limit: parseInt(limit, 10),
+      fromDate: from.toISOString(),
+      toDate: to.toISOString(),
     });
-  };
+  }, [timePeriod, setParameters, limit]);
 
   return (
     <Wrapper>
       <Header size="H3">Last Events</Header>
       <Filters>
-        <Fieldset>
-          <Label>Limit</Label>
-          <Select
-            value={parameters.limit.toString()}
-            options={options}
-            onChange={updateLimit}
-          />
-        </Fieldset>
+        <Select
+          value={limit}
+          options={limitOpptions}
+          onChange={setLimit}
+          label="Limit"
+        />
+        <Select
+          value={timePeriod}
+          options={timePeriodOptions}
+          onChange={setTimePeriod}
+          label="Show data for last"
+        />
       </Filters>
       <ListWrapper>
         <Suspense fallback={<StyledLoader partial />}>

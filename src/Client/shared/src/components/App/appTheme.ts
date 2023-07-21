@@ -11,7 +11,11 @@ export const appTheme: DefaultTheme = {
       main: '#eee',
       contrastText: '#333333',
     },
-    backgroundHighlight: {
+    paper: {
+      main: '#f4f4f4',
+      contrastText: '#444444',
+    },
+    paperHighlight: {
       main: '#f9f9f9',
       contrastText: '#444444',
     },
@@ -45,6 +49,7 @@ export const appTheme: DefaultTheme = {
     h3: '1.6rem',
   },
   spacing: {
+    xxs: '4px',
     xs: '8px',
     s: '16px',
     m: '24px',
@@ -55,6 +60,6 @@ export const appTheme: DefaultTheme = {
     'none',
     'rgb(0 0 0 / 25%) 0px 2px 1px -1px, rgb(0 0 0 / 19%) 0px 1px 1px 0px, rgb(0 0 0 / 17%) 0px 1px 3px 0px;',
     'rgb(0 0 0 / 25%) 0px 3px 1px -2px, rgb(0 0 0 / 19%) 0px 2px 2px 0px, rgb(0 0 0 / 17%) 0px 1px 5px 0px;',
-    'rgb(0 0 0 / 25%) 0px 3px 3px -2px, rgb(0 0 0 / 19%) 0px 3px 4px 0px, rgb(0 0 0 / 17%) 0px 1px 8px 0px;',
+    'rgb(0 0 0 / 17%) 0px 3px 3px -2px, rgb(0 0 0 / 15%) 0px 3px 4px 0px, rgb(0 0 0 / 13%) 0px 1px 8px 0px;',
   ],
 };

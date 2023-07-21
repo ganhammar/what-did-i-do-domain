@@ -23,7 +23,7 @@ const CheckboxElement = styled.input`
     border-radius: ${({ theme }) => theme.borderRadius};
     cursor: pointer;
     border: 2px solid ${({ theme }) => theme.palette.divider.main};
-    background-color: ${({ theme }) => theme.palette.backgroundHighlight.main};
+    background-color: ${({ theme }) => theme.palette.paper.main};
     box-sizing: border-box;
     color: ${({ theme }) => theme.palette.primary.contrastText};
     transition:
