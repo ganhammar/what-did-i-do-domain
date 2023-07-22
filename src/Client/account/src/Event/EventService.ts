@@ -7,6 +7,14 @@ export interface ListParamters {
   toDate?: string;
 }
 
+export interface CreateParameters {
+  accountId: string;
+  title: string;
+  description?: string;
+  date?: string;
+  tags?: string[];
+}
+
 export class EventService extends FetchBase {
   baseUrl = `${process.env.REACT_APP_BASE_API_URL}/event`;
   private readonly accessToken: string;
@@ -25,5 +33,9 @@ export class EventService extends FetchBase {
     }
 
     return await this.get<Event[]>(url, this.accessToken);
+  }
+
+  async create(data: CreateParameters) {
+    return await this.post<Event>(this.baseUrl, data, this.accessToken);
   }
 }
