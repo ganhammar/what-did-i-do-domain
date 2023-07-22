@@ -7,6 +7,8 @@ import { eventsSelector } from 'src/Event';
 import { IntlProvider } from 'react-intl';
 import { ThemeProvider } from 'styled-components';
 import { appTheme } from '@wdid/shared';
+import { currentUserAtom } from '@wdid/shared/src/components/Auth/currentUserAtom';
+import { User } from 'oidc-client-ts';
 
 test('renders application title', async () => {
   const name = 'test-account-name';
@@ -20,6 +22,9 @@ test('renders application title', async () => {
     success: true,
     result: [],
   });
+  context.set(currentUserAtom, {
+    access_token: 'test',
+  } as User);
 
   render(
     <IntlProvider locale={navigator.language}>

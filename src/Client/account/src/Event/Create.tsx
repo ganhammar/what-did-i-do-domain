@@ -23,7 +23,7 @@ const TITLE_MIN_LENGTH = 3;
 export const Create = ({ onCreate }: CreateProps) => {
   const throwError = useAsyncError();
   const account = useRecoilValue(currentAccountAtom);
-  const eventService = useRecoilValue(eventServiceSelector);
+  // const eventService = useRecoilValue(eventServiceSelector);
   const [title, setTitle] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
@@ -31,10 +31,10 @@ export const Create = ({ onCreate }: CreateProps) => {
     try {
       setIsLoading(true);
 
-      await eventService.create({
-        accountId: account.id,
-        title,
-      });
+      // await eventService.create({
+      //   accountId: account.id,
+      //   title,
+      // });
 
       setIsLoading(false);
 
