@@ -117,7 +117,7 @@ public abstract class FunctionBase
       {
         StatusCode = (int)HttpStatusCode.OK,
         Body = JsonSerializer.Serialize(response.Result, _defaultSerializerOptions),
-        Headers = _defaultHeaders
+        Headers = _defaultHeaders,
       };
     }
 
@@ -139,6 +139,7 @@ public abstract class FunctionBase
       return new APIGatewayHttpApiV2ProxyResponse
       {
         StatusCode = (int)HttpStatusCode.NoContent,
+        Headers = _defaultHeaders,
       };
     }
 

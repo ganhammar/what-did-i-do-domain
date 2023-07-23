@@ -87,7 +87,7 @@ const Element = styled.button<ElementProps>`
       ? theme.palette.divider.contrastText
       : theme.palette[color].contrastText};
   border: none;
-  padding: ${({ theme }) => theme.spacing.xs} ${({ theme }) => theme.spacing.m};
+  padding: ${({ theme }) => `${theme.spacing.xs} ${theme.spacing.m}`};
   border-radius: ${({ theme }) => theme.borderRadius};
   box-shadow: ${({ theme, isDisabled }) =>
     isDisabled ? theme.shadows[0] : theme.shadows[1]};

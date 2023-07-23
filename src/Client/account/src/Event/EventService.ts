@@ -38,4 +38,8 @@ export class EventService extends FetchBase {
   async create(data: CreateParameters) {
     return await this.post<Event>(this.baseUrl, data, this.accessToken);
   }
+
+  async remove(id: string) {
+    return await this.delete(`${this.baseUrl}?id=${id}`, this.accessToken);
+  }
 }

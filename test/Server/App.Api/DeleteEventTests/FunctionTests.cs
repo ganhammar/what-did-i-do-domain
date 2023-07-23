@@ -24,14 +24,14 @@ public class FunctionTests
     });
 
     var context = new TestLambdaContext();
-    var data = new DeleteEventCommand.Command
+    var data = new Dictionary<string, string>
     {
-      Id = EventMapper.ToDto(item).Id,
+      { "Id", EventMapper.ToDto(item).Id! },
     };
     var request = new APIGatewayProxyRequest
     {
       HttpMethod = HttpMethod.Post.Method,
-      Body = JsonSerializer.Serialize(data),
+      QueryStringParameters = data,
       RequestContext = new APIGatewayProxyRequest.ProxyRequestContext
       {
         RequestId = Guid.NewGuid().ToString(),
@@ -55,11 +55,10 @@ public class FunctionTests
   {
     var function = new Function();
     var context = new TestLambdaContext();
-    var data = new DeleteEventCommand.Command();
     var request = new APIGatewayProxyRequest
     {
       HttpMethod = HttpMethod.Post.Method,
-      Body = JsonSerializer.Serialize(data),
+      QueryStringParameters = new Dictionary<string, string>(),
       RequestContext = new APIGatewayProxyRequest.ProxyRequestContext
       {
         RequestId = Guid.NewGuid().ToString(),
@@ -90,14 +89,14 @@ public class FunctionTests
   {
     var function = new Function();
     var context = new TestLambdaContext();
-    var data = new DeleteEventCommand.Command
+    var data = new Dictionary<string, string>
     {
-      Id = "not-the-real-deal",
+      { "Id", "not-the-real-deal" },
     };
     var request = new APIGatewayProxyRequest
     {
       HttpMethod = HttpMethod.Post.Method,
-      Body = JsonSerializer.Serialize(data),
+      QueryStringParameters = data,
       RequestContext = new APIGatewayProxyRequest.ProxyRequestContext
       {
         RequestId = Guid.NewGuid().ToString(),
@@ -135,14 +134,14 @@ public class FunctionTests
 
     var function = new Function();
     var context = new TestLambdaContext();
-    var data = new DeleteEventCommand.Command
+    var data = new Dictionary<string, string>
     {
-      Id = EventMapper.ToDto(item).Id,
+      { "Id", EventMapper.ToDto(item).Id! },
     };
     var request = new APIGatewayProxyRequest
     {
       HttpMethod = HttpMethod.Post.Method,
-      Body = JsonSerializer.Serialize(data),
+      QueryStringParameters = data,
       RequestContext = new APIGatewayProxyRequest.ProxyRequestContext
       {
         RequestId = Guid.NewGuid().ToString(),

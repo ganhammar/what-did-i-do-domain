@@ -24,23 +24,24 @@ const fade = keyframes`
   }
 `;
 
-const LoadingIndicator = styled.div`
-  width: 40px;
-  height: 40px;
-  border-radius: 20px;
+const LoadingIndicator = styled.div<{ size: 'small' | 'normal' }>`
+  width: ${({ size }) => (size === 'normal' ? '40px' : '24px')};
+  height: ${({ size }) => (size === 'normal' ? '40px' : '24px')};
+  border-radius: ${({ size }) => (size === 'normal' ? '20px' : '12px')};
   background-color: ${({ theme }) => theme.palette.primary.main};
   animation: ${fade} 1s infinite ease-in-out;
 `;
 
 interface LoaderProps {
   partial?: boolean;
+  size?: 'small' | 'normal';
   className?: string;
 }
 
-export function Loader({ partial, className }: LoaderProps) {
+export function Loader({ partial, className, size }: LoaderProps) {
   return (
     <LoadingIndicatorWrapper partial={partial} className={className}>
-      <LoadingIndicator />
+      <LoadingIndicator size={size ?? 'normal'} />
     </LoadingIndicatorWrapper>
   );
 }

@@ -31,8 +31,8 @@ export abstract class FetchBase {
     return await this.request<T>({ method: 'put', url, body, accessToken });
   }
 
-  protected async delete<T>(url: string, accessToken?: string) {
-    return await this.request<T>({ method: 'delete', url, accessToken });
+  protected async delete(url: string, accessToken?: string) {
+    return await this.request<unknown>({ method: 'delete', url, accessToken });
   }
 
   private async request<T>({ method, url, body, accessToken }: Request) {

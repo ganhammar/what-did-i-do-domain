@@ -24,6 +24,15 @@ public class Function : APIGatewayProxyRequestBase
   protected override async Task<APIGatewayHttpApiV2ProxyResponse> Handler(
     APIGatewayProxyRequest apiGatewayProxyRequest)
   {
-    return await Respond(TryDeserialize<DeleteEventCommand.Command>(apiGatewayProxyRequest));
+    var queryStringParameters = new Dictionary<string, string>(
+      apiGatewayProxyRequest.QueryStringParameters ?? new Dictionary<string, string>(),
+      StringComparer.OrdinalIgnoreCase);
+
+    queryStringParameters.TryGetValue("id", out var id);
+
+    return await Respond(new DeleteEventCommand.Command
+    {
+      Id = id,
+    });
   }
 }
