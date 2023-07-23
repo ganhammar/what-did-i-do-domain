@@ -27,6 +27,7 @@ export const Create = ({ onCreate }: CreateProps) => {
   const eventService = useRecoilValue(eventServiceSelector);
   const addEvent = useAddEvent();
   const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
   const submit = async () => {
@@ -36,6 +37,7 @@ export const Create = ({ onCreate }: CreateProps) => {
       const event = await eventService.create({
         accountId: account.id,
         title,
+        description,
       });
 
       if (event.result) {
@@ -45,6 +47,7 @@ export const Create = ({ onCreate }: CreateProps) => {
       setIsLoading(false);
 
       setTitle('');
+      setDescription('');
 
       onCreate();
     } catch (error) {
@@ -62,6 +65,12 @@ export const Create = ({ onCreate }: CreateProps) => {
         onChange={setTitle}
         hasError={Boolean(title) && title.length < TITLE_MIN_LENGTH}
         errorTip="The title must have at least three characters"
+      />
+      <TextInput
+        title="Description"
+        type="textarea"
+        value={description}
+        onChange={setDescription}
       />
       <Submit
         color="success"

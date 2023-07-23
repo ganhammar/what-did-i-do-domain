@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
 interface TextInputStyleProps {
   isFocused: boolean;
@@ -48,7 +48,7 @@ const Label = styled.label<TextInputStyleProps>`
     font-size: 0.8rem;
   `}
 `;
-const Input = styled.input<TextInputStyleProps>`
+const InputStyles = css<TextInputStyleProps>`
   border: none;
   border-bottom: 1px solid
     ${({ theme: { palette }, hasError }) =>
@@ -57,12 +57,20 @@ const Input = styled.input<TextInputStyleProps>`
   padding: ${({ theme }) =>
     `0 ${theme.spacing.xs} ${theme.spacing.xs} ${theme.spacing.xs}`};
   width: 100%;
-  height: 2.6rem;
   margin: 1.1rem 0 0 0;
   transition: border-bottom-color 0.5s;
   &:focus {
     outline: none;
   }
+`;
+const Input = styled.input<TextInputStyleProps>`
+  ${InputStyles}
+  height: 2.6rem;
+`;
+const Textarea = styled.textarea`
+  ${InputStyles}
+  margin-bottom: -8px;
+  resize: none;
 `;
 const Tip = styled.div<TextInputStyleProps>`
   position: absolute;
@@ -81,7 +89,7 @@ const Tip = styled.div<TextInputStyleProps>`
 `;
 
 interface Props {
-  type: 'text' | 'password';
+  type: 'text' | 'password' | 'textarea';
   value: string;
   title: string;
   onChange: (value: string) => void;
@@ -114,17 +122,31 @@ export function TextInput({
       >
         {title}
       </Label>
-      <Input
-        type={type}
-        value={value}
-        onChange={({ target: { value } }) => onChange(value)}
-        disabled={isDisabled}
-        onFocus={() => setIsFocused(true)}
-        onBlur={() => setIsFocused(false)}
-        isFocused={isFocused}
-        hasValue={Boolean(value)}
-        hasError={hasError ?? false}
-      />
+      {type === 'textarea' && (
+        <Textarea
+          value={value}
+          onChange={({ target: { value } }) => onChange(value)}
+          disabled={isDisabled}
+          onFocus={() => setIsFocused(true)}
+          onBlur={() => setIsFocused(false)}
+          isFocused={isFocused}
+          hasValue={Boolean(value)}
+          hasError={hasError ?? false}
+        />
+      )}
+      {type !== 'textarea' && (
+        <Input
+          type={type}
+          value={value}
+          onChange={({ target: { value } }) => onChange(value)}
+          disabled={isDisabled}
+          onFocus={() => setIsFocused(true)}
+          onBlur={() => setIsFocused(false)}
+          isFocused={isFocused}
+          hasValue={Boolean(value)}
+          hasError={hasError ?? false}
+        />
+      )}
       {errorTip && (
         <Tip
           isFocused={isFocused}
