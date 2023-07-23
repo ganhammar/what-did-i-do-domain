@@ -3,7 +3,7 @@ import { BrowserRouter } from 'react-router-dom';
 import { createRecoilMockWrapper } from 'recoil-mock';
 import { Dashboard } from '../Dashboard';
 import { currentAccountAtom } from '../../Account';
-import { eventsSelector } from 'src/Event';
+import { eventsAtom } from 'src/Event';
 import { IntlProvider } from 'react-intl';
 import { ThemeProvider } from 'styled-components';
 import { appTheme, flushPromisesAndTimers } from '@wdid/shared';
@@ -28,7 +28,7 @@ test('renders application title', async () => {
     id: name,
     createDate: new Date().toISOString(),
   });
-  context.set(eventsSelector, {
+  context.set(eventsAtom, {
     success: true,
     result: [],
   });

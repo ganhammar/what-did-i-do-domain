@@ -4,6 +4,7 @@ import { useRecoilValue } from 'recoil';
 import { currentAccountAtom } from 'src/Account';
 import styled from 'styled-components';
 import { eventServiceSelector } from './eventServiceSelector';
+import { useAddEvent } from './useAddEvent';
 
 interface CreateProps {
   onCreate: () => void;
@@ -24,6 +25,7 @@ export const Create = ({ onCreate }: CreateProps) => {
   const throwError = useAsyncError();
   const account = useRecoilValue(currentAccountAtom);
   const eventService = useRecoilValue(eventServiceSelector);
+  const addEvent = useAddEvent();
   const [title, setTitle] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
@@ -31,10 +33,14 @@ export const Create = ({ onCreate }: CreateProps) => {
     try {
       setIsLoading(true);
 
-      await eventService.create({
+      const event = await eventService.create({
         accountId: account.id,
         title,
       });
+
+      if (event.result) {
+        addEvent(event.result);
+      }
 
       setIsLoading(false);
 

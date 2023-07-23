@@ -1,4 +1,4 @@
 export * from './Create';
 export * from './EventService';
-export * from './eventsSelector';
+export * from './eventsAtom';
 export * from './Log';

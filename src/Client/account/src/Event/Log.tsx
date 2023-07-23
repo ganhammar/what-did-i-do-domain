@@ -1,5 +1,5 @@
-import { useRecoilValue, useSetRecoilState } from 'recoil';
-import { eventsSelector } from './';
+import { useRecoilValue, useResetRecoilState, useSetRecoilState } from 'recoil';
+import { eventsAtom } from './';
 import styled from 'styled-components';
 import { useIntl } from 'react-intl';
 import { Loader, Select, timeFromNow } from '@wdid/shared';
@@ -57,7 +57,7 @@ const Tags = styled.div`
 `;
 
 const LogList = () => {
-  const events = useRecoilValue(eventsSelector);
+  const events = useRecoilValue(eventsAtom);
   const intl = useIntl();
 
   return (
@@ -88,6 +88,7 @@ const LogList = () => {
 
 export const Log = () => {
   const setParameters = useSetRecoilState(eventListParamtersAtom);
+  const reset = useResetRecoilState(eventsAtom);
   const [timePeriod, setTimePeriod] = useState('day');
   const [limit, setLimit] = useState('20');
   const limitOpptions = [
@@ -121,8 +122,7 @@ export const Log = () => {
         from.setDate(to.getDate() - 3);
         break;
       case 'week':
-        const first = to.getDate() - to.getDay();
-        from.setDate(first);
+        from.setDate(to.getDate() - 7);
         break;
       case 'month':
         from.setDate(to.getDate() - 30);
@@ -134,7 +134,8 @@ export const Log = () => {
       fromDate: from.toISOString(),
       toDate: to.toISOString(),
     });
-  }, [timePeriod, setParameters, limit]);
+    reset();
+  }, [timePeriod, setParameters, limit, reset]);
 
   return (
     <>

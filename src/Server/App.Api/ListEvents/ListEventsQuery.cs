@@ -88,7 +88,7 @@ public class ListEventsQuery
         {
           OverrideTableName = Environment.GetEnvironmentVariable("TABLE_NAME"),
         });
-      var events = await search.GetRemainingAsync(cancellationToken);
+      var events = await search.GetNextSetAsync(cancellationToken);
 
       Logger.LogInformation($"Found {events.Count} Event(s)");
 
