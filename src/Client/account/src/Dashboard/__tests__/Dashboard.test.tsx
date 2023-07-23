@@ -6,9 +6,19 @@ import { currentAccountAtom } from '../../Account';
 import { eventsSelector } from 'src/Event';
 import { IntlProvider } from 'react-intl';
 import { ThemeProvider } from 'styled-components';
-import { appTheme } from '@wdid/shared';
-import { currentUserAtom } from '@wdid/shared/src/components/Auth/currentUserAtom';
-import { User } from 'oidc-client-ts';
+import { appTheme, flushPromisesAndTimers } from '@wdid/shared';
+import { Suspense } from 'react';
+
+jest.mock('@wdid/shared/src/components/Auth/userManager', () => ({
+  userManager: {
+    getUser: jest.fn(() =>
+      Promise.resolve({
+        expired: false,
+        access_token: 'test',
+      })
+    ),
+  },
+}));
 
 test('renders application title', async () => {
   const name = 'test-account-name';
@@ -22,20 +32,21 @@ test('renders application title', async () => {
     success: true,
     result: [],
   });
-  context.set(currentUserAtom, {
-    access_token: 'test',
-  } as User);
 
   render(
     <IntlProvider locale={navigator.language}>
       <BrowserRouter>
         <ThemeProvider theme={appTheme}>
-          <Dashboard />
+          <Suspense fallback={<div />}>
+            <Dashboard />
+          </Suspense>
         </ThemeProvider>
       </BrowserRouter>
     </IntlProvider>,
     { wrapper }
   );
+
+  await flushPromisesAndTimers();
 
   const elements = screen.getAllByText(new RegExp(name));
   expect(elements.length).toBeGreaterThan(0);
