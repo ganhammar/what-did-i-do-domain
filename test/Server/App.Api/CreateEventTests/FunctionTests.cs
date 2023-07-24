@@ -52,6 +52,93 @@ public class FunctionTests
   }
 
   [Fact]
+  public async Task Should_ReturnEventWithTags_When_InputIsValid()
+  {
+    var function = new Function();
+    var context = new TestLambdaContext();
+    var tags = new[] { "test", "testing" };
+    var data = new CreateEventCommand.Command
+    {
+      AccountId = "test-account",
+      Title = "Testing Testing",
+      Tags = tags,
+    };
+    var request = new APIGatewayProxyRequest
+    {
+      HttpMethod = HttpMethod.Post.Method,
+      Body = JsonSerializer.Serialize(data),
+      RequestContext = new APIGatewayProxyRequest.ProxyRequestContext
+      {
+        RequestId = Guid.NewGuid().ToString(),
+        Authorizer = new()
+        {
+          { "scope", "email test event" },
+          { "sub", Guid.NewGuid() },
+          { "email", "test@wdid.fyi" },
+        },
+      },
+    };
+    var response = await function.FunctionHandler(request, context);
+
+    Assert.Equal((int)HttpStatusCode.OK, response.StatusCode);
+
+    var body = JsonSerializer.Deserialize<EventDto>(response.Body, new JsonSerializerOptions()
+    {
+      PropertyNameCaseInsensitive = true,
+    });
+
+    Assert.NotNull(body);
+    Assert.Equal(data.Title, body!.Title);
+    Assert.NotNull(body!.Id);
+    Assert.NotNull(body.Tags);
+    Assert.Equal(2, body.Tags.Count());
+    Assert.Contains(body.Tags, (tag) => tags.Contains(tag));
+  }
+
+  [Fact]
+  public async Task Should_RemoveDuplicateTags_When_InputContainsDuplicateTagValues()
+  {
+    var function = new Function();
+    var context = new TestLambdaContext();
+    var tags = new[] { "test", "test" };
+    var data = new CreateEventCommand.Command
+    {
+      AccountId = "test-account",
+      Title = "Testing Testing",
+      Tags = tags,
+    };
+    var request = new APIGatewayProxyRequest
+    {
+      HttpMethod = HttpMethod.Post.Method,
+      Body = JsonSerializer.Serialize(data),
+      RequestContext = new APIGatewayProxyRequest.ProxyRequestContext
+      {
+        RequestId = Guid.NewGuid().ToString(),
+        Authorizer = new()
+        {
+          { "scope", "email test event" },
+          { "sub", Guid.NewGuid() },
+          { "email", "test@wdid.fyi" },
+        },
+      },
+    };
+    var response = await function.FunctionHandler(request, context);
+
+    Assert.Equal((int)HttpStatusCode.OK, response.StatusCode);
+
+    var body = JsonSerializer.Deserialize<EventDto>(response.Body, new JsonSerializerOptions()
+    {
+      PropertyNameCaseInsensitive = true,
+    });
+
+    Assert.NotNull(body);
+    Assert.Equal(data.Title, body!.Title);
+    Assert.NotNull(body!.Id);
+    Assert.NotNull(body.Tags);
+    Assert.Single(body.Tags);
+  }
+
+  [Fact]
   public async Task Should_ReturnEvent_When_InputIsValidWithDate()
   {
     var function = new Function();

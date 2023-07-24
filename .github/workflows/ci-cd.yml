@@ -81,6 +81,7 @@ jobs:
           - ./src/Server/App.Api/DeleteEvent
           - ./src/Server/App.Api/ListAccounts
           - ./src/Server/App.Api/ListEvents
+          - ./src/Server/App.Api/ListTags
           - ./src/Server/App.Login
           - ./src/Server/App.Authorizer
     steps:

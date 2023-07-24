@@ -61,6 +61,10 @@ public class AppStack : Stack
     var eventResource = apiResource.AddResource("event");
     HandleEventResource(eventResource, applicationTable, authorizer);
 
+    // Resource: Tag
+    var tagResource = apiResource.AddResource("tag");
+    HandleTagResource(tagResource, applicationTable, authorizer);
+
     // CloudFront Distribution
     var cloudFrontDistribution = CreateCloudFrontWebDistribution(apiGateway);
 
@@ -293,6 +297,24 @@ public class AppStack : Stack
     ));
     applicationTable.GrantReadData(listEventsFunction);
     eventResource.AddMethod("GET", new LambdaIntegration(listEventsFunction), new MethodOptions
+    {
+      AuthorizationType = AuthorizationType.CUSTOM,
+      Authorizer = authorizer,
+    });
+  }
+
+  private void HandleTagResource(
+    Amazon.CDK.AWS.APIGateway.Resource tagResource,
+    Table applicationTable,
+    RequestAuthorizer authorizer)
+  {
+    // List
+    var listTagsFunction = new AppFunction(this, "ListTags", new AppFunction.Props(
+      "ListTags::App.Api.ListTags.Function::FunctionHandler",
+      _tableName
+    ));
+    applicationTable.GrantReadData(listTagsFunction);
+    tagResource.AddMethod("GET", new LambdaIntegration(listTagsFunction), new MethodOptions
     {
       AuthorizationType = AuthorizationType.CUSTOM,
       Authorizer = authorizer,

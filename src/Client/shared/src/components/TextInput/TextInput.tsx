@@ -10,7 +10,6 @@ interface TextInputStyleProps {
 const Fieldset = styled.fieldset<TextInputStyleProps>`
   border: none;
   position: relative;
-  height: 3.2rem;
   margin-bottom: 1.8rem;
   &:after {
     content: '';
