@@ -2,6 +2,6 @@
 
 public class EventTag
 {
-  public string? PartitionKey { get; set; } // ACCOUNT#{ACCOUNT_ID}#VALUE#{TAG_VALUE}
+  public string? PartitionKey { get; set; } // TAG#ACCOUNT#{ACCOUNT_ID}#VALUE#{TAG_VALUE}
   public string? SortKey { get; set; } // {DATE}
 }

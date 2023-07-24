@@ -15,8 +15,8 @@ public static class TagMapper
   };
 
   public static string GetAccountId(Tag instance)
-    => instance.PartitionKey!.Split("#")[1];
+    => instance.PartitionKey!.Split("#")[2];
 
   public static string GetPartitionKey(string accountId)
-    => $"ACCOUNT#{accountId}";
+    => $"TAG#ACCOUNT#{accountId}";
 }

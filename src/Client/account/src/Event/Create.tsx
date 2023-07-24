@@ -5,6 +5,7 @@ import { currentAccountAtom } from 'src/Account';
 import styled from 'styled-components';
 import { eventServiceSelector } from './eventServiceSelector';
 import { useAddEvent } from './useAddEvent';
+import { tagsSelector } from 'src/Tag';
 
 interface CreateProps {
   onCreate: () => void;
@@ -25,6 +26,7 @@ export const Create = ({ onCreate }: CreateProps) => {
   const throwError = useAsyncError();
   const account = useRecoilValue(currentAccountAtom);
   const eventService = useRecoilValue(eventServiceSelector);
+  const tags = useRecoilValue(tagsSelector);
   const addEvent = useAddEvent();
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');

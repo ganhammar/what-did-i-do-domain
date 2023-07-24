@@ -2,6 +2,6 @@
 
 public class Tag
 {
-  public string? PartitionKey { get; set; } // ACCOUNT#{ACCOUNT_ID}
+  public string? PartitionKey { get; set; } // TAG#ACCOUNT#{ACCOUNT_ID}
   public string? SortKey { get; set; } // VALUE
 }

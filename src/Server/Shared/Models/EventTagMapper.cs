@@ -19,10 +19,10 @@ public static class EventTagMapper
   };
 
   public static string GetAccountId(EventTag instance)
-    => instance.PartitionKey!.Split("#")[1];
+    => instance.PartitionKey!.Split("#")[2];
 
   public static string GetValue(EventTag instance)
-    => instance.PartitionKey!.Split("#")[3];
+    => instance.PartitionKey!.Split("#")[4];
 
   public static DateTime? GetDate(EventTag instance)
   {
@@ -32,5 +32,5 @@ public static class EventTagMapper
   }
 
   public static string GetPartitionKey(EventTagDto instance)
-    => $"ACCOUNT#{instance.AccountId}#VALUE#{instance.Value}";
+    => $"EVENT_TAG#ACCOUNT#{instance.AccountId}#VALUE#{instance.Value}";
 }

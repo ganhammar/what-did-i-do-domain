@@ -30,10 +30,10 @@ public static class EventMapper
   };
 
   public static string GetAccountId(Event instance)
-    => instance.PartitionKey!.Split("#")[1];
+    => instance.PartitionKey!.Split("#")[2];
 
   public static string GetPartitionKey(string accountId)
-    => $"ACCOUNT#{accountId}";
+    => $"EVENT#ACCOUNT#{accountId}";
 
   public static string[] GetKeys(string? id)
   {
