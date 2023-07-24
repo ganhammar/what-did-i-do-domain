@@ -36,14 +36,4 @@ public class Function : APIGatewayProxyRequestBase
       AccountId = accountId,
     });
   }
-
-  private DateTime? TryParseDateTime(string? date)
-  {
-    if (DateTime.TryParse(date, out var parseDate))
-    {
-      return parseDate;
-    }
-
-    return default;
-  }
 }
