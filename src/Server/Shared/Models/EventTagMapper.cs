@@ -14,7 +14,8 @@ public static class EventTagMapper
   public static EventTag FromDto(EventTagDto instance) => new()
   {
     PartitionKey = GetPartitionKey(instance),
-    SortKey = instance.Date?.ToString("o", CultureInfo.InvariantCulture),
+    SortKey = instance.Date?.ToUniversalTime()
+      .ToString("yyyy-MM-dd'T'HH:mm:ss.fffK", CultureInfo.InvariantCulture),
   };
 
   public static string GetAccountId(EventTag instance)

@@ -40,33 +40,55 @@ public class DeleteEventCommand
   public class CommandHandler : Handler<Command, IResponse>
   {
     private readonly DynamoDBContext _client;
+    private readonly DynamoDBOperationConfig _config;
 
     public CommandHandler(IAmazonDynamoDB database)
     {
       _client = new DynamoDBContext(database);
+      _config = new()
+      {
+        OverrideTableName = Environment.GetEnvironmentVariable("TABLE_NAME"),
+      };
     }
 
     public override async Task<IResponse> Handle(Command request, CancellationToken cancellationToken)
     {
       Logger.LogInformation("Attempting to delete Event");
 
-      var tableName = Environment.GetEnvironmentVariable("TABLE_NAME");
       var keys = EventMapper.GetKeys(request.Id);
-      var item = await _client.LoadAsync<Event>(keys[0], keys[1], new()
-      {
-        OverrideTableName = tableName,
-      }, cancellationToken);
+      var item = await _client.LoadAsync<Event>(keys[0], keys[1], _config, cancellationToken);
 
       if (item != default)
       {
         Logger.LogInformation("Matching Event found, deleting");
-        await _client.DeleteAsync(item, new()
-        {
-          OverrideTableName = tableName,
-        }, cancellationToken);
+        await _client.DeleteAsync(item, _config, cancellationToken);
+        await DeleteEventTags(item, cancellationToken);
       }
 
       return Response();
+    }
+
+    public async Task DeleteEventTags(Event item, CancellationToken cancellationToken)
+    {
+      if (item.Tags?.Any() != true)
+      {
+        return;
+      }
+
+      var eventDto = EventMapper.ToDto(item);
+      var batch = _client.CreateBatchWrite<EventTag>(_config);
+
+      foreach (var tag in eventDto.Tags!)
+      {
+        batch.AddDeleteItem(EventTagMapper.FromDto(new()
+        {
+          AccountId = eventDto.AccountId,
+          Date = eventDto.Date,
+          Value = tag,
+        }));
+      }
+
+      await batch.ExecuteAsync(cancellationToken);
     }
   }
 }
