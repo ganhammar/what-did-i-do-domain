@@ -245,13 +245,13 @@ export const Log = () => {
         <Select
           value={limit}
           options={limitOpptions}
-          onChange={setLimit}
+          onChange={(value) => setLimit(value as string)}
           label="Limit"
         />
         <Select
           value={timePeriod}
           options={timePeriodOptions}
-          onChange={setTimePeriod}
+          onChange={(value) => setTimePeriod(value as string)}
           label="Show data for last"
         />
       </Filters>

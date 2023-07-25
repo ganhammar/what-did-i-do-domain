@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useClickOutside, useKeyPress } from '@wdid/shared';
 import styled, { keyframes } from 'styled-components';
@@ -10,10 +10,10 @@ interface SelectOption {
 
 interface SelectProps {
   options: SelectOption[];
-  value: string;
+  value: string | string[];
   label: string;
   className?: string;
-  onChange: (value: string) => void;
+  onChange: (value: string | string[]) => void;
 }
 
 interface WrapperProps {
@@ -39,19 +39,19 @@ const Wrapper = styled.div<WrapperProps>`
   flex-direction: column;
   cursor: pointer;
   padding: ${({ theme }) => theme.spacing.xs};
-  margin-top: ${({ theme }) => theme.spacing.s};
+  margin-top: 22px;
   box-sizing: border-box;
   border-bottom: 1px solid ${({ theme }) => theme.palette.divider.main};
   position: relative;
   &:after {
     position: absolute;
-    top: calc(50% - 12px);
+    top: calc(50% - 14px);
     right: ${({ theme }) => theme.spacing.s};
     content: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24px' height='24px' fill='currentColor'><path d='M7.41,8.58L12,13.17L16.59,8.58L18,10L12,16L6,10L7.41,8.58Z' /></svg>");
     ${({ isOpen }) =>
       isOpen &&
       `
-      top: calc(50% - 24px);
+      top: calc(50% - 26px);
       rotate: 180deg;
     `}
   }
@@ -61,21 +61,41 @@ const Wrapper = styled.div<WrapperProps>`
     border-color: ${theme.palette.primary.main};
   `}
 `;
-const Label = styled.label`
-  font-size: 0.8rem;
+const Label = styled.label<{ hasSelected: boolean }>`
   height: 22px;
   display: block;
   cursor: pointer;
   position: absolute;
-  top: -14px;
   left: ${({ theme }) => theme.spacing.xs};
+  top: 0;
   background: ${({ theme }) => theme.palette.paper.main};
+  transition:
+    top 0.5s,
+    font-size 0.5s;
+  ${({ hasSelected }) =>
+    hasSelected &&
+    `
+    font-size: 0.8rem;
+    top: -22px;
+  `}
 `;
 const ActualSelect = styled.select`
-  display: none;
+  width: 0;
+  height: 0;
+  overflow: hidden;
 `;
 const Value = styled.div`
   cursor: pointer;
+  min-height: 32px;
+  display: flex;
+  flex-direction: row;
+`;
+const ValueTag = styled.div`
+  border: 1px solid ${({ theme }) => theme.palette.divider.main};
+  border-radius: ${({ theme }) => theme.borderRadius};
+  padding: ${({ theme }) => `0 ${theme.spacing.xs}`};
+  margin-right: ${({ theme }) => theme.spacing.xs};
+  background: ${({ theme }) => theme.palette.paperHighlight.main};
 `;
 
 const fade = keyframes`
@@ -130,6 +150,7 @@ export const Select = ({
   const [hovered, setIsHovered] = useState<string>();
   const selectBoxRef = useRef<HTMLDivElement>(null);
   const wrapperRef = useRef<HTMLDivElement>(null);
+  const [wrapperRect, setWrapperRect] = useState<DOMRect>();
 
   const toggle = () => {
     if (isOpen) {
@@ -139,10 +160,32 @@ export const Select = ({
     setIsOpen(!isOpen);
   };
 
-  const callback = (value: string) => {
-    setIsHovered(undefined);
-    setIsOpen(false);
-    onChange(value);
+  const callback = (selected: string) => {
+    let newValue;
+
+    if (Array.isArray(value)) {
+      newValue = [...value];
+
+      if (newValue.indexOf(selected) !== -1) {
+        newValue.splice(newValue.indexOf(selected), 1);
+      } else {
+        newValue.push(selected);
+      }
+    } else {
+      setIsHovered(undefined);
+      setIsOpen(false);
+      newValue = selected;
+    }
+
+    onChange(newValue);
+  };
+
+  const isSelected = (option: SelectOption) => {
+    if (Array.isArray(value)) {
+      return value.indexOf(option.value) !== -1;
+    }
+
+    return value === option.value;
   };
 
   useClickOutside([wrapperRef, selectBoxRef], () => isOpen && toggle());
@@ -181,14 +224,29 @@ export const Select = ({
     }
   });
 
+  useEffect(() => {
+    if (wrapperRef.current) {
+      setWrapperRect(wrapperRef.current.getBoundingClientRect());
+    }
+  }, [wrapperRef]);
+
   return (
     <OuterWrapper className={className}>
       <Wrapper ref={wrapperRef} isOpen={isOpen} onClick={toggle}>
-        <Label>{label}</Label>
-        <Value>{options.find((option) => option.value === value)?.title}</Value>
+        <Label hasSelected={Boolean(value.length)}>{label}</Label>
+        <Value>
+          {Array.isArray(value) &&
+            options
+              .filter(isSelected)
+              .map(({ title, value }) => (
+                <ValueTag key={value}>{title}</ValueTag>
+              ))}
+          {!Array.isArray(value) && value}
+        </Value>
         <ActualSelect
           value={value}
           onChange={(event) => onChange(event.target.value)}
+          multiple={Array.isArray(value)}
         >
           {options.map(({ value, title }) => (
             <option value={value} key={value}>
@@ -200,23 +258,23 @@ export const Select = ({
       {isOpen &&
         createPortal(
           <SelectBox
-            left={wrapperRef.current!.offsetLeft}
-            top={wrapperRef.current!.offsetTop}
-            width={wrapperRef.current!.clientWidth}
-            height={wrapperRef.current!.clientHeight}
+            left={wrapperRect?.left ?? 0}
+            top={wrapperRect?.top ?? 0}
+            width={wrapperRect?.width ?? 0}
+            height={wrapperRect?.height ?? 0}
             ref={selectBoxRef}
             onMouseLeave={() => setIsHovered(undefined)}
           >
             <Options>
-              {options.map(({ value: optionValue, title }) => (
+              {options.map((option) => (
                 <Option
-                  key={optionValue}
-                  onClick={() => callback(optionValue)}
-                  onMouseEnter={() => setIsHovered(optionValue)}
-                  isSelected={value === optionValue}
-                  isHovered={hovered === optionValue}
+                  key={option.value}
+                  onClick={() => callback(option.value)}
+                  onMouseEnter={() => setIsHovered(option.value)}
+                  isSelected={isSelected(option)}
+                  isHovered={hovered === option.value}
                 >
-                  {title}
+                  {option.value}
                 </Option>
               ))}
             </Options>

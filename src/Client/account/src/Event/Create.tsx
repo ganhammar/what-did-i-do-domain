@@ -1,10 +1,11 @@
-import { Button, TextInput, useAsyncError, Header } from '@wdid/shared';
+import { Button, TextInput, useAsyncError, Header, Select } from '@wdid/shared';
 import { useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { currentAccountAtom } from 'src/Account';
 import styled from 'styled-components';
 import { eventServiceSelector } from './eventServiceSelector';
 import { useAddEvent } from './useAddEvent';
+import { tagsSelector } from 'src/Tag';
 
 interface CreateProps {
   onCreate: () => void;
@@ -25,10 +26,18 @@ export const Create = ({ onCreate }: CreateProps) => {
   const throwError = useAsyncError();
   const account = useRecoilValue(currentAccountAtom);
   const eventService = useRecoilValue(eventServiceSelector);
+  const existingTags = useRecoilValue(tagsSelector);
   const addEvent = useAddEvent();
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
+  const [tags, setTags] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+
+  const getOptions = () =>
+    existingTags.result?.map(({ value }) => ({
+      value,
+      title: value,
+    })) ?? [];
 
   const submit = async () => {
     try {
@@ -38,6 +47,7 @@ export const Create = ({ onCreate }: CreateProps) => {
         accountId: account.id,
         title,
         description,
+        tags,
       });
 
       if (event.result) {
@@ -48,6 +58,7 @@ export const Create = ({ onCreate }: CreateProps) => {
 
       setTitle('');
       setDescription('');
+      setTags([]);
 
       onCreate();
     } catch (error) {
@@ -71,6 +82,12 @@ export const Create = ({ onCreate }: CreateProps) => {
         type="textarea"
         value={description}
         onChange={setDescription}
+      />
+      <Select
+        value={tags}
+        options={getOptions()}
+        onChange={(value) => setTags(value as string[])}
+        label="Tags"
       />
       <Submit
         color="success"
