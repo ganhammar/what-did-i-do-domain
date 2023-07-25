@@ -8,16 +8,16 @@ export const appTheme: DefaultTheme = {
       white: '#f9f9f9',
     },
     background: {
-      main: '#eee',
+      main: '#e8e8e8',
       contrastText: '#333333',
     },
     paper: {
-      main: '#f4f4f4',
+      main: '#f2f2f2',
       contrastText: '#444444',
     },
     paperHighlight: {
       main: '#f7f7f7',
-      contrastText: '#444444',
+      contrastText: '#555555',
     },
     primary: {
       main: '#5e50a1',

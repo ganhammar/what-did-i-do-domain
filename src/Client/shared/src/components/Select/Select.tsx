@@ -46,7 +46,7 @@ const Wrapper = styled.div<WrapperProps>`
   box-sizing: border-box;
   border-bottom: 1px solid ${({ theme }) => theme.palette.divider.main};
   position: relative;
-  &:after {
+  &:before {
     position: absolute;
     top: calc(50% - 14px);
     right: ${({ theme }) => theme.spacing.s};
@@ -58,10 +58,26 @@ const Wrapper = styled.div<WrapperProps>`
       rotate: 180deg;
     `}
   }
+  &:after {
+    content: '';
+    height: 3px;
+    width: 0;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    background-color: ${({ theme: { palette } }) => palette.primary.main};
+    z-index: 1;
+    transition:
+      width 0.5s,
+      background-color 0.5s;
+  }
   ${({ theme, isOpen }) =>
     isOpen &&
     `
     border-color: ${theme.palette.primary.main};
+    &:after {
+      width: 100%;
+    }
   `}
 `;
 const Label = styled.label<{ hasSelected: boolean; isOpen: boolean }>`
@@ -139,7 +155,7 @@ const fade = keyframes`
 const SelectBox = styled.div<SelectBoxProps>`
   position: absolute;
   left: ${({ left }) => `${left}px`};
-  top: ${({ top, height }) => `${top + height + 1}px`};
+  top: ${({ top, height }) => `${top + height}px`};
   width: ${({ width }) => `${width}px`};
   background-color: ${({ theme }) => theme.palette.paperHighlight.main};
   color: ${({ theme }) => theme.palette.paperHighlight.contrastText};
@@ -208,7 +224,6 @@ export const Select = ({
   const callback = (selected: string) => {
     let newValue;
     setFilter(null);
-    setIsHovered(undefined);
 
     if (Array.isArray(value)) {
       filterRef.current?.focus();
@@ -222,6 +237,7 @@ export const Select = ({
       }
     } else {
       setIsOpen(false);
+      setIsHovered(undefined);
       newValue = selected;
     }
 
@@ -347,6 +363,7 @@ export const Select = ({
           value={value}
           onChange={(event) => onChange(event.target.value)}
           multiple={Array.isArray(value)}
+          onFocus={() => toggle()}
         >
           {options.map(({ value, title }) => (
             <option value={value} key={value}>

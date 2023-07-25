@@ -43,11 +43,9 @@ export function Dashboard() {
 
   return (
     <>
-      <Header size="H2">Welcome! 👋</Header>
-      <p>Showing data for the account "{account.name}".</p>
       <Wrapper>
         <HeaderWrapper>
-          <Header size="H3">Last Events</Header>
+          <Header size="H3">Events</Header>
           <Button onClick={toggle}>
             <Svg
               xmlns="http://www.w3.org/2000/svg"
