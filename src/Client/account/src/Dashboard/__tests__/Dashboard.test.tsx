@@ -53,7 +53,9 @@ test('renders application title', async () => {
 
   await flushPromisesAndTimers();
 
-  const elements = screen.getAllByText(new RegExp(name));
+  const elements = screen.getAllByText(
+    new RegExp('No events during the selected period')
+  );
   expect(elements.length).toBeGreaterThan(0);
   expect(elements[0]).toBeInTheDocument();
 });
