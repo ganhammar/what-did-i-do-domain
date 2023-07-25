@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useClickOutside, useKeyPress } from '@wdid/shared';
+import { Remove } from '@wdid/shared/src/components/Remove';
 import styled, { keyframes } from 'styled-components';
 
 interface SelectOption {
@@ -61,7 +62,7 @@ const Wrapper = styled.div<WrapperProps>`
     border-color: ${theme.palette.primary.main};
   `}
 `;
-const Label = styled.label<{ hasSelected: boolean }>`
+const Label = styled.label<{ hasSelected: boolean; isOpen: boolean }>`
   height: 22px;
   display: block;
   cursor: pointer;
@@ -72,8 +73,8 @@ const Label = styled.label<{ hasSelected: boolean }>`
   transition:
     top 0.5s,
     font-size 0.5s;
-  ${({ hasSelected }) =>
-    hasSelected &&
+  ${({ hasSelected, isOpen }) =>
+    (hasSelected || isOpen) &&
     `
     font-size: 0.8rem;
     top: -22px;
@@ -90,12 +91,26 @@ const Value = styled.div`
   display: flex;
   flex-direction: row;
 `;
+const Input = styled.input`
+  background: none;
+  border: none;
+  &:focus {
+    outline: none;
+  }
+`;
 const ValueTag = styled.div`
   border: 1px solid ${({ theme }) => theme.palette.divider.main};
   border-radius: ${({ theme }) => theme.borderRadius};
   padding: ${({ theme }) => `0 ${theme.spacing.xs}`};
   margin-right: ${({ theme }) => theme.spacing.xs};
   background: ${({ theme }) => theme.palette.paperHighlight.main};
+  display: flex;
+  align-items: center;
+`;
+const StyledRemove = styled(Remove)`
+  height: 12px;
+  width: 12px;
+  margin-left: 4px;
 `;
 
 const fade = keyframes`
@@ -148,13 +163,16 @@ export const Select = ({
 }: SelectProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [hovered, setIsHovered] = useState<string>();
+  const [filter, setFilter] = useState<string | null>(null);
   const selectBoxRef = useRef<HTMLDivElement>(null);
   const wrapperRef = useRef<HTMLDivElement>(null);
+  const filterRef = useRef<HTMLInputElement>(null);
   const [wrapperRect, setWrapperRect] = useState<DOMRect>();
 
   const toggle = () => {
     if (isOpen) {
       setIsHovered(undefined);
+      setFilter(null);
     }
 
     setIsOpen(!isOpen);
@@ -164,6 +182,9 @@ export const Select = ({
     let newValue;
 
     if (Array.isArray(value)) {
+      setFilter(null);
+      filterRef.current?.focus();
+
       newValue = [...value];
 
       if (newValue.indexOf(selected) !== -1) {
@@ -187,6 +208,17 @@ export const Select = ({
 
     return value === option.value;
   };
+
+  const getFilterValue = () => {
+    if (filter === null && !Array.isArray(value)) {
+      return value;
+    }
+
+    return filter ?? '';
+  };
+
+  const getOptions = () =>
+    options.filter(({ value }) => !filter || value.indexOf(filter) !== -1);
 
   useClickOutside([wrapperRef, selectBoxRef], () => isOpen && toggle());
   useKeyPress(['Escape', 'Enter', 'ArrowDown', 'ArrowUp'], (key) => {
@@ -230,18 +262,39 @@ export const Select = ({
     }
   }, [wrapperRef]);
 
+  useEffect(() => {
+    if (isOpen) {
+      filterRef.current!.focus();
+    }
+  }, [isOpen, filterRef]);
+
   return (
     <OuterWrapper className={className}>
-      <Wrapper ref={wrapperRef} isOpen={isOpen} onClick={toggle}>
-        <Label hasSelected={Boolean(value.length)}>{label}</Label>
-        <Value>
+      <Wrapper ref={wrapperRef} isOpen={isOpen}>
+        <Label
+          hasSelected={Boolean(value.length)}
+          isOpen={isOpen}
+          onClick={toggle}
+        >
+          {label}
+        </Label>
+        <Value onClick={() => setIsOpen(true)}>
           {Array.isArray(value) &&
-            options
-              .filter(isSelected)
-              .map(({ title, value }) => (
-                <ValueTag key={value}>{title}</ValueTag>
-              ))}
-          {!Array.isArray(value) && value}
+            options.filter(isSelected).map(({ title, value }) => (
+              <ValueTag key={value}>
+                {title}
+                <StyledRemove onClick={() => callback(value)} />
+              </ValueTag>
+            ))}
+          {!Array.isArray(value) && !isOpen && value}
+          {isOpen && (
+            <Input
+              type="text"
+              value={getFilterValue()}
+              onChange={(event) => setFilter(event.target.value)}
+              ref={filterRef}
+            />
+          )}
         </Value>
         <ActualSelect
           value={value}
@@ -266,7 +319,7 @@ export const Select = ({
             onMouseLeave={() => setIsHovered(undefined)}
           >
             <Options>
-              {options.map((option) => (
+              {getOptions().map((option) => (
                 <Option
                   key={option.value}
                   onClick={() => callback(option.value)}

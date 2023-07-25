@@ -5,5 +5,6 @@ export * from './Checkbox';
 export * from './Header';
 export * from './Loader';
 export * from './Modal';
+export * from './Remove';
 export * from './Select';
 export * from './TextInput';
