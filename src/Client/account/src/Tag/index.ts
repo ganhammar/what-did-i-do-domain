@@ -1,2 +1,3 @@
 export * from './TagService';
-export * from './tagsSelector';
+export * from './tagsAtom';
+export * from './useSyncTags';

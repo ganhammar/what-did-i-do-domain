@@ -4,3 +4,4 @@ export * from './timeFromNow';
 export * from './useAsyncError';
 export * from './useClickOutside';
 export * from './useKeyPress';
+export * from './useWindowSize';

@@ -1,11 +1,18 @@
-import { Button, TextInput, useAsyncError, Header, Select } from '@wdid/shared';
-import { useState } from 'react';
+import {
+  Button,
+  TextInput,
+  useAsyncError,
+  Header,
+  Select,
+  SelectOption,
+} from '@wdid/shared';
+import { useEffect, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { currentAccountAtom } from 'src/Account';
 import styled from 'styled-components';
 import { eventServiceSelector } from './eventServiceSelector';
 import { useAddEvent } from './useAddEvent';
-import { tagsSelector } from 'src/Tag';
+import { tagsAtom, useSyncTags } from 'src/Tag';
 
 interface CreateProps {
   onCreate: () => void;
@@ -26,18 +33,25 @@ export const Create = ({ onCreate }: CreateProps) => {
   const throwError = useAsyncError();
   const account = useRecoilValue(currentAccountAtom);
   const eventService = useRecoilValue(eventServiceSelector);
-  const existingTags = useRecoilValue(tagsSelector);
+  const existingTags = useRecoilValue(tagsAtom);
   const addEvent = useAddEvent();
+  const syncTags = useSyncTags();
+  const [tagOptions, setTagOptions] = useState<SelectOption[]>([]);
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [tags, setTags] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
-  const getOptions = () =>
-    existingTags.result?.map(({ value }) => ({
-      value,
-      title: value,
-    })) ?? [];
+  useEffect(() => {
+    if (existingTags.result?.length) {
+      setTagOptions(
+        existingTags.result.map(({ value }) => ({
+          value,
+          title: value,
+        }))
+      );
+    }
+  }, [existingTags]);
 
   const submit = async () => {
     try {
@@ -52,6 +66,7 @@ export const Create = ({ onCreate }: CreateProps) => {
 
       if (event.result) {
         addEvent(event.result);
+        syncTags(tags);
       }
 
       setIsLoading(false);
@@ -64,6 +79,12 @@ export const Create = ({ onCreate }: CreateProps) => {
     } catch (error) {
       throwError(error);
     }
+  };
+
+  const onAddNewTag = (value: string) => {
+    setTagOptions([...tagOptions, { value, title: value }]);
+
+    setTags([...tags, value]);
   };
 
   return (
@@ -85,8 +106,9 @@ export const Create = ({ onCreate }: CreateProps) => {
       />
       <Select
         value={tags}
-        options={getOptions()}
+        options={tagOptions}
         onChange={(value) => setTags(value as string[])}
+        onAddNew={onAddNewTag}
         label="Tags"
       />
       <Submit

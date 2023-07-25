@@ -1,10 +1,10 @@
 import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { useClickOutside, useKeyPress } from '@wdid/shared';
+import { useClickOutside, useKeyPress, useWindowSize } from '@wdid/shared';
 import { Remove } from '@wdid/shared/src/components/Remove';
 import styled, { keyframes } from 'styled-components';
 
-interface SelectOption {
+export interface SelectOption {
   value: string;
   title: string;
 }
@@ -15,6 +15,7 @@ interface SelectProps {
   label: string;
   className?: string;
   onChange: (value: string | string[]) => void;
+  onAddNew?: (value: string) => void;
 }
 
 interface WrapperProps {
@@ -39,7 +40,8 @@ const Wrapper = styled.div<WrapperProps>`
   display: flex;
   flex-direction: column;
   cursor: pointer;
-  padding: ${({ theme }) => theme.spacing.xs};
+  padding: ${({ theme }) =>
+    `${theme.spacing.xs} 44px ${theme.spacing.xs} ${theme.spacing.xs}`};
   margin-top: 22px;
   box-sizing: border-box;
   border-bottom: 1px solid ${({ theme }) => theme.palette.divider.main};
@@ -85,27 +87,37 @@ const ActualSelect = styled.select`
   height: 0;
   overflow: hidden;
 `;
-const Value = styled.div`
+const Value = styled.div<{ hasTags: boolean }>`
   cursor: pointer;
   min-height: 32px;
   display: flex;
   flex-direction: row;
+  max-width: 100%;
+  flex-wrap: wrap;
+  ${({ hasTags }) =>
+    hasTags &&
+    `
+    margin-bottom: -9px;
+  `}
 `;
 const Input = styled.input`
   background: none;
   border: none;
+  flex-grow: 1;
   &:focus {
     outline: none;
   }
 `;
 const ValueTag = styled.div`
+  box-sizing: border-box;
   border: 1px solid ${({ theme }) => theme.palette.divider.main};
   border-radius: ${({ theme }) => theme.borderRadius};
   padding: ${({ theme }) => `0 ${theme.spacing.xs}`};
-  margin-right: ${({ theme }) => theme.spacing.xs};
+  margin: ${({ theme }) => `0 ${theme.spacing.xs} ${theme.spacing.xs} 0`};
   background: ${({ theme }) => theme.palette.paperHighlight.main};
   display: flex;
   align-items: center;
+  white-space: nowrap;
 `;
 const StyledRemove = styled(Remove)`
   height: 12px;
@@ -153,6 +165,19 @@ const Option = styled.div<OptionProps>`
     color: ${theme.palette.background.contrastText};
   `}
 `;
+const AddOption = styled.p`
+  padding: ${({ theme }) => theme.spacing.xs};
+  cursor: pointer;
+  &:hover {
+    background-color: ${({ theme }) => theme.palette.paper.main};
+    color: ${({ theme }) => theme.palette.paper.contrastText};
+  }
+`;
+const NoOptions = styled.p`
+  font-size: 0.8em;
+  font-style: italic;
+  padding: ${({ theme }) => theme.spacing.xs};
+`;
 
 export const Select = ({
   options,
@@ -160,10 +185,12 @@ export const Select = ({
   label,
   className,
   onChange,
+  onAddNew,
 }: SelectProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [hovered, setIsHovered] = useState<string>();
   const [filter, setFilter] = useState<string | null>(null);
+  const size = useWindowSize();
   const selectBoxRef = useRef<HTMLDivElement>(null);
   const wrapperRef = useRef<HTMLDivElement>(null);
   const filterRef = useRef<HTMLInputElement>(null);
@@ -180,9 +207,10 @@ export const Select = ({
 
   const callback = (selected: string) => {
     let newValue;
+    setFilter(null);
+    setIsHovered(undefined);
 
     if (Array.isArray(value)) {
-      setFilter(null);
       filterRef.current?.focus();
 
       newValue = [...value];
@@ -193,12 +221,28 @@ export const Select = ({
         newValue.push(selected);
       }
     } else {
-      setIsHovered(undefined);
       setIsOpen(false);
       newValue = selected;
     }
 
     onChange(newValue);
+  };
+
+  const addNewCallback = () => {
+    if (!onAddNew) {
+      return;
+    }
+
+    setIsHovered(undefined);
+
+    if (Array.isArray(value)) {
+      filterRef.current?.focus();
+    } else {
+      setIsOpen(false);
+    }
+
+    onAddNew(filter as string);
+    setFilter(null);
   };
 
   const isSelected = (option: SelectOption) => {
@@ -260,7 +304,7 @@ export const Select = ({
     if (wrapperRef.current) {
       setWrapperRect(wrapperRef.current.getBoundingClientRect());
     }
-  }, [wrapperRef]);
+  }, [wrapperRef, size, value]);
 
   useEffect(() => {
     if (isOpen) {
@@ -278,7 +322,10 @@ export const Select = ({
         >
           {label}
         </Label>
-        <Value onClick={() => setIsOpen(true)}>
+        <Value
+          hasTags={Array.isArray(value) && value.length > 0}
+          onClick={() => setIsOpen(true)}
+        >
           {Array.isArray(value) &&
             options.filter(isSelected).map(({ title, value }) => (
               <ValueTag key={value}>
@@ -330,6 +377,18 @@ export const Select = ({
                   {option.value}
                 </Option>
               ))}
+              {getOptions().length === 0 && (
+                <>
+                  {Boolean(onAddNew) && filter?.length && (
+                    <AddOption onClick={addNewCallback}>
+                      Add "{filter}"
+                    </AddOption>
+                  )}
+                  {!Boolean(onAddNew) && (
+                    <NoOptions>No matching options</NoOptions>
+                  )}
+                </>
+              )}
             </Options>
           </SelectBox>,
           document.body
