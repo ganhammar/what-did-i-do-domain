@@ -8,7 +8,7 @@ import { IntlProvider } from 'react-intl';
 import { ThemeProvider } from 'styled-components';
 import { appTheme, flushPromisesAndTimers } from '@wdid/shared';
 import { Suspense } from 'react';
-import { tagsSelector } from 'src/Tag';
+import { tagsAtom } from 'src/Tag';
 
 jest.mock('@wdid/shared/src/components/Auth/userManager', () => ({
   userManager: {
@@ -33,7 +33,7 @@ test('renders application title', async () => {
     success: true,
     result: [],
   });
-  context.set(tagsSelector, {
+  context.set(tagsAtom, {
     success: true,
     result: [],
   });

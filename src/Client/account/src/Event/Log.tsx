@@ -81,9 +81,15 @@ const DeleteWrapper = styled.div`
   margin-top: -12px;
   text-align: right;
 `;
+const ConfirmActions = styled.div`
+  background-color: ${({ theme }) => theme.palette.paperHighlight.main};
+  padding: ${({ theme }) => `0 0 ${theme.spacing.xs} ${theme.spacing.xs}`};
+`;
 const ConfirmText = styled.p`
   font-size: 0.7em;
   line-height: 0.8em;
+  background-color: ${({ theme }) => theme.palette.paperHighlight.main};
+  padding: ${({ theme }) => `0 0 0 ${theme.spacing.xs}`};
 `;
 const AbortLink = styled.p`
   cursor: pointer;
@@ -127,14 +133,20 @@ const LogList = () => {
     }
   };
 
+  const changeHovered = (id?: string) => {
+    if (!isLoading && !removeInitiated) {
+      setHovered(id);
+    }
+  };
+
   return (
     <List>
       {(events.result?.length ?? 0) > 0 &&
         events.result?.map(({ id, title, date, description, tags }) => (
           <Item
             key={id}
-            onMouseEnter={() => setHovered(id)}
-            onMouseLeave={() => setHovered(undefined)}
+            onMouseEnter={() => changeHovered(id)}
+            onMouseLeave={() => changeHovered(undefined)}
             isHovered={hovered === id}
           >
             <Title>{title}</Title>
@@ -155,14 +167,14 @@ const LogList = () => {
                 {!isLoading && removeInitiated && (
                   <>
                     <ConfirmText>Remove event?</ConfirmText>
-                    <div>
+                    <ConfirmActions>
                       <ConfirmLink onClick={() => onRemoveEvent(id)}>
                         Yes
                       </ConfirmLink>
                       <AbortLink onClick={() => setRemoveInitiated(false)}>
                         No
                       </AbortLink>
-                    </div>
+                    </ConfirmActions>
                   </>
                 )}
                 {isLoading && <Loader partial size="small" />}
