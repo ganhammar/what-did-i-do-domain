@@ -83,7 +83,6 @@ public class CreateEventCommand
 
       Logger.LogInformation($"Attempting to save {item.Tags.Count()} tag(s)");
       var tags = _client.CreateBatchWrite<Tag>(config);
-      var eventTags = _client.CreateBatchWrite<EventTag>(config);
 
       foreach (var value in item.Tags.Distinct())
       {
@@ -92,17 +91,9 @@ public class CreateEventCommand
           AccountId = item.AccountId,
           Value = value,
         }));
-
-        eventTags.AddPutItem(EventTagMapper.FromDto(new EventTagDto
-        {
-          AccountId = item.AccountId,
-          Date = item.Date,
-          Value = value,
-        }));
       }
 
       await tags.ExecuteAsync(cancellationToken);
-      await eventTags.ExecuteAsync(cancellationToken);
       Logger.LogInformation("Tags saved");
     }
   }
