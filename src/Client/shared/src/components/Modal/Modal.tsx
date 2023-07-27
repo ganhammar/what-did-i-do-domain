@@ -131,7 +131,7 @@ export const Modal = ({ isOpen, children, onClose }: ModalProps) => {
         onClick={() => setIsClosing(true)}
       ></Overlay>
       <Window isOpen={isOpen} isClosing={isClosing}>
-        {children}
+        {isOpen && children}
       </Window>
     </Wrapper>,
     document.body

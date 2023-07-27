@@ -16,7 +16,12 @@ export const tagsAtom = atom({
       }
 
       const tagService = new TagService(accessToken);
-      return await tagService.list(account.id);
+
+      if (account) {
+        return await tagService.list(account.id);
+      }
+
+      return { result: [], success: true };
     },
   }),
 });

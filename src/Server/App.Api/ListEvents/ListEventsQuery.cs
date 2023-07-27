@@ -18,6 +18,7 @@ public class ListEventsQuery
     public DateTime? FromDate { get; set; }
     public DateTime? ToDate { get; set; }
     public int Limit { get; set; }
+    public IList<string>? Tags { get; set; }
   }
 
   public class QueryValidator : AbstractValidator<Query>
@@ -68,26 +69,51 @@ public class ListEventsQuery
 
       Logger.LogInformation($"Listing Events between {fromDate.ToString("o")} and {toDate.ToString("o")} for account {request.AccountId}");
 
-      var search = _client.FromQueryAsync<Event>(
-        new()
+      var operation = new QueryOperationConfig()
+      {
+        KeyExpression = new Expression
         {
-          KeyExpression = new Expression
+          ExpressionStatement = "PartitionKey = :partitionKey AND SortKey BETWEEN :fromDate and :toDate",
+          ExpressionAttributeValues = new Dictionary<string, DynamoDBEntry>
           {
-            ExpressionStatement = "PartitionKey = :partitionKey AND SortKey BETWEEN :fromDate and :toDate",
-            ExpressionAttributeValues = new Dictionary<string, DynamoDBEntry>
-            {
-              { ":partitionKey", EventMapper.GetPartitionKey(request.AccountId!) },
-              { ":fromDate", fromDate },
-              { ":toDate", toDate },
-            },
+            { ":partitionKey", EventMapper.GetPartitionKey(request.AccountId!) },
+            { ":fromDate", fromDate },
+            { ":toDate", toDate },
           },
-          Limit = request.Limit,
-          BackwardSearch = true,
         },
+        Limit = request.Limit,
+        BackwardSearch = true,
+      };
+
+      if (request.Tags?.Any() == true)
+      {
+        var expressionStatement = "";
+        var expressionAttributeValues = new Dictionary<string, DynamoDBEntry>();
+
+        for (var index = 0; index < request.Tags.Count; index++)
+        {
+          var tag = request.Tags[index];
+
+          expressionStatement += $"contains(Tags, :tag{index}) OR ";
+          expressionAttributeValues.Add($":tag{index}", tag);
+        }
+
+        expressionStatement = expressionStatement.Remove(expressionStatement.Length - 4);
+
+        operation.FilterExpression = new Expression
+        {
+          ExpressionStatement = expressionStatement,
+          ExpressionAttributeValues = expressionAttributeValues,
+        };
+      }
+
+      var search = _client.FromQueryAsync<Event>(
+        operation,
         new()
         {
           OverrideTableName = Environment.GetEnvironmentVariable("TABLE_NAME"),
         });
+
       var events = await search.GetNextSetAsync(cancellationToken);
 
       Logger.LogInformation($"Found {events.Count} Event(s)");

@@ -25,25 +25,27 @@ public class Function : APIGatewayProxyRequestBase
   protected override async Task<APIGatewayHttpApiV2ProxyResponse> Handler(
     APIGatewayProxyRequest apiGatewayProxyRequest)
   {
-    var queryStringParameters = new Dictionary<string, string>(
-      apiGatewayProxyRequest.QueryStringParameters ?? new Dictionary<string, string>(),
+    var queryStringParameters = new Dictionary<string, IList<string>>(
+      apiGatewayProxyRequest.MultiValueQueryStringParameters ?? new Dictionary<string, IList<string>>(),
       StringComparer.OrdinalIgnoreCase);
 
     queryStringParameters.TryGetValue("accountid", out var accountId);
     queryStringParameters.TryGetValue("fromdate", out var fromDateRaw);
     queryStringParameters.TryGetValue("todate", out var toDateRaw);
     queryStringParameters.TryGetValue("limit", out var limitRaw);
+    queryStringParameters.TryGetValue("tags", out var tags);
 
-    var fromDate = TryParseDateTime(fromDateRaw);
-    var toDate = TryParseDateTime(toDateRaw);
-    int.TryParse(limitRaw, out var limit);
+    var fromDate = TryParseDateTime(fromDateRaw?.First());
+    var toDate = TryParseDateTime(toDateRaw?.First());
+    int.TryParse(limitRaw?.First(), out var limit);
 
     return await Respond(new ListEventsQuery.Query
     {
-      AccountId = accountId,
+      AccountId = accountId?.First(),
       FromDate = fromDate,
       ToDate = toDate,
       Limit = limit,
+      Tags = tags,
     });
   }
 

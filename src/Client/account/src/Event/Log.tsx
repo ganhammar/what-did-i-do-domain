@@ -14,6 +14,7 @@ import { Suspense, useEffect, useState } from 'react';
 import { Tag } from './Tag';
 import { eventServiceSelector } from './eventServiceSelector';
 import { useRemoveEvent } from './useRemoveEvent';
+import { tagsAtom } from 'src/Tag';
 
 interface ItemProps {
   isHovered: boolean;
@@ -28,7 +29,7 @@ const Filters = styled.div`
   border-bottom-left-radius: 0;
   border-bottom-right-radius: 0;
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   gap: ${({ theme }) => theme.spacing.s};
 `;
 const ListWrapper = styled.div`
@@ -40,6 +41,7 @@ const ListWrapper = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: center;
+  overflow: hidden;
 `;
 const StyledLoader = styled(Loader)`
   margin: ${({ theme }) => theme.spacing.xl};
@@ -192,10 +194,12 @@ const LogList = () => {
 };
 
 export const Log = () => {
+  const existingTags = useRecoilValue(tagsAtom);
   const setParameters = useSetRecoilState(eventListParamtersAtom);
   const reset = useResetRecoilState(eventsAtom);
   const [timePeriod, setTimePeriod] = useState('day');
   const [limit, setLimit] = useState('20');
+  const [tags, setTags] = useState<string[]>([]);
   const limitOpptions = [
     { value: '10', title: '10' },
     { value: '20', title: '20' },
@@ -238,9 +242,10 @@ export const Log = () => {
       limit: parseInt(limit, 10),
       fromDate: from.toISOString(),
       toDate: to.toISOString(),
+      tags: tags,
     });
     reset();
-  }, [timePeriod, setParameters, limit, reset]);
+  }, [timePeriod, setParameters, limit, tags, reset]);
 
   return (
     <>
@@ -256,6 +261,19 @@ export const Log = () => {
           options={timePeriodOptions}
           onChange={(value) => setTimePeriod(value as string)}
           label="Show data for last"
+        />
+        <Select
+          value={tags}
+          options={
+            existingTags.result?.map(({ value }) => ({
+              value,
+              title: value,
+            })) ?? []
+          }
+          label="Filter by tag"
+          onChange={(value) => setTags(value as string[])}
+          allowClear
+          condense
         />
       </Filters>
       <ListWrapper>

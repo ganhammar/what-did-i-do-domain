@@ -37,6 +37,7 @@
     "recoil-mock": "^0.1.4"
   },
   "dependencies": {
+    "date-fns": "^2.30.0",
     "oidc-client-ts": "^2.2.4",
     "react-datepicker": "^4.16.0"
   },

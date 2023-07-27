@@ -16,6 +16,8 @@ interface SelectProps {
   className?: string;
   onChange: (value: string | string[]) => void;
   onAddNew?: (value: string) => void;
+  allowClear?: boolean;
+  condense?: boolean;
 }
 
 interface WrapperProps {
@@ -46,18 +48,6 @@ const Wrapper = styled.div<WrapperProps>`
   box-sizing: border-box;
   border-bottom: 1px solid ${({ theme }) => theme.palette.divider.main};
   position: relative;
-  &:before {
-    position: absolute;
-    top: calc(50% - 14px);
-    right: ${({ theme }) => theme.spacing.s};
-    content: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24px' height='24px' fill='currentColor'><path d='M7.41,8.58L12,13.17L16.59,8.58L18,10L12,16L6,10L7.41,8.58Z' /></svg>");
-    ${({ isOpen }) =>
-      isOpen &&
-      `
-      top: calc(50% - 26px);
-      rotate: 180deg;
-    `}
-  }
   &:after {
     content: '';
     height: 3px;
@@ -79,6 +69,20 @@ const Wrapper = styled.div<WrapperProps>`
       width: 100%;
     }
   `}
+`;
+const Arrow = styled.div<WrapperProps>`
+  position: absolute;
+  top: calc(50% - 24px);
+  right: 0;
+  content: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24px' height='24px' fill='currentColor'><path d='M7.41,8.58L12,13.17L16.59,8.58L18,10L12,16L6,10L7.41,8.58Z' /></svg>");
+  padding: ${({ theme }) => `10px ${theme.spacing.s} 10px 4px`};
+  ${({ theme, isOpen }) =>
+    isOpen &&
+    `
+      top: calc(50% - 26px);
+      rotate: 180deg;
+      padding: ${`10px 4px 10px ${theme.spacing.s}`};
+    `}
 `;
 const Label = styled.label<{ hasSelected: boolean; isOpen: boolean }>`
   height: 22px;
@@ -103,13 +107,17 @@ const ActualSelect = styled.select`
   height: 0;
   overflow: hidden;
 `;
-const Value = styled.div<{ hasTags: boolean }>`
+const Value = styled.div<{
+  hasTags: boolean;
+  width: number;
+  condense: boolean;
+}>`
   cursor: pointer;
   min-height: 32px;
   display: flex;
   flex-direction: row;
-  max-width: 100%;
-  flex-wrap: wrap;
+  max-width: ${({ width }) => width - 52}px;
+  flex-wrap: ${({ condense }) => (condense ? 'nowrap' : 'wrap')};
   ${({ hasTags }) =>
     hasTags &&
     `
@@ -202,13 +210,16 @@ export const Select = ({
   className,
   onChange,
   onAddNew,
+  allowClear,
+  condense,
 }: SelectProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [hovered, setIsHovered] = useState<string>();
   const [filter, setFilter] = useState<string | null>(null);
   const size = useWindowSize();
-  const selectBoxRef = useRef<HTMLDivElement>(null);
+  const outerWrapperRef = useRef<HTMLDivElement>(null);
   const wrapperRef = useRef<HTMLDivElement>(null);
+  const selectBoxRef = useRef<HTMLDivElement>(null);
   const filterRef = useRef<HTMLInputElement>(null);
   const [wrapperRect, setWrapperRect] = useState<DOMRect>();
 
@@ -238,7 +249,12 @@ export const Select = ({
     } else {
       setIsOpen(false);
       setIsHovered(undefined);
-      newValue = selected;
+
+      if ((selected === value || selected.length === 0) && allowClear) {
+        newValue = '';
+      } else {
+        newValue = selected;
+      }
     }
 
     onChange(newValue);
@@ -317,10 +333,10 @@ export const Select = ({
   });
 
   useEffect(() => {
-    if (wrapperRef.current) {
+    if (isOpen && wrapperRef.current) {
       setWrapperRect(wrapperRef.current.getBoundingClientRect());
     }
-  }, [wrapperRef, size, value]);
+  }, [isOpen, wrapperRef, size, value]);
 
   useEffect(() => {
     if (isOpen) {
@@ -329,7 +345,7 @@ export const Select = ({
   }, [isOpen, filterRef]);
 
   return (
-    <OuterWrapper className={className}>
+    <OuterWrapper className={className} ref={outerWrapperRef}>
       <Wrapper ref={wrapperRef} isOpen={isOpen}>
         <Label
           hasSelected={Boolean(value.length)}
@@ -341,14 +357,31 @@ export const Select = ({
         <Value
           hasTags={Array.isArray(value) && value.length > 0}
           onClick={() => setIsOpen(true)}
+          width={outerWrapperRef.current?.clientWidth ?? 0}
+          condense={condense ?? false}
         >
-          {Array.isArray(value) &&
+          {!condense &&
+            Array.isArray(value) &&
             options.filter(isSelected).map(({ title, value }) => (
               <ValueTag key={value}>
                 {title}
                 <StyledRemove onClick={() => callback(value)} />
               </ValueTag>
             ))}
+          {condense && Array.isArray(value) && value.length > 0 && (
+            <ValueTag>
+              {value.length}{' '}
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="2 5 24 24"
+                width="16px"
+                height="16px"
+                fill="currentColor"
+              >
+                <path d="M5 16.577l2.194-2.195 5.486 5.484L24.804 7.743 27 9.937l-14.32 14.32z" />
+              </svg>
+            </ValueTag>
+          )}
           {!Array.isArray(value) && !isOpen && value}
           {isOpen && (
             <Input
@@ -359,6 +392,7 @@ export const Select = ({
             />
           )}
         </Value>
+        <Arrow isOpen={isOpen} onClick={toggle} />
         <ActualSelect
           value={value}
           onChange={(event) => onChange(event.target.value)}

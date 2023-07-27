@@ -25,15 +25,15 @@ public class FunctionTests
     });
     var function = new Function();
     var context = new TestLambdaContext();
-    var data = new Dictionary<string, string>
+    var data = new Dictionary<string, IList<string>>
     {
-      { "AccountId", accountId },
-      { "Limit", "100" },
+      { "AccountId", new List<string> { accountId } },
+      { "Limit", new List<string> { "100" } },
     };
     var request = new APIGatewayProxyRequest
     {
       HttpMethod = HttpMethod.Post.Method,
-      QueryStringParameters = data,
+      MultiValueQueryStringParameters = data,
       RequestContext = new APIGatewayProxyRequest.ProxyRequestContext
       {
         RequestId = Guid.NewGuid().ToString(),
@@ -71,17 +71,17 @@ public class FunctionTests
     });
     var function = new Function();
     var context = new TestLambdaContext();
-    var data = new Dictionary<string, string>
+    var data = new Dictionary<string, IList<string>>
     {
-      { "AccountId", accountId },
-      { "FromDate", DateTime.UtcNow.AddDays(-7).ToString() },
-      { "ToDate", DateTime.UtcNow.AddDays(-6).ToString() },
-      { "Limit", "100" },
+      { "AccountId", new List<string> { accountId } },
+      { "FromDate", new List<string> { DateTime.UtcNow.AddDays(-7).ToString() } },
+      { "ToDate", new List<string> { DateTime.UtcNow.AddDays(-6).ToString() } },
+      { "Limit", new List<string> { "100" } },
     };
     var request = new APIGatewayProxyRequest
     {
       HttpMethod = HttpMethod.Post.Method,
-      QueryStringParameters = data,
+      MultiValueQueryStringParameters = data,
       RequestContext = new APIGatewayProxyRequest.ProxyRequestContext
       {
         RequestId = Guid.NewGuid().ToString(),
@@ -144,16 +144,16 @@ public class FunctionTests
   {
     var function = new Function();
     var context = new TestLambdaContext();
-    var data = new Dictionary<string, string>
+    var data = new Dictionary<string, IList<string>>
     {
-      { "AccountId", Guid.NewGuid().ToString() },
-      { "FromDate", DateTime.UtcNow.ToString() },
-      { "Limit", "100" },
+      { "AccountId", new List<string> { Guid.NewGuid().ToString() } },
+      { "FromDate", new List<string> { DateTime.UtcNow.ToString() } },
+      { "Limit", new List<string> { "100" } },
     };
     var request = new APIGatewayProxyRequest
     {
       HttpMethod = HttpMethod.Post.Method,
-      QueryStringParameters = data,
+      MultiValueQueryStringParameters = data,
       RequestContext = new APIGatewayProxyRequest.ProxyRequestContext
       {
         RequestId = Guid.NewGuid().ToString(),
@@ -184,16 +184,16 @@ public class FunctionTests
   {
     var function = new Function();
     var context = new TestLambdaContext();
-    var data = new Dictionary<string, string>
+    var data = new Dictionary<string, IList<string>>
     {
-      { "AccountId", Guid.NewGuid().ToString() },
-      { "ToDate", DateTime.UtcNow.ToString() },
-      { "Limit", "100" },
+      { "AccountId", new List<string> { Guid.NewGuid().ToString() } },
+      { "ToDate", new List<string> { DateTime.UtcNow.ToString() } },
+      { "Limit", new List<string> { "100" } },
     };
     var request = new APIGatewayProxyRequest
     {
       HttpMethod = HttpMethod.Post.Method,
-      QueryStringParameters = data,
+      MultiValueQueryStringParameters = data,
       RequestContext = new APIGatewayProxyRequest.ProxyRequestContext
       {
         RequestId = Guid.NewGuid().ToString(),
@@ -224,17 +224,17 @@ public class FunctionTests
   {
     var function = new Function();
     var context = new TestLambdaContext();
-    var data = new Dictionary<string, string>
+    var data = new Dictionary<string, IList<string>>
     {
-      { "AccountId", Guid.NewGuid().ToString() },
-      { "ToDate", DateTime.UtcNow.AddDays(-1).ToString() },
-      { "FromDate", DateTime.UtcNow.ToString() },
-      { "Limit", "100" },
+      { "AccountId", new List<string> { Guid.NewGuid().ToString() } },
+      { "ToDate", new List<string> { DateTime.UtcNow.AddDays(-1).ToString() } },
+      { "FromDate", new List<string> { DateTime.UtcNow.ToString() } },
+      { "Limit", new List<string> { "100" } },
     };
     var request = new APIGatewayProxyRequest
     {
       HttpMethod = HttpMethod.Post.Method,
-      QueryStringParameters = data,
+      MultiValueQueryStringParameters = data,
       RequestContext = new APIGatewayProxyRequest.ProxyRequestContext
       {
         RequestId = Guid.NewGuid().ToString(),
@@ -265,16 +265,16 @@ public class FunctionTests
   {
     var function = new Function();
     var context = new TestLambdaContext();
-    var data = new Dictionary<string, string>
+    var data = new Dictionary<string, IList<string>>
     {
-      { "AccountId", Guid.NewGuid().ToString() },
-      { "FromDate", DateTime.UtcNow.AddDays(-7).ToString() },
-      { "ToDate", DateTime.UtcNow.AddDays(-6).ToString() },
+      { "AccountId", new List<string> { Guid.NewGuid().ToString() } },
+      { "FromDate", new List<string> { DateTime.UtcNow.AddDays(-7).ToString() } },
+      { "ToDate", new List<string> { DateTime.UtcNow.AddDays(-6).ToString() } },
     };
     var request = new APIGatewayProxyRequest
     {
       HttpMethod = HttpMethod.Post.Method,
-      QueryStringParameters = data,
+      MultiValueQueryStringParameters = data,
       RequestContext = new APIGatewayProxyRequest.ProxyRequestContext
       {
         RequestId = Guid.NewGuid().ToString(),
@@ -308,17 +308,17 @@ public class FunctionTests
   {
     var function = new Function();
     var context = new TestLambdaContext();
-    var data = new Dictionary<string, string>
+    var data = new Dictionary<string, IList<string>>
     {
-      { "AccountId", Guid.NewGuid().ToString() },
-      { "FromDate", DateTime.UtcNow.AddDays(-7).ToString() },
-      { "ToDate", DateTime.UtcNow.AddDays(-6).ToString() },
-      { "Limit", limit }
+      { "AccountId", new List<string> { Guid.NewGuid().ToString() } },
+      { "FromDate", new List<string> { DateTime.UtcNow.AddDays(-7).ToString() } },
+      { "ToDate", new List<string> { DateTime.UtcNow.AddDays(-6).ToString() } },
+      { "Limit", new List<string> { limit } },
     };
     var request = new APIGatewayProxyRequest
     {
       HttpMethod = HttpMethod.Post.Method,
-      QueryStringParameters = data,
+      MultiValueQueryStringParameters = data,
       RequestContext = new APIGatewayProxyRequest.ProxyRequestContext
       {
         RequestId = Guid.NewGuid().ToString(),
@@ -349,15 +349,15 @@ public class FunctionTests
   {
     var function = new Function();
     var context = new TestLambdaContext();
-    var data = new Dictionary<string, string>
+    var data = new Dictionary<string, IList<string>>
     {
-      { "AccountId", Guid.NewGuid().ToString() },
-      { "Limit", "100" },
+      { "AccountId", new List<string> { Guid.NewGuid().ToString() } },
+      { "Limit", new List<string> { "100" } },
     };
     var request = new APIGatewayProxyRequest
     {
       HttpMethod = HttpMethod.Post.Method,
-      Body = JsonSerializer.Serialize(data),
+      MultiValueQueryStringParameters = data,
       RequestContext = new APIGatewayProxyRequest.ProxyRequestContext
       {
         RequestId = Guid.NewGuid().ToString(),
@@ -380,5 +380,64 @@ public class FunctionTests
 
     Assert.NotNull(errors);
     Assert.Contains(errors, error => error.ErrorCode == "UnauthorizedRequest");
+  }
+
+  [Fact]
+  public async Task Should_FilterByTags_When_InputContainsTagsFilter()
+  {
+    var accountId = Guid.NewGuid().ToString();
+    EventHelpers.CreateEvent(new()
+    {
+      AccountId = accountId,
+      Title = "Testing Testing",
+      Date = DateTime.UtcNow,
+      Tags = new[] { "test" },
+    });
+    EventHelpers.CreateEvent(new()
+    {
+      AccountId = accountId,
+      Title = "Testing 2 Testing 2",
+      Date = DateTime.UtcNow,
+      Tags = new[] { "testing" },
+    });
+
+    var function = new Function();
+    var context = new TestLambdaContext();
+    var data = new Dictionary<string, IList<string>>
+    {
+      { "AccountId", new List<string>() { accountId } },
+      { "Limit", new List<string>() { "100" } },
+      { "Tags", new List<string>() { "test" } },
+    };
+    var request = new APIGatewayProxyRequest
+    {
+      HttpMethod = HttpMethod.Post.Method,
+      MultiValueQueryStringParameters = data,
+      RequestContext = new APIGatewayProxyRequest.ProxyRequestContext
+      {
+        RequestId = Guid.NewGuid().ToString(),
+        Authorizer = new()
+        {
+          { "scope", "email test event" },
+          { "sub", Guid.NewGuid() },
+          { "email", "test@wdid.fyi" },
+        },
+      },
+    };
+    var response = await function.FunctionHandler(request, context);
+
+    Assert.Equal((int)HttpStatusCode.OK, response.StatusCode);
+
+    var body = JsonSerializer.Deserialize<List<EventDto>>(response.Body, new JsonSerializerOptions()
+    {
+      PropertyNameCaseInsensitive = true,
+    });
+
+    Assert.NotNull(body);
+    Assert.Single(body);
+    Assert.Equal(accountId, body.First().AccountId);
+    Assert.NotNull(body.First().Tags);
+    Assert.Single(body.First().Tags!);
+    Assert.Equal("test", body.First()!.Tags!.First());
   }
 }
