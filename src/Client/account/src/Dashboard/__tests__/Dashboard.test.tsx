@@ -31,7 +31,9 @@ test('renders application title', async () => {
   });
   context.set(eventsAtom, {
     success: true,
-    result: [],
+    result: {
+      items: [],
+    },
   });
   context.set(tagsAtom, {
     success: true,
