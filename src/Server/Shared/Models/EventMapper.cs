@@ -1,5 +1,4 @@
-﻿using System.Globalization;
-using App.Api.Shared.Extensions;
+﻿using App.Api.Shared.Extensions;
 
 namespace App.Api.Shared.Models;
 
@@ -22,7 +21,7 @@ public static class EventMapper
       : GetPartitionKey(instance.AccountId!),
     SortKey = instance.Id != default
       ? GetKeys(instance.Id)[1]
-      : instance.Date?.ToString("o", CultureInfo.InvariantCulture),
+      : instance.Date.ToUniversalString(),
     Date = instance.Date,
     Title = instance.Title,
     Description = instance.Description,

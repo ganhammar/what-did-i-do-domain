@@ -17,6 +17,23 @@ public static class EventHelpers
     var dbContext = new DynamoDBContext(client);
     dbContext.SaveAsync(item, config, CancellationToken.None).GetAwaiter().GetResult();
 
+    if (eventDto.Tags?.Any() == true)
+    {
+      var batch = dbContext.CreateBatchWrite<EventTag>(config);
+
+      foreach (var value in eventDto.Tags)
+      {
+        batch.AddPutItem(EventTagMapper.FromDto(new()
+        {
+          AccountId = eventDto.AccountId,
+          Date = eventDto.Date,
+          Value = value,
+        }));
+      }
+
+      batch.ExecuteAsync().GetAwaiter().GetResult();
+    }
+
     return item;
   }
 }

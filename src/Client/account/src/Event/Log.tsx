@@ -199,14 +199,12 @@ export const Log = () => {
   const reset = useResetRecoilState(eventsAtom);
   const [timePeriod, setTimePeriod] = useState('day');
   const [limit, setLimit] = useState('20');
-  const [tags, setTags] = useState<string[]>([]);
+  const [tag, setTag] = useState<string>('');
   const limitOpptions = [
     { value: '10', title: '10' },
     { value: '20', title: '20' },
     { value: '30', title: '30' },
     { value: '50', title: '50' },
-    { value: '100', title: '100' },
-    { value: '200', title: '200' },
   ];
   const timePeriodOptions = [
     { value: 'day', title: 'Day' },
@@ -242,10 +240,10 @@ export const Log = () => {
       limit: parseInt(limit, 10),
       fromDate: from.toISOString(),
       toDate: to.toISOString(),
-      tags: tags,
+      tag: tag,
     });
     reset();
-  }, [timePeriod, setParameters, limit, tags, reset]);
+  }, [timePeriod, setParameters, limit, tag, reset]);
 
   return (
     <>
@@ -254,7 +252,7 @@ export const Log = () => {
           value={limit}
           options={limitOpptions}
           onChange={(value) => setLimit(value as string)}
-          label="Limit"
+          label="Events per page"
         />
         <Select
           value={timePeriod}
@@ -263,7 +261,7 @@ export const Log = () => {
           label="Show data for last"
         />
         <Select
-          value={tags}
+          value={tag}
           options={
             existingTags.result?.map(({ value }) => ({
               value,
@@ -271,7 +269,7 @@ export const Log = () => {
             })) ?? []
           }
           label="Filter by tag"
-          onChange={(value) => setTags(value as string[])}
+          onChange={(value) => setTag(value as string)}
           allowClear
           condense
         />

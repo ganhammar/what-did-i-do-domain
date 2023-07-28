@@ -62,9 +62,33 @@ public class DeleteEventCommand
       {
         Logger.LogInformation("Matching Event found, deleting");
         await _client.DeleteAsync(item, _config, cancellationToken);
+        await DeleteEventTags(item, cancellationToken);
       }
 
       return Response();
+    }
+
+    public async Task DeleteEventTags(Event item, CancellationToken cancellationToken)
+    {
+      if (item.Tags?.Any() != true)
+      {
+        return;
+      }
+
+      var eventDto = EventMapper.ToDto(item);
+      var batch = _client.CreateBatchWrite<EventTag>(_config);
+
+      foreach (var tag in eventDto.Tags!)
+      {
+        batch.AddDeleteItem(EventTagMapper.FromDto(new()
+        {
+          AccountId = eventDto.AccountId,
+          Date = eventDto.Date,
+          Value = tag,
+        }));
+      }
+
+      await batch.ExecuteAsync(cancellationToken);
     }
   }
 }

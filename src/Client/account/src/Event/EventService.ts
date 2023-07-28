@@ -5,7 +5,7 @@ export interface ListParamters {
   limit: number;
   fromDate?: string;
   toDate?: string;
-  tags?: string[];
+  tag?: string;
 }
 
 export interface CreateParameters {
@@ -26,13 +26,11 @@ export class EventService extends FetchBase {
     this.accessToken = accessToken;
   }
 
-  async list({ accountId, limit, fromDate, toDate, tags }: ListParamters) {
+  async list({ accountId, limit, fromDate, toDate, tag }: ListParamters) {
     let url = `${this.baseUrl}?accountId=${accountId}&limit=${limit}`;
 
-    if (tags?.length) {
-      tags.forEach((tag) => {
-        url += `&tags=${tag}`;
-      });
+    if (tag) {
+      url += `&tag=${tag}`;
     }
 
     if (fromDate && toDate) {

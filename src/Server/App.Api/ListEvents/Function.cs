@@ -3,7 +3,6 @@ using Amazon.Lambda.APIGatewayEvents;
 using Amazon.Lambda.Core;
 using Amazon.Lambda.Serialization.SystemTextJson;
 using App.Api.Shared.Infrastructure;
-using App.Api.Shared.Models;
 using FluentValidation;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
@@ -17,35 +16,37 @@ public class Function : APIGatewayProxyRequestBase
   protected override void ConfigureServices(IServiceCollection services)
   {
     services.AddMediatR(Assembly.GetCallingAssembly());
-    services.AddTransient<IResponse<List<EventDto>>, Response<List<EventDto>>>();
-    services.AddTransient<IRequestHandler<ListEventsQuery.Query, IResponse<List<EventDto>>>, ListEventsQuery.QueryHandler>();
+    services.AddTransient<IResponse<Result>, Response<Result>>();
+    services.AddTransient<IRequestHandler<ListEventsQuery.Query, IResponse<Result>>, ListEventsQuery.QueryHandler>();
     services.AddTransient<IValidator<ListEventsQuery.Query>, ListEventsQuery.QueryValidator>();
   }
 
   protected override async Task<APIGatewayHttpApiV2ProxyResponse> Handler(
     APIGatewayProxyRequest apiGatewayProxyRequest)
   {
-    var queryStringParameters = new Dictionary<string, IList<string>>(
-      apiGatewayProxyRequest.MultiValueQueryStringParameters ?? new Dictionary<string, IList<string>>(),
+    var queryStringParameters = new Dictionary<string, string>(
+      apiGatewayProxyRequest.QueryStringParameters ?? new Dictionary<string, string>(),
       StringComparer.OrdinalIgnoreCase);
 
     queryStringParameters.TryGetValue("accountid", out var accountId);
     queryStringParameters.TryGetValue("fromdate", out var fromDateRaw);
     queryStringParameters.TryGetValue("todate", out var toDateRaw);
     queryStringParameters.TryGetValue("limit", out var limitRaw);
-    queryStringParameters.TryGetValue("tags", out var tags);
+    queryStringParameters.TryGetValue("tag", out var tag);
+    queryStringParameters.TryGetValue("paginationtoken", out var paginationToken);
 
-    var fromDate = TryParseDateTime(fromDateRaw?.First());
-    var toDate = TryParseDateTime(toDateRaw?.First());
-    int.TryParse(limitRaw?.First(), out var limit);
+    var fromDate = TryParseDateTime(fromDateRaw);
+    var toDate = TryParseDateTime(toDateRaw);
+    int.TryParse(limitRaw, out var limit);
 
     return await Respond(new ListEventsQuery.Query
     {
-      AccountId = accountId?.First(),
+      AccountId = accountId,
       FromDate = fromDate,
       ToDate = toDate,
       Limit = limit,
-      Tags = tags,
+      Tag = tag,
+      PaginationToken = paginationToken,
     });
   }
 
