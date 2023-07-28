@@ -143,8 +143,8 @@ const LogList = () => {
 
   return (
     <List>
-      {(events.result?.length ?? 0) > 0 &&
-        events.result?.map(({ id, title, date, description, tags }) => (
+      {(events.result?.items.length ?? 0) > 0 &&
+        events.result?.items.map(({ id, title, date, description, tags }) => (
           <Item
             key={id}
             onMouseEnter={() => changeHovered(id)}
@@ -184,7 +184,7 @@ const LogList = () => {
             )}
           </Item>
         ))}
-      {events.result?.length === 0 && (
+      {events.result?.items.length === 0 && (
         <Item isHovered={false}>
           <em>No events during the selected period</em>
         </Item>

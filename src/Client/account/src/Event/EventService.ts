@@ -16,6 +16,11 @@ export interface CreateParameters {
   tags?: string[];
 }
 
+export interface ListResult {
+  paginationToken?: string;
+  items: Event[];
+}
+
 export class EventService extends FetchBase {
   baseUrl = `${process.env.REACT_APP_BASE_API_URL}/event`;
   private readonly accessToken: string;
@@ -37,7 +42,7 @@ export class EventService extends FetchBase {
       url += `&fromDate=${fromDate}&toDate=${toDate}`;
     }
 
-    return await this.get<Event[]>(url, this.accessToken);
+    return await this.get<ListResult>(url, this.accessToken);
   }
 
   async create(data: CreateParameters) {
