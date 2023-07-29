@@ -8,7 +8,6 @@ export const useSyncTags = () => {
   const [tags, setTags] = useRecoilState(tagsAtom);
 
   return (tagsToSync: string[]) => {
-    console.log(tags);
     const updatedTags: ApiResponse<Tag[]> = {
       ...tags,
       result: [...(tags.result ?? [])],

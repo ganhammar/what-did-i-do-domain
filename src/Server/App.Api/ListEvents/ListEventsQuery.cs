@@ -171,8 +171,13 @@ public class ListEventsQuery
       });
     }
 
-    private string ToBase64(Dictionary<string, AttributeValue> dictionary)
+    private string? ToBase64(Dictionary<string, AttributeValue> dictionary)
     {
+      if (dictionary.Any() == false)
+      {
+        return default;
+      }
+
       var json = JsonSerializer.Serialize(dictionary, _serializerOptions);
       return Convert.ToBase64String(Encoding.UTF8.GetBytes(json));
     }

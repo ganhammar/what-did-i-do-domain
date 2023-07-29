@@ -19,6 +19,7 @@ export const eventsAtom = atom({
       const parameters = get(eventListParamtersAtom);
 
       const eventService = new EventService(accessToken);
+
       return await eventService.list({
         accountId: account.id,
         ...parameters,

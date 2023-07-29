@@ -1,6 +1,11 @@
 import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { useClickOutside, useKeyPress, useWindowSize } from '@wdid/shared';
+import {
+  useClickOutside,
+  useKeyPress,
+  useScroll,
+  useWindowSize,
+} from '@wdid/shared';
 import { Remove } from '@wdid/shared/src/components/Remove';
 import styled, { keyframes } from 'styled-components';
 
@@ -222,6 +227,7 @@ export const Select = ({
   const selectBoxRef = useRef<HTMLDivElement>(null);
   const filterRef = useRef<HTMLInputElement>(null);
   const [wrapperRect, setWrapperRect] = useState<DOMRect>();
+  const [, scrollY] = useScroll();
 
   const toggle = () => {
     if (isOpen) {
@@ -336,7 +342,7 @@ export const Select = ({
     if (isOpen && wrapperRef.current) {
       setWrapperRect(wrapperRef.current.getBoundingClientRect());
     }
-  }, [isOpen, wrapperRef, size, value]);
+  }, [isOpen, wrapperRef, size, value, scrollY]);
 
   useEffect(() => {
     if (isOpen) {
@@ -410,7 +416,7 @@ export const Select = ({
         createPortal(
           <SelectBox
             left={wrapperRect?.left ?? 0}
-            top={wrapperRect?.top ?? 0}
+            top={(wrapperRect?.top ?? 0) + scrollY}
             width={wrapperRect?.width ?? 0}
             height={wrapperRect?.height ?? 0}
             ref={selectBoxRef}
