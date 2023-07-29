@@ -290,6 +290,18 @@ public class AppStack : Stack
       Authorizer = authorizer,
     });
 
+    // Edit
+    var editEventFunction = new AppFunction(this, "EditEvent", new AppFunction.Props(
+      "EditEvent::App.Api.EditEvent.Function::FunctionHandler",
+      _tableName
+    ));
+    applicationTable.GrantReadWriteData(editEventFunction);
+    eventResource.AddMethod("PUT", new LambdaIntegration(editEventFunction), new MethodOptions
+    {
+      AuthorizationType = AuthorizationType.CUSTOM,
+      Authorizer = authorizer,
+    });
+
     // List
     var listEventsFunction = new AppFunction(this, "ListEvents", new AppFunction.Props(
       "ListEvents::App.Api.ListEvents.Function::FunctionHandler",
