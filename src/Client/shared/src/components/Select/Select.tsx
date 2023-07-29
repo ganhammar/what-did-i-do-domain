@@ -291,16 +291,34 @@ export const Select = ({
     return value === option.value;
   };
 
+  const getTitle = (value: string) =>
+    options.find((option) => option.value === value)?.title;
+
   const getFilterValue = () => {
     if (filter === null && !Array.isArray(value)) {
-      return value;
+      return getTitle(value) ?? '';
     }
 
     return filter ?? '';
   };
 
   const getOptions = () =>
-    options.filter(({ value }) => !filter || value.indexOf(filter) !== -1);
+    options.filter(({ value, title }) => {
+      if (!filter) {
+        return true;
+      }
+
+      const lowerFilter = filter.toLowerCase();
+
+      if (
+        value.toLowerCase().indexOf(lowerFilter) !== -1 ||
+        title.toLowerCase().indexOf(lowerFilter) !== -1
+      ) {
+        return true;
+      }
+
+      return false;
+    });
 
   useClickOutside([wrapperRef, selectBoxRef], () => isOpen && toggle());
   useKeyPress(['Escape', 'Enter', 'ArrowDown', 'ArrowUp'], (key) => {
@@ -388,7 +406,7 @@ export const Select = ({
               </svg>
             </ValueTag>
           )}
-          {!Array.isArray(value) && !isOpen && value}
+          {!Array.isArray(value) && !isOpen && getTitle(value)}
           {isOpen && (
             <Input
               type="text"
@@ -431,7 +449,7 @@ export const Select = ({
                   isSelected={isSelected(option)}
                   isHovered={hovered === option.value}
                 >
-                  {option.value}
+                  {option.title}
                 </Option>
               ))}
               {getOptions().length === 0 && (

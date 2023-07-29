@@ -1,9 +1,11 @@
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import { eventsAtom } from './eventsAtom';
 import { ApiResponse } from '@wdid/shared/src/infrastructure/FetchBase';
 import { ListResult } from './EventService';
+import { eventListParamtersAtom } from './eventListParamtersAtom';
 
 export const useAddEvent = () => {
+  const parameters = useRecoilValue(eventListParamtersAtom);
   const [events, setEvents] = useRecoilState(eventsAtom);
 
   return (newEvent: Event) => {
@@ -14,6 +16,13 @@ export const useAddEvent = () => {
         items: [],
       },
     };
+
+    if (
+      parameters.tag &&
+      !newEvent.tags.some((tag) => tag === parameters.tag)
+    ) {
+      return;
+    }
 
     let hasAddedEvent = false;
     events.result?.items.forEach((event) => {
