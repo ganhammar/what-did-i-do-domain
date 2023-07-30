@@ -17,6 +17,13 @@ export interface CreateParameters {
   tags?: string[];
 }
 
+export interface EditParameters {
+  id: string;
+  title: string;
+  description?: string;
+  tags?: string[];
+}
+
 export interface ListResult {
   paginationToken?: string;
   items: Event[];
@@ -59,6 +66,10 @@ export class EventService extends FetchBase {
 
   async create(data: CreateParameters) {
     return await this.post<Event>(this.baseUrl, data, this.accessToken);
+  }
+
+  async edit(data: EditParameters) {
+    return await this.put<Event>(this.baseUrl, data, this.accessToken);
   }
 
   async remove(id: string) {

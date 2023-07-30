@@ -3,7 +3,7 @@ import { Navigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { Header, Modal } from '@wdid/shared';
 import { currentAccountAtom } from '../Account';
-import { Create, Log } from 'src/Event';
+import { Put, Log } from 'src/Event';
 import { useState } from 'react';
 
 const Wrapper = styled.div`
@@ -69,7 +69,7 @@ export function Dashboard() {
         <Log />
       </Wrapper>
       <Modal isOpen={isCreating} onClose={toggle}>
-        <Create onCreate={toggle} />
+        <Put onPut={toggle} />
       </Modal>
     </>
   );

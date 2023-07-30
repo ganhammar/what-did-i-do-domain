@@ -66,7 +66,7 @@ const DatePickerStyles = styled.div`
     border-color: ${({ theme }) => theme.palette.divider.main};
   }
 `;
-const Fieldset = styled.fieldset<{ isFocused: boolean }>`
+const Fieldset = styled.fieldset<{ isFocused: boolean; isDisabled: boolean }>`
   border: none;
   position: relative;
   margin-bottom: 1.8rem;
@@ -90,6 +90,12 @@ const Fieldset = styled.fieldset<{ isFocused: boolean }>`
       width: 100%;
     }
   `}
+  ${({ isDisabled }) =>
+    isDisabled &&
+    `
+    cursor: not-allowed;
+    opacity: 0.8;
+  `}
   .react-datepicker-wrapper {
     width: 100%;
   }
@@ -112,7 +118,7 @@ const Label = styled.label<{ isFocused: boolean; hasValue: boolean }>`
     font-size: 0.8rem;
   `}
 `;
-const Input = styled.input`
+const Input = styled.input<{ isDisabled: boolean }>`
   border: none;
   border-bottom: 1px solid ${({ theme: { palette } }) => palette.divider.main};
   background: none;
@@ -124,23 +130,30 @@ const Input = styled.input`
   &:focus {
     outline: none;
   }
+  ${({ isDisabled }) =>
+    isDisabled &&
+    `
+    cursor: not-allowed;
+  `}
 `;
 
 interface DateTimePickerProps {
   date: Date | null;
   showTimeSelect?: boolean;
+  isDisabled?: boolean;
   onChange: (date: Date | null) => void;
 }
 
 export const DateTimePicker = ({
   date,
   showTimeSelect,
+  isDisabled,
   onChange,
 }: DateTimePickerProps) => {
   const [dateIsFocused, setDateIsFocused] = useState(false);
 
   return (
-    <Fieldset isFocused={dateIsFocused}>
+    <Fieldset isFocused={dateIsFocused} isDisabled={isDisabled ?? false}>
       <Label isFocused={dateIsFocused} hasValue={Boolean(date)}>
         Date
       </Label>
@@ -152,7 +165,8 @@ export const DateTimePicker = ({
         onCalendarOpen={() => setDateIsFocused(true)}
         onCalendarClose={() => setDateIsFocused(false)}
         dateFormat={showTimeSelect ? 'Pp' : 'P'}
-        customInput={<Input type="text" />}
+        customInput={<Input type="text" isDisabled={isDisabled ?? false} />}
+        disabled={isDisabled ?? false}
       />
     </Fieldset>
   );

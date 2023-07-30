@@ -14,9 +14,11 @@ import { eventServiceSelector } from './eventServiceSelector';
 import { useAddEvent } from './useAddEvent';
 import { tagsAtom, useSyncTags } from 'src/Tag';
 import { DateTimePicker } from 'src/Components';
+import { useUpdateEvent } from './useUpdateEvent';
 
-interface CreateProps {
-  onCreate: () => void;
+interface PutProps {
+  onPut: () => void;
+  event?: Event;
 }
 
 const Form = styled.form`
@@ -30,12 +32,13 @@ const Submit = styled(Button)`
 
 const TITLE_MIN_LENGTH = 3;
 
-export const Create = ({ onCreate }: CreateProps) => {
+export const Put = ({ onPut, event }: PutProps) => {
   const throwError = useAsyncError();
   const account = useRecoilValue(currentAccountAtom);
   const eventService = useRecoilValue(eventServiceSelector);
   const existingTags = useRecoilValue(tagsAtom);
   const addEvent = useAddEvent();
+  const updateEvent = useUpdateEvent();
   const syncTags = useSyncTags();
   const [tagOptions, setTagOptions] = useState<SelectOption[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -43,6 +46,15 @@ export const Create = ({ onCreate }: CreateProps) => {
   const [description, setDescription] = useState('');
   const [tags, setTags] = useState<string[]>([]);
   const [date, setDate] = useState<Date | null>(new Date());
+
+  useEffect(() => {
+    if (event) {
+      setTitle(event.title);
+      setDescription(event.description ?? '');
+      setTags(event.tags ?? []);
+      setDate(new Date(event.date));
+    }
+  }, [event]);
 
   useEffect(() => {
     if (existingTags.result?.length) {
@@ -59,17 +71,31 @@ export const Create = ({ onCreate }: CreateProps) => {
     try {
       setIsLoading(true);
 
-      const event = await eventService.create({
-        accountId: account.id,
-        title,
-        description,
-        tags,
-        date: date?.toISOString(),
-      });
+      if (Boolean(event)) {
+        const editEvent = await eventService.edit({
+          id: event!.id,
+          title,
+          description,
+          tags,
+        });
 
-      if (event.result) {
-        addEvent(event.result);
-        syncTags(tags);
+        if (editEvent.result) {
+          updateEvent(event!.id, editEvent.result);
+          syncTags(tags);
+        }
+      } else {
+        const newEvent = await eventService.create({
+          accountId: account.id,
+          title,
+          description,
+          tags,
+          date: date?.toISOString(),
+        });
+
+        if (newEvent.result) {
+          addEvent(newEvent.result);
+          syncTags(tags);
+        }
       }
 
       setIsLoading(false);
@@ -79,7 +105,7 @@ export const Create = ({ onCreate }: CreateProps) => {
       setDate(new Date());
       setTags([]);
 
-      onCreate();
+      onPut();
     } catch (error) {
       throwError(error);
     }
@@ -93,7 +119,9 @@ export const Create = ({ onCreate }: CreateProps) => {
 
   return (
     <Form>
-      <Header size="H3">Create Event</Header>
+      <Header size="H3">
+        {Boolean(event) ? 'Edit Event' : 'Create Event'}
+      </Header>
       <TextInput
         title="Title"
         type="text"
@@ -108,7 +136,12 @@ export const Create = ({ onCreate }: CreateProps) => {
         value={description}
         onChange={setDescription}
       />
-      <DateTimePicker date={date} onChange={setDate} showTimeSelect />
+      <DateTimePicker
+        date={date}
+        onChange={setDate}
+        showTimeSelect
+        isDisabled={Boolean(event)}
+      />
       <Select
         value={tags}
         options={tagOptions}
@@ -123,7 +156,7 @@ export const Create = ({ onCreate }: CreateProps) => {
         isLoading={isLoading}
         isAsync
       >
-        Create
+        {Boolean(event) ? 'Edit' : 'Create'}
       </Submit>
     </Form>
   );

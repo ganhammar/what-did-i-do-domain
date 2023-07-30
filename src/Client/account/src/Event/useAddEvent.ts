@@ -19,7 +19,7 @@ export const useAddEvent = () => {
 
     if (
       parameters.tag &&
-      !newEvent.tags.some((tag) => tag === parameters.tag)
+      !newEvent.tags?.some((tag) => tag === parameters.tag)
     ) {
       return;
     }
