@@ -95,6 +95,7 @@ const Element = styled.button<ElementProps>`
   transition:
     box-shadow 0.5s,
     opacity 0.5s;
+  white-space: nowrap;
   &:hover {
     box-shadow: ${({ theme }) => theme.shadows[0]};
     opacity: 0.9;

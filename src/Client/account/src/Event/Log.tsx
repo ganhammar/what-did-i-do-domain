@@ -1,10 +1,18 @@
 import { useRecoilValue, useResetRecoilState, useSetRecoilState } from 'recoil';
 import { LogList, eventsAtom } from './';
 import styled from 'styled-components';
-import { Loader, Select } from '@wdid/shared';
+import { Button, Header, Loader, Modal, Select } from '@wdid/shared';
 import { eventListParamtersAtom } from './eventListParamtersAtom';
 import { Suspense, useEffect, useState } from 'react';
 import { tagsAtom } from 'src/Tag';
+import {
+  addDays,
+  formatISO,
+  startOfDay,
+  startOfMonth,
+  startOfWeek,
+} from 'date-fns';
+import { DateTimePicker } from 'src/Components';
 
 const Filters = styled.div`
   padding: ${({ theme }) => `${theme.spacing.s} ${theme.spacing.m}`};
@@ -17,6 +25,11 @@ const Filters = styled.div`
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: ${({ theme }) => theme.spacing.s};
+`;
+const CustomInfo = styled.p`
+  white-space: nowrap;
+  font-size: 0.8em;
+  font-style: italic;
 `;
 const ListWrapper = styled.div`
   background-color: ${({ theme }) => theme.palette.paper.main};
@@ -32,14 +45,20 @@ const ListWrapper = styled.div`
 const StyledLoader = styled(Loader)`
   margin: ${({ theme }) => theme.spacing.xl};
 `;
+const Submit = styled(Button)`
+  float: right;
+`;
 
 export const Log = () => {
   const existingTags = useRecoilValue(tagsAtom);
   const setParameters = useSetRecoilState(eventListParamtersAtom);
   const reset = useResetRecoilState(eventsAtom);
-  const [timePeriod, setTimePeriod] = useState('day');
+  const [timePeriod, setTimePeriod] = useState('today');
   const [limit, setLimit] = useState('20');
   const [tag, setTag] = useState<string>('');
+  const [showDateSelect, setShowDateSelect] = useState(false);
+  const [startDate, setStartDate] = useState<Date | null>(null);
+  const [endDate, setEndDate] = useState<Date | null>(null);
   const limitOpptions = [
     { value: '10', title: '10' },
     { value: '20', title: '20' },
@@ -47,33 +66,52 @@ export const Log = () => {
     { value: '50', title: '50' },
   ];
   const timePeriodOptions = [
-    { value: 'day', title: 'Day' },
-    { value: 'two-days', title: 'Two days' },
-    { value: 'three-days', title: 'Three days' },
-    { value: 'week', title: 'Week' },
-    { value: 'month', title: 'Month' },
+    { value: 'today', title: 'Today' },
+    { value: 'yesterday', title: 'Yesterday' },
+    { value: 'last-three-days', title: 'Last three days' },
+    { value: 'this-week', title: 'This week' },
+    { value: 'this-month', title: 'This month' },
+    { value: 'last-thirty-days', title: 'Last thirty days' },
+    { value: 'custom', title: 'Custom' },
   ];
 
+  const onTimePeriodChange = (value: string | string[]) => {
+    setTimePeriod(value as string);
+
+    if (value === 'custom') {
+      setShowDateSelect(true);
+    } else {
+      setStartDate(null);
+      setEndDate(null);
+    }
+  };
+
   useEffect(() => {
-    const to = new Date();
-    const from = new Date();
+    let to = new Date();
+    let from = new Date();
 
     switch (timePeriod) {
-      case 'day':
-        from.setDate(to.getDate() - 1);
+      case 'today':
+        from = startOfDay(from);
         break;
-      case 'two-days':
-        from.setDate(to.getDate() - 2);
+      case 'yesterday':
+        to = startOfDay(to);
+        from = startOfDay(addDays(from, -1));
         break;
-      case 'three-days':
-        from.setDate(to.getDate() - 3);
+      case 'last-three-days':
+        from = startOfDay(addDays(from, -2));
         break;
-      case 'week':
-        from.setDate(to.getDate() - 7);
+      case 'this-week':
+        from = startOfWeek(from);
         break;
-      case 'month':
-        from.setDate(to.getDate() - 30);
+      case 'this-month':
+        from = startOfMonth(from);
         break;
+      case 'last-thirty-days':
+        from = addDays(from, -30);
+        break;
+      case 'custom':
+        return;
     }
 
     setParameters({
@@ -84,6 +122,25 @@ export const Log = () => {
     });
     reset();
   }, [timePeriod, setParameters, limit, tag, reset]);
+
+  const onCustomDatesChange = ([start, end]: [Date | null, Date | null]) => {
+    setStartDate(start);
+    setEndDate(end);
+  };
+
+  const onSubmitCustomDates = () => {
+    setShowDateSelect(false);
+
+    if (startDate && endDate) {
+      setParameters({
+        limit: parseInt(limit, 10),
+        fromDate: startDate.toISOString(),
+        toDate: endDate.toISOString(),
+        tag: tag,
+      });
+      reset();
+    }
+  };
 
   return (
     <>
@@ -97,8 +154,8 @@ export const Log = () => {
         <Select
           value={timePeriod}
           options={timePeriodOptions}
-          onChange={(value) => setTimePeriod(value as string)}
-          label="Show data for last"
+          onChange={onTimePeriodChange}
+          label="Show data for"
         />
         <Select
           value={tag}
@@ -114,11 +171,39 @@ export const Log = () => {
           condense
         />
       </Filters>
+      {startDate && endDate && (
+        <Filters>
+          <CustomInfo>
+            Showing data between{' '}
+            {`${formatISO(startDate, {
+              representation: 'date',
+            })} and ${formatISO(endDate, { representation: 'date' })}`}
+          </CustomInfo>
+        </Filters>
+      )}
       <ListWrapper>
         <Suspense fallback={<StyledLoader partial />}>
           <LogList />
         </Suspense>
       </ListWrapper>
+      <Modal isOpen={showDateSelect} onClose={() => setShowDateSelect(false)}>
+        <Header size="H3">Show events between</Header>
+        <DateTimePicker
+          selectsRange
+          startDate={startDate}
+          endDate={endDate}
+          onRangeChange={onCustomDatesChange}
+        />
+        <Submit
+          color="success"
+          onClick={onSubmitCustomDates}
+          isDisabled={
+            !Boolean(startDate) || !Boolean(endDate) || startDate! >= endDate!
+          }
+        >
+          Show Events
+        </Submit>
+      </Modal>
     </>
   );
 };

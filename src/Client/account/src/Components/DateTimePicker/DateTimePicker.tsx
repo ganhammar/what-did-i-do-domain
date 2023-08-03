@@ -20,6 +20,11 @@ const DatePickerStyles = styled.div`
     background-color: ${({ theme }) => theme.palette.paperHighlight.main};
     color: ${({ theme }) => theme.palette.paperHighlight.contrastText};
   }
+  .react-datepicker__day--in-range,
+  .react-datepicker__day--in-selecting-range {
+    background-color: ${({ theme }) => theme.palette.primary.main};
+    opacity: 0.8;
+  }
   .react-datepicker__day--selected,
   .react-datepicker__time-container
     .react-datepicker__time
@@ -29,6 +34,7 @@ const DatePickerStyles = styled.div`
     background-color: ${({ theme }) => theme.palette.primary.main};
     color: ${({ theme }) => theme.palette.primary.contrastText};
     font-weight: normal;
+    opacity: 1;
   }
   .react-datepicker__day--keyboard-selected {
     background-color: ${({ theme }) => theme.palette.secondary.main};
@@ -52,7 +58,8 @@ const DatePickerStyles = styled.div`
     right: 100px;
     top: 10px;
   }
-  .react-datepicker__navigation--previous {
+  .react-datepicker__navigation--previous,
+  .react-datepicker__navigation--next {
     top: 10px;
   }
   .react-datepicker__time-container,
@@ -138,28 +145,42 @@ const Input = styled.input<{ isDisabled: boolean }>`
 `;
 
 interface DateTimePickerProps {
-  date: Date | null;
+  date?: Date | null;
+  startDate?: Date | null;
+  endDate?: Date | null;
+  selectsRange?: boolean;
   showTimeSelect?: boolean;
   isDisabled?: boolean;
-  onChange: (date: Date | null) => void;
+  onChange?(date: Date | null): void;
+  onRangeChange?(dates: [Date | null, Date | null]): void;
 }
 
 export const DateTimePicker = ({
   date,
+  startDate,
+  endDate,
+  selectsRange,
   showTimeSelect,
   isDisabled,
   onChange,
+  onRangeChange,
 }: DateTimePickerProps) => {
   const [dateIsFocused, setDateIsFocused] = useState(false);
 
   return (
     <Fieldset isFocused={dateIsFocused} isDisabled={isDisabled ?? false}>
-      <Label isFocused={dateIsFocused} hasValue={Boolean(date)}>
+      <Label
+        isFocused={dateIsFocused}
+        hasValue={Boolean(date) || Boolean(startDate)}
+      >
         Date
       </Label>
       <DatePicker
-        selected={date}
-        onChange={onChange}
+        selected={date ?? startDate}
+        startDate={startDate}
+        endDate={endDate}
+        selectsRange={selectsRange}
+        onChange={onChange ?? onRangeChange!}
         showTimeSelect={showTimeSelect}
         calendarContainer={DatePickerStyles}
         onCalendarOpen={() => setDateIsFocused(true)}
