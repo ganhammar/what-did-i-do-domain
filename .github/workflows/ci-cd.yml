@@ -48,16 +48,16 @@ jobs:
           node-version: 18
       - name: 'Client: Restore'
         run: npm ci
-        working-directory: ./src/Client
+        working-directory: ./src/Client/Web
       - name: 'Client: Lint'
         run: npm run lint:ci
-        working-directory: ./src/Client
+        working-directory: ./src/Client/Web
       - name: 'Client: Styling'
         run: npm run styling:ci
-        working-directory: ./src/Client
+        working-directory: ./src/Client/Web
       - name: 'Client: Test'
         run: npm test
-        working-directory: ./src/Client
+        working-directory: ./src/Client/Web
 
       - name: Publish Code Coverage
         uses: codecov/codecov-action@v3
@@ -118,19 +118,19 @@ jobs:
           node-version: 18
       - name: 'Client: Restore'
         run: npm ci
-        working-directory: ./src/Client
+        working-directory: ./src/Client/Web
       - name: 'Client: Build'
         run: npm run build
-        working-directory: ./src/Client
+        working-directory: ./src/Client/Web
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v3
         with:
           name: ${{ github.run_id }}
           path: |
-            ./src/Client/account/build
-            ./src/Client/landing/build
-            ./src/Client/login/build
+            ./src/Client/Web/account/build
+            ./src/Client/Web/landing/build
+            ./src/Client/Web/login/build
           retention-days: 1
 
   deploy:

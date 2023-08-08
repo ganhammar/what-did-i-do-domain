@@ -1,5 +1,5 @@
 import { useRecoilValue, useResetRecoilState, useSetRecoilState } from 'recoil';
-import { LogList, eventsAtom } from './';
+import { LogList, eventsAtom } from '.';
 import styled from 'styled-components';
 import { Button, Header, Loader, Modal, Select } from '@wdid/shared';
 import { eventListParamtersAtom } from './eventListParamtersAtom';
