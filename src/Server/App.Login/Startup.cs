@@ -47,7 +47,7 @@ public class Startup
         policy =>
         {
           policy
-            .WithOrigins("http://localhost:3000")
+            .WithOrigins("http://localhost:3000", "http://127.0.0.1:3124")
             .AllowAnyHeader()
             .AllowAnyMethod();
         });
