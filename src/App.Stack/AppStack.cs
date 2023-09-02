@@ -191,23 +191,25 @@ public class AppStack : Stack
 
   private void AllowSsm(AppFunction function, string resource, bool allowPut)
   {
+    var actions = new List<string>
+    {
+      "ssm:GetParametersByPath",
+    };
+
+    if (allowPut)
+    {
+      actions.Add("ssm:PutParameter");
+    }
+
     var ssmPolicy = new PolicyStatement(new PolicyStatementProps
     {
       Effect = Effect.ALLOW,
-      Actions = new[]
-      {
-        "ssm:GetParametersByPath",
-      },
+      Actions = actions.ToArray(),
       Resources = new[]
       {
         $"arn:aws:ssm:{this.Region}:{this.Account}:parameter{resource}",
       },
     });
-
-    if (allowPut)
-    {
-      ssmPolicy.Actions.Append("ssm:PutParameter");
-    }
 
     function.AddToRolePolicy(ssmPolicy);
   }
