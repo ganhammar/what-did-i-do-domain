@@ -179,7 +179,7 @@ public class AppStack : Stack
     openiddictTable.GrantReadWriteData(loginFunction);
 
     AllowSes(loginFunction);
-    AllowSsm(loginFunction, "/WhatDidIDo/DataProtection*", true);
+    AllowSsm(loginFunction, "/WDID/DataProtection*", true);
     AllowSsm(loginFunction, "/WDID/Login*", false);
 
     loginResource.AddProxy(new ProxyResourceOptions

@@ -38,7 +38,7 @@ public class Startup
         } : new()));
 
     services.AddDataProtection()
-      .PersistKeysToAWSSystemsManager("/WhatDidIDo/DataProtection");
+      .PersistKeysToAWSSystemsManager("/WDID/DataProtection");
 
     services.AddIdentity();
     services.AddCors(options =>
