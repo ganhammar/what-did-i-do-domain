@@ -39,7 +39,9 @@ public class ExchangeCommand
         {
           var request = httpContextAccessor.HttpContext!.GetOpenIddictServerRequest();
 
-          return request!.IsClientCredentialsGrantType() || request!.IsAuthorizationCodeGrantType();
+          return request!.IsClientCredentialsGrantType()
+            || request!.IsAuthorizationCodeGrantType()
+            || request!.IsRefreshTokenGrantType();
         })
         .WithErrorCode(Errors.UnsupportedGrantType)
         .WithMessage("The specified grant type is not supported");
@@ -78,7 +80,7 @@ public class ExchangeCommand
         return await HandleClientCredentials(openIddictRequest);
       }
 
-      return await HandleAuthorizationCode(openIddictRequest);
+      return await HandleAuthorizationCodeAndRefreshToken(openIddictRequest);
     }
 
     private async Task<IResponse<ClaimsPrincipal>> HandleClientCredentials(OpenIddictRequest openIddictRequest)
@@ -89,7 +91,7 @@ public class ExchangeCommand
       {
         return Response<ClaimsPrincipal>(new(), new List<ValidationFailure>
         {
-          new ValidationFailure("InvalidApplication", "The application is not valid in this context"),
+          new("InvalidApplication", "The application is not valid in this context"),
         });
       }
 
@@ -126,18 +128,19 @@ public class ExchangeCommand
       return Response(principal);
     }
 
-    private async Task<IResponse<ClaimsPrincipal>> HandleAuthorizationCode(OpenIddictRequest openIddictRequest)
+    private async Task<IResponse<ClaimsPrincipal>> HandleAuthorizationCodeAndRefreshToken(
+      OpenIddictRequest openIddictRequest)
     {
       var result = await _httpContextAccessor.HttpContext!.AuthenticateAsync(
         OpenIddictServerAspNetCoreDefaults.AuthenticationScheme);
 
       // Retrieve the user profile corresponding to the authorization code/refresh token.
-      var user = await _userManager.FindByIdAsync(result.Principal?.GetClaim(Claims.Subject) ?? String.Empty);
+      var user = await _userManager.FindByIdAsync(result.Principal?.GetClaim(Claims.Subject) ?? string.Empty);
       if (user is null)
       {
         return Response<ClaimsPrincipal>(new(), new List<ValidationFailure>
         {
-          new ValidationFailure(nameof(ExchangeCommand.Command), "The token is no longer valid")
+          new(nameof(Command), "The token is no longer valid")
           {
             ErrorCode = Errors.InvalidGrant,
           },
@@ -149,7 +152,7 @@ public class ExchangeCommand
       {
         return Response<ClaimsPrincipal>(new(), new List<ValidationFailure>
         {
-          new ValidationFailure(nameof(ExchangeCommand.Command), "The user is no longer allowed to sign in")
+          new(nameof(Command), "The user is no longer allowed to sign in")
           {
             ErrorCode = Errors.InvalidGrant,
           },
