@@ -82,7 +82,7 @@ public static class ServiceCollectionExtensions
         builder.RegisterScopes(Scopes.Email, Scopes.Profile, Scopes.Roles);
 
         builder.SetAccessTokenLifetime(TimeSpan.FromMinutes(30));
-        builder.SetRefreshTokenLifetime(TimeSpan.FromDays(1));
+        builder.SetRefreshTokenLifetime(TimeSpan.FromDays(7));
 
         var signingCertificate = configuration.GetValue<string>("SigningCertificate");
         var encryptionCertificate = configuration.GetValue<string>("EncryptionCertificate");
