@@ -15,6 +15,7 @@ using AppStack.Constructs;
 using Constructs;
 using Microsoft.Extensions.Configuration;
 using static Amazon.CDK.AWS.CloudFront.CfnDistribution;
+using static Amazon.CDK.AWS.CloudFront.CfnOriginAccessControl;
 
 namespace AppStack;
 
@@ -509,7 +510,7 @@ public class AppStack : Stack
     // https://github.com/aws/aws-cdk/issues/21771#issuecomment-1281190832
     var oac = new CfnOriginAccessControl(this, "AOC", new CfnOriginAccessControlProps
     {
-      OriginAccessControlConfig = new
+      OriginAccessControlConfig = new OriginAccessControlConfigProperty
       {
         Name = "AOC",
         OriginAccessControlOriginType = "S3",
