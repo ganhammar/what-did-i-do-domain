@@ -10,7 +10,6 @@ using Amazon.CDK.AWS.Logs;
 using Amazon.CDK.AWS.Route53;
 using Amazon.CDK.AWS.Route53.Targets;
 using Amazon.CDK.AWS.S3;
-using Amazon.CDK.AWS.S3.Deployment;
 using Amazon.CDK.AWS.SSM;
 using AppStack.Constructs;
 using Constructs;
@@ -335,31 +334,11 @@ public class AppStack : Stack
     });
   }
 
-  private Bucket CreateClientBucket(
+  private IBucket FindAndGiveCloudFrontAccessToBucket(
     OriginAccessIdentity cloudFrontOriginAccessPrincipal,
-    string name,
-    string packagePath,
-    string s3Path = "/")
+    string name)
   {
-    var clientBucket = new Bucket(this, name, new BucketProps
-    {
-      AccessControl = BucketAccessControl.PRIVATE,
-      Cors = new[]
-      {
-        new CorsRule
-        {
-          AllowedOrigins = new[] { "*" },
-          AllowedMethods = new[] { HttpMethods.GET },
-          MaxAge = 3000,
-        },
-      },
-    });
-    new BucketDeployment(this, $"Deploy{name}", new BucketDeploymentProps
-    {
-      Sources = new[] { Source.Asset($"./{packagePath}/build") },
-      DestinationBucket = clientBucket,
-      DestinationKeyPrefix = s3Path,
-    });
+    var clientBucket = Bucket.FromBucketName(this, name, $"what-did-i-do-web-{name.ToLowerInvariant()}");
     var policyStatement = new PolicyStatement(new PolicyStatementProps
     {
       Actions = new[] { "s3:GetObject" },
@@ -399,7 +378,7 @@ public class AppStack : Stack
       {
         Comment = "Allows CloudFront access to S3 bucket",
       });
-    var loginBucket = CreateClientBucket(loginPrincipal, "Login", "login", "login");
+    var loginBucket = FindAndGiveCloudFrontAccessToBucket(loginPrincipal, "Login");
 
     // S3: Account
     var accountPrincipal = new OriginAccessIdentity(
@@ -407,7 +386,7 @@ public class AppStack : Stack
       {
         Comment = "Allows CloudFront access to S3 bucket",
       });
-    var accountBucket = CreateClientBucket(accountPrincipal, "Account", "account", "account");
+    var accountBucket = FindAndGiveCloudFrontAccessToBucket(accountPrincipal, "Account");
 
     // S3: Landing
     var landingPrincipal = new OriginAccessIdentity(
@@ -415,7 +394,7 @@ public class AppStack : Stack
       {
         Comment = "Allows CloudFront access to S3 bucket",
       });
-    var landingBucket = CreateClientBucket(landingPrincipal, "Landing", "landing");
+    var landingBucket = FindAndGiveCloudFrontAccessToBucket(landingPrincipal, "Landing");
 
     var certificate = Certificate.FromCertificateArn(
       this,

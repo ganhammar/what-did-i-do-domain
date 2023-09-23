@@ -1,0 +1,33 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>$(TargetFramework)</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Amazon.Lambda.Core" Version="$(AmazonLambdaCoreVersion)" />
+    <PackageReference Include="Amazon.Lambda.TestUtilities"
+      Version="$(AmazonLambdaTestUtilitiesVersion)" />
+    <PackageReference Include="coverlet.msbuild" Version="$(CoverletMsbuildVersion)">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="$(MicrosoftNETTestSdkVersion)" />
+    <PackageReference Include="xunit" Version="$(XunitVersion)" />
+    <PackageReference Include="xunit.runner.visualstudio"
+      Version="$(XunitRunnerVisualstudioVersion)">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\src\App.Api\DeleteEvent\DeleteEvent.csproj" />
+    <ProjectReference Include="..\..\..\src\Shared\Shared.csproj" />
+    <ProjectReference Include="..\..\TestBase\TestBase.csproj" />
+  </ItemGroup>
+
+</Project>

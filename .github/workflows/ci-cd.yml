@@ -33,31 +33,14 @@ jobs:
           role-to-assume: ${{ secrets.DEPLOY_ROLE }}
           role-session-name: OIDCSession
 
-      - name: 'Backend: Restore'
+      - name: Restore
         run: dotnet restore
-      - name: 'Backend: Build'
+      - name: Build
         run: dotnet build --no-restore
-      - name: 'Backend: Lint'
+      - name: Lint
         run: dotnet format --verify-no-changes --no-restore
-      - name: 'Backend: Test'
+      - name: Test
         run: dotnet test --no-build /p:CollectCoverage=true /p:CoverletOutput=TestResults/ /p:CoverletOutputFormat=lcov /p:Exclude="[TestBase*]*"
-
-      - name: Install node
-        uses: actions/setup-node@v3
-        with:
-          node-version: 18
-      - name: 'Client: Restore'
-        run: npm ci
-        working-directory: ./src/Client/Web
-      - name: 'Client: Lint'
-        run: npm run lint:ci
-        working-directory: ./src/Client/Web
-      - name: 'Client: Styling'
-        run: npm run styling:ci
-        working-directory: ./src/Client/Web
-      - name: 'Client: Test'
-        run: npm test
-        working-directory: ./src/Client/Web
 
       - name: Publish Code Coverage
         uses: codecov/codecov-action@v3
@@ -67,8 +50,8 @@ jobs:
           fail_ci_if_error: false
           gcov_ignore: test/**/*
 
-  package-projects:
-    name: Package Projects
+  package:
+    name: Package
     runs-on: ubuntu-latest
     needs: test
     if: ${{ github.ref == 'refs/heads/main' }}
@@ -76,15 +59,15 @@ jobs:
       fail-fast: true
       matrix:
         project:
-          - ./src/Server/App.Api/CreateAccount
-          - ./src/Server/App.Api/CreateEvent
-          - ./src/Server/App.Api/DeleteEvent
-          - ./src/Server/App.Api/EditEvent
-          - ./src/Server/App.Api/ListAccounts
-          - ./src/Server/App.Api/ListEvents
-          - ./src/Server/App.Api/ListTags
-          - ./src/Server/App.Login
-          - ./src/Server/App.Authorizer
+          - ./src/App.Api/CreateAccount
+          - ./src/App.Api/CreateEvent
+          - ./src/App.Api/DeleteEvent
+          - ./src/App.Api/EditEvent
+          - ./src/App.Api/ListAccounts
+          - ./src/App.Api/ListEvents
+          - ./src/App.Api/ListTags
+          - ./src/App.Login
+          - ./src/App.Authorizer
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -104,41 +87,10 @@ jobs:
           path: ./.output
           retention-days: 1
 
-  package-clients:
-    name: Package Clients
-    runs-on: ubuntu-latest
-    needs: test
-    if: ${{ github.ref == 'refs/heads/main' }}
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-      - name: Install node
-        uses: actions/setup-node@v3
-        with:
-          node-version: 18
-      - name: 'Client: Restore'
-        run: npm ci
-        working-directory: ./src/Client/Web
-      - name: 'Client: Build'
-        run: npm run build
-        working-directory: ./src/Client/Web
-
-      - name: Upload Artifact
-        uses: actions/upload-artifact@v3
-        with:
-          name: ${{ github.run_id }}
-          path: |
-            ./src/Client/Web/account/build
-            ./src/Client/Web/landing/build
-            ./src/Client/Web/login/build
-          retention-days: 1
-
   deploy:
     name: Deploy
     runs-on: ubuntu-latest
-    needs:
-      - package-projects
-      - package-clients
+    needs: package
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -164,10 +116,10 @@ jobs:
         with:
           signing-certificate-content: ${{ secrets.LOGIN_SIGNING_CERTIFICATE }}
           encryption-certificate-content: ${{ secrets.LOGIN_ENCRYPTION_CERTIFICATE }}
-          target-dir: './src/Server/Helpers/App.Login.EnsureInitialized'
+          target-dir: './src/Helpers/App.Login.EnsureInitialized'
       - name: Ensure 3rd Party Tables is Created
         run: dotnet run
-        working-directory: ./src/Server/Helpers/App.Login.EnsureInitialized
+        working-directory: ./src/Helpers/App.Login.EnsureInitialized
         env:
           ASPNETCORE_ENVIRONMENT: ci
           ClientOptions__Clients__0__ClientSecret: ${{ secrets.CLIENT_AUTHORIZER_SECRET }}
