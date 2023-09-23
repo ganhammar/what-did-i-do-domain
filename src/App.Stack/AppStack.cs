@@ -356,27 +356,12 @@ public class AppStack : Stack
     });
 
     // S3: Login
-    var loginPrincipal = new OriginAccessIdentity(
-      this, "LoginCloudFrontOAI", new OriginAccessIdentityProps
-      {
-        Comment = "Allows CloudFront access to S3 bucket",
-      });
     var loginBucket = Bucket.FromBucketName(this, "Login", $"what-did-i-do-web-login");
 
     // S3: Account
-    var accountPrincipal = new OriginAccessIdentity(
-      this, "AccountCloudFrontOAI", new OriginAccessIdentityProps
-      {
-        Comment = "Allows CloudFront access to S3 bucket",
-      });
     var accountBucket = Bucket.FromBucketName(this, "Account", $"what-did-i-do-web-account");
 
     // S3: Landing
-    var landingPrincipal = new OriginAccessIdentity(
-      this, "LandingCloudFrontOAI", new OriginAccessIdentityProps
-      {
-        Comment = "Allows CloudFront access to S3 bucket",
-      });
     var landingBucket = Bucket.FromBucketName(this, "Landing", $"what-did-i-do-web-landing");
 
     var certificate = Certificate.FromCertificateArn(
@@ -430,7 +415,6 @@ public class AppStack : Stack
             S3OriginSource = new S3OriginConfig
             {
               S3BucketSource = loginBucket,
-              OriginAccessIdentity = loginPrincipal,
             },
             Behaviors = new[]
             {
@@ -456,7 +440,6 @@ public class AppStack : Stack
             S3OriginSource = new S3OriginConfig
             {
               S3BucketSource = accountBucket,
-              OriginAccessIdentity = accountPrincipal,
             },
             Behaviors = new[]
             {
@@ -482,7 +465,6 @@ public class AppStack : Stack
             S3OriginSource = new S3OriginConfig
             {
               S3BucketSource = landingBucket,
-              OriginAccessIdentity = landingPrincipal,
             },
             Behaviors = new[]
             {
@@ -523,6 +505,32 @@ public class AppStack : Stack
           },
         }),
       });
+
+    // https://github.com/aws/aws-cdk/issues/21771#issuecomment-1281190832
+    var oac = new CfnOriginAccessControl(this, "AOC", new CfnOriginAccessControlProps
+    {
+      OriginAccessControlConfig = new
+      {
+        name = "AOC",
+        originAccessControlOriginType = "S3",
+        signingBehavior = "always",
+        signingProtocol = "sigv4",
+      },
+    });
+
+    var cfnDistribution = distribution.Node.DefaultChild as CfnDistribution;
+
+    // Login
+    cfnDistribution!.AddOverride("Properties.DistributionConfig.Origins.1.S3OriginConfig.OriginAccessIdentity", "");
+    cfnDistribution!.AddPropertyOverride("DistributionConfig.Origins.1.OriginAccessControlId", oac.GetAtt("Id"));
+
+    // Account
+    cfnDistribution!.AddOverride("Properties.DistributionConfig.Origins.2.S3OriginConfig.OriginAccessIdentity", "");
+    cfnDistribution!.AddPropertyOverride("DistributionConfig.Origins.2.OriginAccessControlId", oac.GetAtt("Id"));
+
+    // Landing
+    cfnDistribution!.AddOverride("Properties.DistributionConfig.Origins.3.S3OriginConfig.OriginAccessIdentity", "");
+    cfnDistribution!.AddPropertyOverride("DistributionConfig.Origins.3.OriginAccessControlId", oac.GetAtt("Id"));
 
     CreateRecords(distribution);
 
