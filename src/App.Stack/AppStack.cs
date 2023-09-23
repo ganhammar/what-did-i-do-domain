@@ -511,10 +511,10 @@ public class AppStack : Stack
     {
       OriginAccessControlConfig = new
       {
-        name = "AOC",
-        originAccessControlOriginType = "S3",
-        signingBehavior = "always",
-        signingProtocol = "sigv4",
+        Name = "AOC",
+        OriginAccessControlOriginType = "S3",
+        SigningBehavior = "always",
+        SigningProtocol = "sigv4",
       },
     });
 
