@@ -334,23 +334,6 @@ public class AppStack : Stack
     });
   }
 
-  private IBucket FindAndGiveCloudFrontAccessToBucket(
-    OriginAccessIdentity cloudFrontOriginAccessPrincipal,
-    string name)
-  {
-    var clientBucket = Bucket.FromBucketName(this, name, $"what-did-i-do-web-{name.ToLowerInvariant()}");
-    var policyStatement = new PolicyStatement(new PolicyStatementProps
-    {
-      Actions = new[] { "s3:GetObject" },
-      Resources = new[] { $"{clientBucket.BucketArn}/*" },
-    });
-    policyStatement.AddCanonicalUserPrincipal(
-      cloudFrontOriginAccessPrincipal.CloudFrontOriginAccessIdentityS3CanonicalUserId);
-    clientBucket.AddToResourcePolicy(policyStatement);
-
-    return clientBucket;
-  }
-
   private CloudFrontWebDistribution CreateCloudFrontWebDistribution(
     RestApi apiGateway)
   {
@@ -378,7 +361,7 @@ public class AppStack : Stack
       {
         Comment = "Allows CloudFront access to S3 bucket",
       });
-    var loginBucket = FindAndGiveCloudFrontAccessToBucket(loginPrincipal, "Login");
+    var loginBucket = Bucket.FromBucketName(this, "Login", $"what-did-i-do-web-login");
 
     // S3: Account
     var accountPrincipal = new OriginAccessIdentity(
@@ -386,7 +369,7 @@ public class AppStack : Stack
       {
         Comment = "Allows CloudFront access to S3 bucket",
       });
-    var accountBucket = FindAndGiveCloudFrontAccessToBucket(accountPrincipal, "Account");
+    var accountBucket = Bucket.FromBucketName(this, "Account", $"what-did-i-do-web-account");
 
     // S3: Landing
     var landingPrincipal = new OriginAccessIdentity(
@@ -394,7 +377,7 @@ public class AppStack : Stack
       {
         Comment = "Allows CloudFront access to S3 bucket",
       });
-    var landingBucket = FindAndGiveCloudFrontAccessToBucket(landingPrincipal, "Landing");
+    var landingBucket = Bucket.FromBucketName(this, "Landing", $"what-did-i-do-web-landing");
 
     var certificate = Certificate.FromCertificateArn(
       this,

@@ -27,7 +27,7 @@ jobs:
       - name: Setup DynamoDB Local
         run: docker run -d -p 8000:8000 amazon/dynamodb-local
       - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v1
+        uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-region: eu-north-1
           role-to-assume: ${{ secrets.DEPLOY_ROLE }}
@@ -101,7 +101,7 @@ jobs:
           path: ./
 
       - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v1
+        uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-region: eu-north-1
           role-to-assume: ${{ secrets.DEPLOY_ROLE }}
