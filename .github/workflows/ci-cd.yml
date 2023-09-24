@@ -24,8 +24,6 @@ jobs:
         with:
           dotnet-version: 6.0.x
 
-      - name: Setup DynamoDB Local
-        run: docker run -d -p 8000:8000 amazon/dynamodb-local
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
@@ -66,7 +64,6 @@ jobs:
           - ./src/App.Api/ListAccounts
           - ./src/App.Api/ListEvents
           - ./src/App.Api/ListTags
-          - ./src/App.Login
           - ./src/App.Authorizer
     steps:
       - name: Checkout
@@ -111,19 +108,6 @@ jobs:
         uses: actions/setup-dotnet@v3
         with:
           dotnet-version: 6.0.x
-      - name: Create Certificate Files
-        uses: ./.github/actions/certificates
-        with:
-          signing-certificate-content: ${{ secrets.LOGIN_SIGNING_CERTIFICATE }}
-          encryption-certificate-content: ${{ secrets.LOGIN_ENCRYPTION_CERTIFICATE }}
-          target-dir: './src/Helpers/App.Login.EnsureInitialized'
-      - name: Ensure 3rd Party Tables is Created
-        run: dotnet run
-        working-directory: ./src/Helpers/App.Login.EnsureInitialized
-        env:
-          ASPNETCORE_ENVIRONMENT: ci
-          ClientOptions__Clients__0__ClientSecret: ${{ secrets.CLIENT_AUTHORIZER_SECRET }}
-
       - name: Install node
         uses: actions/setup-node@v3
         with:
@@ -134,12 +118,8 @@ jobs:
       - name: CDK Bootstrap
         run: cdk bootstrap
         env:
-          Login__SigningCertificate: ${{ secrets.LOGIN_SIGNING_CERTIFICATE }}
-          Login__EncryptionCertificate: ${{ secrets.LOGIN_ENCRYPTION_CERTIFICATE }}
           Authorizer__ClientSecret: ${{ secrets.CLIENT_AUTHORIZER_SECRET }}
       - name: CDK Deploy
         run: cdk deploy --require-approval never --all
         env:
-          Login__SigningCertificate: ${{ secrets.LOGIN_SIGNING_CERTIFICATE }}
-          Login__EncryptionCertificate: ${{ secrets.LOGIN_ENCRYPTION_CERTIFICATE }}
           Authorizer__ClientSecret: ${{ secrets.CLIENT_AUTHORIZER_SECRET }}

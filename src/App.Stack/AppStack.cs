@@ -51,7 +51,7 @@ public class AppStack : Stack
 
     // Resource: Login
     var loginResource = apiResource.AddResource("login");
-    HandleLoginResource(loginResource);
+    // HandleLoginResource(loginResource);
 
     // Resource: Account
     var accountResource = apiResource.AddResource("account");
@@ -141,53 +141,53 @@ public class AppStack : Stack
     });
   }
 
-  private void HandleLoginResource(
-    Amazon.CDK.AWS.APIGateway.Resource loginResource)
-  {
-    var loginConfiguration = _configuration.GetSection("Login");
-    new StringParameter(this, "LoginSigningCertificateParameter", new StringParameterProps
-    {
-      ParameterName = "/WDID/Login/SigningCertificate",
-      StringValue = loginConfiguration.GetValue<string>("SigningCertificate")!,
-      Tier = ParameterTier.STANDARD,
-    });
-    new StringParameter(this, "LoginEncryptionCertificateParameter", new StringParameterProps
-    {
-      ParameterName = "/WDID/Login/EncryptionCertificate",
-      StringValue = loginConfiguration.GetValue<string>("EncryptionCertificate")!,
-      Tier = ParameterTier.STANDARD,
-    });
+  // private void HandleLoginResource(
+  //   Amazon.CDK.AWS.APIGateway.Resource loginResource)
+  // {
+  //   var loginConfiguration = _configuration.GetSection("Login");
+  //   new StringParameter(this, "LoginSigningCertificateParameter", new StringParameterProps
+  //   {
+  //     ParameterName = "/WDID/Login/SigningCertificate",
+  //     StringValue = loginConfiguration.GetValue<string>("SigningCertificate")!,
+  //     Tier = ParameterTier.STANDARD,
+  //   });
+  //   new StringParameter(this, "LoginEncryptionCertificateParameter", new StringParameterProps
+  //   {
+  //     ParameterName = "/WDID/Login/EncryptionCertificate",
+  //     StringValue = loginConfiguration.GetValue<string>("EncryptionCertificate")!,
+  //     Tier = ParameterTier.STANDARD,
+  //   });
 
-    var loginFunction = new AppFunction(this, "App.Login", new AppFunction.Props(
-      "App.Login::App.Login.LambdaEntryPoint::FunctionHandlerAsync",
-      _tableName,
-      2048
-    ));
+  //   var loginFunction = new AppFunction(this, "App.Login", new AppFunction.Props(
+  //     "App.Login::App.Login.LambdaEntryPoint::FunctionHandlerAsync",
+  //     _tableName,
+  //     2048
+  //   ));
 
-    var identityTable = Table.FromTableAttributes(this, "IdentityTable", new TableAttributes
-    {
-      TableArn = $"arn:aws:dynamodb:{this.Region}:{this.Account}:table/what-did-i-do.identity",
-      GrantIndexPermissions = true,
-    });
-    identityTable.GrantReadWriteData(loginFunction);
+  //   var identityTable = Table.FromTableAttributes(this, "IdentityTable", new TableAttributes
+  //   {
+  //     TableArn = $"arn:aws:dynamodb:{Region}:{Account}:table/what-did-i-do.identity",
+  //     GrantIndexPermissions = true,
+  //   });
+  //   identityTable.GrantReadWriteData(loginFunction);
 
-    var openiddictTable = Table.FromTableAttributes(this, "OpenIddictTable", new TableAttributes
-    {
-      TableArn = $"arn:aws:dynamodb:{this.Region}:{this.Account}:table/what-did-i-do.openiddict",
-      GrantIndexPermissions = true,
-    });
-    openiddictTable.GrantReadWriteData(loginFunction);
+  //   var openiddictTable = Table.FromTableAttributes(this, "OpenIddictTable", new TableAttributes
+  //   {
+  //     TableArn = $"arn:aws:dynamodb:{Region}:{Account}:table/what-did-i-do.openiddict",
+  //     GrantIndexPermissions = true,
+  //   });
+  //   openiddictTable.GrantReadWriteData(loginFunction);
 
-    AllowSes(loginFunction);
-    AllowSsm(loginFunction, "/WDID/DataProtection*", true);
-    AllowSsm(loginFunction, "/WDID/Login*", false);
+  //   AllowSes(loginFunction);
+  //   AllowSsm(loginFunction, "/WDID/DataProtection*", true);
+  //   AllowSsm(loginFunction, "/WDID/Login*", false);
 
-    loginResource.AddProxy(new ProxyResourceOptions
-    {
-      AnyMethod = true,
-      DefaultIntegration = new LambdaIntegration(loginFunction),
-    });
-  }
+  //   loginResource.AddProxy(new ProxyResourceOptions
+  //   {
+  //     AnyMethod = true,
+  //     DefaultIntegration = new LambdaIntegration(loginFunction),
+  //   });
+  // }
 
   private void AllowSsm(AppFunction function, string resource, bool allowPut)
   {
@@ -207,31 +207,31 @@ public class AppStack : Stack
       Actions = actions.ToArray(),
       Resources = new[]
       {
-        $"arn:aws:ssm:{this.Region}:{this.Account}:parameter{resource}",
+        $"arn:aws:ssm:{Region}:{Account}:parameter{resource}",
       },
     });
 
     function.AddToRolePolicy(ssmPolicy);
   }
 
-  private void AllowSes(AppFunction function)
-  {
-    var sesPolicy = new PolicyStatement(new PolicyStatementProps
-    {
-      Effect = Effect.ALLOW,
-      Actions = new[]
-      {
-        "ses:SendEmail",
-        "ses:SendRawEmail",
-        "ses:SendTemplatedEmail",
-      },
-      Resources = new[]
-      {
-        "*",
-      },
-    });
-    function.AddToRolePolicy(sesPolicy);
-  }
+  // private void AllowSes(AppFunction function)
+  // {
+  //   var sesPolicy = new PolicyStatement(new PolicyStatementProps
+  //   {
+  //     Effect = Effect.ALLOW,
+  //     Actions = new[]
+  //     {
+  //       "ses:SendEmail",
+  //       "ses:SendRawEmail",
+  //       "ses:SendTemplatedEmail",
+  //     },
+  //     Resources = new[]
+  //     {
+  //       "*",
+  //     },
+  //   });
+  //   function.AddToRolePolicy(sesPolicy);
+  // }
 
   private void HandleAccountResource(
     Amazon.CDK.AWS.APIGateway.Resource accountResource,
@@ -381,7 +381,7 @@ public class AppStack : Stack
           {
             CustomOriginSource = new CustomOriginConfig
             {
-              DomainName = $"{apiGateway.RestApiId}.execute-api.{this.Region}.{this.UrlSuffix}",
+              DomainName = $"{apiGateway.RestApiId}.execute-api.{Region}.{UrlSuffix}",
               OriginPath = $"/{apiGateway.DeploymentStage.StageName}",
             },
             Behaviors = new[]

@@ -1,2 +1,0 @@
-﻿GenerateCertificates.EncryptionCertificate();
-GenerateCertificates.SigningCertificate();
