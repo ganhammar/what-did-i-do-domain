@@ -49,10 +49,6 @@ public class AppStack : Stack
     // Authorizer
     var authorizer = CreateAuthorizerFunction();
 
-    // Resource: Login
-    var loginResource = apiResource.AddResource("login");
-    // HandleLoginResource(loginResource);
-
     // Resource: Account
     var accountResource = apiResource.AddResource("account");
     HandleAccountResource(accountResource, applicationTable, authorizer);
@@ -141,54 +137,6 @@ public class AppStack : Stack
     });
   }
 
-  // private void HandleLoginResource(
-  //   Amazon.CDK.AWS.APIGateway.Resource loginResource)
-  // {
-  //   var loginConfiguration = _configuration.GetSection("Login");
-  //   new StringParameter(this, "LoginSigningCertificateParameter", new StringParameterProps
-  //   {
-  //     ParameterName = "/WDID/Login/SigningCertificate",
-  //     StringValue = loginConfiguration.GetValue<string>("SigningCertificate")!,
-  //     Tier = ParameterTier.STANDARD,
-  //   });
-  //   new StringParameter(this, "LoginEncryptionCertificateParameter", new StringParameterProps
-  //   {
-  //     ParameterName = "/WDID/Login/EncryptionCertificate",
-  //     StringValue = loginConfiguration.GetValue<string>("EncryptionCertificate")!,
-  //     Tier = ParameterTier.STANDARD,
-  //   });
-
-  //   var loginFunction = new AppFunction(this, "App.Login", new AppFunction.Props(
-  //     "App.Login::App.Login.LambdaEntryPoint::FunctionHandlerAsync",
-  //     _tableName,
-  //     2048
-  //   ));
-
-  //   var identityTable = Table.FromTableAttributes(this, "IdentityTable", new TableAttributes
-  //   {
-  //     TableArn = $"arn:aws:dynamodb:{Region}:{Account}:table/what-did-i-do.identity",
-  //     GrantIndexPermissions = true,
-  //   });
-  //   identityTable.GrantReadWriteData(loginFunction);
-
-  //   var openiddictTable = Table.FromTableAttributes(this, "OpenIddictTable", new TableAttributes
-  //   {
-  //     TableArn = $"arn:aws:dynamodb:{Region}:{Account}:table/what-did-i-do.openiddict",
-  //     GrantIndexPermissions = true,
-  //   });
-  //   openiddictTable.GrantReadWriteData(loginFunction);
-
-  //   AllowSes(loginFunction);
-  //   AllowSsm(loginFunction, "/WDID/DataProtection*", true);
-  //   AllowSsm(loginFunction, "/WDID/Login*", false);
-
-  //   loginResource.AddProxy(new ProxyResourceOptions
-  //   {
-  //     AnyMethod = true,
-  //     DefaultIntegration = new LambdaIntegration(loginFunction),
-  //   });
-  // }
-
   private void AllowSsm(AppFunction function, string resource, bool allowPut)
   {
     var actions = new List<string>
@@ -213,25 +161,6 @@ public class AppStack : Stack
 
     function.AddToRolePolicy(ssmPolicy);
   }
-
-  // private void AllowSes(AppFunction function)
-  // {
-  //   var sesPolicy = new PolicyStatement(new PolicyStatementProps
-  //   {
-  //     Effect = Effect.ALLOW,
-  //     Actions = new[]
-  //     {
-  //       "ses:SendEmail",
-  //       "ses:SendRawEmail",
-  //       "ses:SendTemplatedEmail",
-  //     },
-  //     Resources = new[]
-  //     {
-  //       "*",
-  //     },
-  //   });
-  //   function.AddToRolePolicy(sesPolicy);
-  // }
 
   private void HandleAccountResource(
     Amazon.CDK.AWS.APIGateway.Resource accountResource,
@@ -381,6 +310,40 @@ public class AppStack : Stack
           {
             CustomOriginSource = new CustomOriginConfig
             {
+              DomainName = $"ukfgt58q78.execute-api.{Region}.{UrlSuffix}",
+              OriginPath = $"/prod",
+            },
+            Behaviors = new[]
+            {
+              new Behavior
+              {
+                PathPattern = "/api/login/*",
+                AllowedMethods = CloudFrontAllowedMethods.ALL,
+                DefaultTtl = Duration.Seconds(0),
+                ForwardedValues = new ForwardedValuesProperty
+                {
+                  QueryString = true,
+                  Headers = new[] { "Authorization" },
+                  Cookies = new CookiesProperty
+                  {
+                    Forward = "all",
+                  },
+                },
+                LambdaFunctionAssociations = new[]
+                {
+                  new LambdaFunctionAssociation
+                  {
+                    LambdaFunction = forwardedForFunction.CurrentVersion,
+                    EventType = LambdaEdgeEventType.VIEWER_REQUEST,
+                  },
+                },
+              },
+            },
+          },
+          new SourceConfiguration
+          {
+            CustomOriginSource = new CustomOriginConfig
+            {
               DomainName = $"{apiGateway.RestApiId}.execute-api.{Region}.{UrlSuffix}",
               OriginPath = $"/{apiGateway.DeploymentStage.StageName}",
             },
@@ -522,16 +485,16 @@ public class AppStack : Stack
     var cfnDistribution = distribution.Node.DefaultChild as CfnDistribution;
 
     // Login
-    cfnDistribution!.AddOverride("Properties.DistributionConfig.Origins.1.S3OriginConfig.OriginAccessIdentity", "");
-    cfnDistribution!.AddPropertyOverride("DistributionConfig.Origins.1.OriginAccessControlId", oac.GetAtt("Id"));
-
-    // Account
     cfnDistribution!.AddOverride("Properties.DistributionConfig.Origins.2.S3OriginConfig.OriginAccessIdentity", "");
     cfnDistribution!.AddPropertyOverride("DistributionConfig.Origins.2.OriginAccessControlId", oac.GetAtt("Id"));
 
-    // Landing
+    // Account
     cfnDistribution!.AddOverride("Properties.DistributionConfig.Origins.3.S3OriginConfig.OriginAccessIdentity", "");
     cfnDistribution!.AddPropertyOverride("DistributionConfig.Origins.3.OriginAccessControlId", oac.GetAtt("Id"));
+
+    // Landing
+    cfnDistribution!.AddOverride("Properties.DistributionConfig.Origins.4.S3OriginConfig.OriginAccessIdentity", "");
+    cfnDistribution!.AddPropertyOverride("DistributionConfig.Origins.4.OriginAccessControlId", oac.GetAtt("Id"));
 
     CreateRecords(distribution);
 
