@@ -152,40 +152,40 @@ public class AppStack : Stack
               },
             },
           },
-          // new SourceConfiguration
-          // {
-          //   CustomOriginSource = new CustomOriginConfig
-          //   {
-          //     DomainName = $"{apiGateway.RestApiId}.execute-api.{Region}.{UrlSuffix}",
-          //     OriginPath = $"/prod",
-          //   },
-          //   Behaviors = new[]
-          //   {
-          //     new Behavior
-          //     {
-          //       PathPattern = "/api/*",
-          //       AllowedMethods = CloudFrontAllowedMethods.ALL,
-          //       DefaultTtl = Duration.Seconds(0),
-          //       ForwardedValues = new ForwardedValuesProperty
-          //       {
-          //         QueryString = true,
-          //         Headers = new[] { "Authorization" },
-          //         Cookies = new CookiesProperty
-          //         {
-          //           Forward = "all",
-          //         },
-          //       },
-          //       LambdaFunctionAssociations = new[]
-          //       {
-          //         new LambdaFunctionAssociation
-          //         {
-          //           LambdaFunction = forwardedForFunction.CurrentVersion,
-          //           EventType = LambdaEdgeEventType.VIEWER_REQUEST,
-          //         },
-          //       },
-          //     },
-          //   },
-          // },
+          new SourceConfiguration
+          {
+            CustomOriginSource = new CustomOriginConfig
+            {
+              DomainName = $"1ipqi0z7ng.execute-api.{Region}.{UrlSuffix}",
+              OriginPath = $"/prod",
+            },
+            Behaviors = new[]
+            {
+              new Behavior
+              {
+                PathPattern = "/api/*",
+                AllowedMethods = CloudFrontAllowedMethods.ALL,
+                DefaultTtl = Duration.Seconds(0),
+                ForwardedValues = new ForwardedValuesProperty
+                {
+                  QueryString = true,
+                  Headers = new[] { "Authorization" },
+                  Cookies = new CookiesProperty
+                  {
+                    Forward = "all",
+                  },
+                },
+                LambdaFunctionAssociations = new[]
+                {
+                  new LambdaFunctionAssociation
+                  {
+                    LambdaFunction = forwardedForFunction.CurrentVersion,
+                    EventType = LambdaEdgeEventType.VIEWER_REQUEST,
+                  },
+                },
+              },
+            },
+          },
           new SourceConfiguration
           {
             S3OriginSource = new S3OriginConfig
@@ -297,16 +297,16 @@ public class AppStack : Stack
     var cfnDistribution = distribution.Node.DefaultChild as CfnDistribution;
 
     // Login
-    cfnDistribution!.AddOverride("Properties.DistributionConfig.Origins.1.S3OriginConfig.OriginAccessIdentity", "");
-    cfnDistribution!.AddPropertyOverride("DistributionConfig.Origins.1.OriginAccessControlId", oac.GetAtt("Id"));
-
-    // Account
     cfnDistribution!.AddOverride("Properties.DistributionConfig.Origins.2.S3OriginConfig.OriginAccessIdentity", "");
     cfnDistribution!.AddPropertyOverride("DistributionConfig.Origins.2.OriginAccessControlId", oac.GetAtt("Id"));
 
-    // Landing
+    // Account
     cfnDistribution!.AddOverride("Properties.DistributionConfig.Origins.3.S3OriginConfig.OriginAccessIdentity", "");
     cfnDistribution!.AddPropertyOverride("DistributionConfig.Origins.3.OriginAccessControlId", oac.GetAtt("Id"));
+
+    // Landing
+    cfnDistribution!.AddOverride("Properties.DistributionConfig.Origins.4.S3OriginConfig.OriginAccessIdentity", "");
+    cfnDistribution!.AddPropertyOverride("DistributionConfig.Origins.4.OriginAccessControlId", oac.GetAtt("Id"));
 
     CreateRecords(distribution);
 
