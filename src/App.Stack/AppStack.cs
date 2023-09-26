@@ -156,7 +156,7 @@ public class AppStack : Stack
           {
             CustomOriginSource = new CustomOriginConfig
             {
-              DomainName = $"1ipqi0z7ng.execute-api.{Region}.{UrlSuffix}",
+              DomainName = $"yfcq9hbnu9.execute-api.{Region}.{UrlSuffix}",
               OriginPath = $"/prod",
             },
             Behaviors = new[]
