@@ -297,16 +297,16 @@ public class AppStack : Stack
     var cfnDistribution = distribution.Node.DefaultChild as CfnDistribution;
 
     // Login
+    cfnDistribution!.AddOverride("Properties.DistributionConfig.Origins.1.S3OriginConfig.OriginAccessIdentity", "");
+    cfnDistribution!.AddPropertyOverride("DistributionConfig.Origins.1.OriginAccessControlId", oac.GetAtt("Id"));
+
+    // Account
     cfnDistribution!.AddOverride("Properties.DistributionConfig.Origins.2.S3OriginConfig.OriginAccessIdentity", "");
     cfnDistribution!.AddPropertyOverride("DistributionConfig.Origins.2.OriginAccessControlId", oac.GetAtt("Id"));
 
-    // Account
+    // Landing
     cfnDistribution!.AddOverride("Properties.DistributionConfig.Origins.3.S3OriginConfig.OriginAccessIdentity", "");
     cfnDistribution!.AddPropertyOverride("DistributionConfig.Origins.3.OriginAccessControlId", oac.GetAtt("Id"));
-
-    // Landing
-    cfnDistribution!.AddOverride("Properties.DistributionConfig.Origins.4.S3OriginConfig.OriginAccessIdentity", "");
-    cfnDistribution!.AddPropertyOverride("DistributionConfig.Origins.4.OriginAccessControlId", oac.GetAtt("Id"));
 
     CreateRecords(distribution);
 
