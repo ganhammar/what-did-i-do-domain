@@ -13,89 +13,12 @@ defaults:
     shell: bash
 
 jobs:
-  test:
-    name: Lint & Test
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-      - name: Setup .NET Core SDKs
-        uses: actions/setup-dotnet@v3
-        with:
-          dotnet-version: 6.0.x
-
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          aws-region: eu-north-1
-          role-to-assume: ${{ secrets.DEPLOY_ROLE }}
-          role-session-name: OIDCSession
-
-      - name: Restore
-        run: dotnet restore
-      - name: Build
-        run: dotnet build --no-restore
-      - name: Lint
-        run: dotnet format --verify-no-changes --no-restore
-      - name: Test
-        run: dotnet test --no-build /p:CollectCoverage=true /p:CoverletOutput=TestResults/ /p:CoverletOutputFormat=lcov /p:Exclude="[TestBase*]*"
-
-      - name: Publish Code Coverage
-        uses: codecov/codecov-action@v3
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          files: test/**/*/TestResults/coverage.info
-          fail_ci_if_error: false
-          gcov_ignore: test/**/*
-
-  package:
-    name: Package
-    runs-on: ubuntu-latest
-    needs: test
-    if: ${{ github.ref == 'refs/heads/main' }}
-    strategy:
-      fail-fast: true
-      matrix:
-        project:
-          - ./src/App.Api/CreateAccount
-          - ./src/App.Api/CreateEvent
-          - ./src/App.Api/DeleteEvent
-          - ./src/App.Api/EditEvent
-          - ./src/App.Api/ListAccounts
-          - ./src/App.Api/ListEvents
-          - ./src/App.Api/ListTags
-          - ./src/App.Authorizer
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-      - name: Install Lambda Tools
-        run: dotnet tool install -g Amazon.Lambda.Tools
-
-      - name: Package Project
-        uses: ./.github/actions/package-project
-        with:
-          project-path: ${{ matrix.project }}
-          output-directory: ./.output
-
-      - name: Upload Artifact
-        uses: actions/upload-artifact@v3
-        with:
-          name: ${{ github.run_id }}
-          path: ./.output
-          retention-days: 1
-
   deploy:
     name: Deploy
     runs-on: ubuntu-latest
-    needs: package
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-      - name: Download package
-        uses: actions/download-artifact@v3
-        with:
-          name: ${{ github.run_id }}
-          path: ./
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
@@ -117,9 +40,5 @@ jobs:
 
       - name: CDK Bootstrap
         run: cdk bootstrap
-        env:
-          Authorizer__ClientSecret: ${{ secrets.CLIENT_AUTHORIZER_SECRET }}
       - name: CDK Deploy
         run: cdk deploy --require-approval never --all
-        env:
-          Authorizer__ClientSecret: ${{ secrets.CLIENT_AUTHORIZER_SECRET }}

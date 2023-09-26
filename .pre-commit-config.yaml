@@ -6,15 +6,3 @@ repos:
         language: system
         entry: dotnet format --verify-no-changes --include
         types_or: ["c#"]
-      - id: eslint
-        name: eslint
-        language: system
-        entry: bash -c 'cd src/Client/Web && npm run lint:ci'
-        files: ^src/Client/Web/
-        types_or: ["ts", "tsx"]
-      - id: styling
-        name: styling
-        language: system
-        entry: bash -c 'cd src/Client/Web && npm run styling:ci'
-        files: ^src/Client/Web/
-        types_or: ["ts", "tsx"]
