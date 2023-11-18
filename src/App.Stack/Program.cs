@@ -8,7 +8,7 @@ public class Program
   {
     var app = new App(null);
 
-    _ = new AppStack(app, "what-did-i-do-stack", new StackProps
+    _ = new AppStack(app, "what-did-i-do-domain-stack", new StackProps
     {
       Env = new Amazon.CDK.Environment
       {
