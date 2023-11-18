@@ -9,7 +9,6 @@ using Amazon.CDK.AWS.Route53;
 using Amazon.CDK.AWS.Route53.Targets;
 using Amazon.CDK.AWS.S3;
 using Constructs;
-using Microsoft.Extensions.Configuration;
 using static Amazon.CDK.AWS.CloudFront.CfnDistribution;
 using static Amazon.CDK.AWS.CloudFront.CfnOriginAccessControl;
 
@@ -17,14 +16,11 @@ namespace AppStack;
 
 public class AppStack : Stack
 {
-  private const string _tableName = "what-did-i-do";
-  private readonly IConfiguration _configuration;
+  private const string TableName = "what-did-i-do";
 
-  internal AppStack(Construct scope, string id, IStackProps props, IConfiguration configuration)
+  internal AppStack(Construct scope, string id, IStackProps props)
     : base(scope, id, props)
   {
-    _configuration = configuration;
-
     // DynamoDB
     CreateTable();
 
@@ -32,7 +28,7 @@ public class AppStack : Stack
     var cloudFrontDistribution = CreateCloudFrontWebDistribution();
 
     // Output
-    new CfnOutput(this, "CloudFrontDomainName", new CfnOutputProps
+    _ = new CfnOutput(this, "CloudFrontDomainName", new CfnOutputProps
     {
       Value = cloudFrontDistribution.DistributionDomainName,
     });
@@ -42,7 +38,7 @@ public class AppStack : Stack
   {
     var table = new Table(this, "ApplicationTable", new TableProps
     {
-      TableName = _tableName,
+      TableName = TableName,
       RemovalPolicy = RemovalPolicy.DESTROY, //Delete DynamoDB table on CDK destroy
       PartitionKey = new Amazon.CDK.AWS.DynamoDB.Attribute
       {
@@ -135,7 +131,7 @@ public class AppStack : Stack
                 ForwardedValues = new ForwardedValuesProperty
                 {
                   QueryString = true,
-                  Headers = new[] { "Authorization" },
+                  Headers = ["Authorization"],
                   Cookies = new CookiesProperty
                   {
                     Forward = "all",
@@ -169,7 +165,7 @@ public class AppStack : Stack
                 ForwardedValues = new ForwardedValuesProperty
                 {
                   QueryString = true,
-                  Headers = new[] { "Authorization" },
+                  Headers = ["Authorization"],
                   Cookies = new CookiesProperty
                   {
                     Forward = "all",
@@ -274,11 +270,11 @@ public class AppStack : Stack
         },
         ViewerCertificate = ViewerCertificate.FromAcmCertificate(certificate, new ViewerCertificateOptions
         {
-          Aliases = new[]
-          {
+          Aliases =
+          [
             "wdid.fyi",
             "www.wdid.fyi",
-          },
+          ],
         }),
       });
 
@@ -321,13 +317,13 @@ public class AppStack : Stack
       ZoneName = "wdid.fyi",
     });
 
-    new AaaaRecord(this, "AliasRecord", new AaaaRecordProps
+    _ = new AaaaRecord(this, "AliasRecord", new AaaaRecordProps
     {
       Target = RecordTarget.FromAlias(new CloudFrontTarget(distribution)),
       Zone = zone,
     });
 
-    new CnameRecord(this, "CnameRecord", new CnameRecordProps
+    _ = new CnameRecord(this, "CnameRecord", new CnameRecordProps
     {
       RecordName = "www.wdid.fyi",
       DomainName = distribution.DistributionDomainName,

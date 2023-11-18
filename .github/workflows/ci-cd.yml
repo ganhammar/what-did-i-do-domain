@@ -30,7 +30,7 @@ jobs:
       - name: Setup .NET Core SDKs
         uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: 6.0.x
+          dotnet-version: 8.0.x
       - name: Install node
         uses: actions/setup-node@v3
         with:
