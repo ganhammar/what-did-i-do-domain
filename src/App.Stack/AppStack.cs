@@ -119,13 +119,13 @@ public class AppStack : Stack
             CustomOriginSource = new CustomOriginConfig
             {
               DomainName = $"ukfgt58q78.execute-api.{Region}.{UrlSuffix}",
-              OriginPath = $"/prod",
+              OriginPath = "/prod",
             },
             Behaviors = new[]
             {
               new Behavior
               {
-                PathPattern = "/api/login/*",
+                PathPattern = "/api/login*",
                 AllowedMethods = CloudFrontAllowedMethods.ALL,
                 DefaultTtl = Duration.Seconds(0),
                 ForwardedValues = new ForwardedValuesProperty
@@ -153,13 +153,13 @@ public class AppStack : Stack
             CustomOriginSource = new CustomOriginConfig
             {
               DomainName = $"a45c9a7715.execute-api.{Region}.{UrlSuffix}",
-              OriginPath = $"/prod",
+              OriginPath = "/prod",
             },
             Behaviors = new[]
             {
               new Behavior
               {
-                PathPattern = "/api/*",
+                PathPattern = "/api*",
                 AllowedMethods = CloudFrontAllowedMethods.ALL,
                 DefaultTtl = Duration.Seconds(0),
                 ForwardedValues = new ForwardedValuesProperty
