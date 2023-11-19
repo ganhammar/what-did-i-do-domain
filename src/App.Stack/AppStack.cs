@@ -125,7 +125,7 @@ public class AppStack : Stack
             {
               new Behavior
               {
-                PathPattern = "/api/login*",
+                PathPattern = "/api/login/*",
                 AllowedMethods = CloudFrontAllowedMethods.ALL,
                 DefaultTtl = Duration.Seconds(0),
                 ForwardedValues = new ForwardedValuesProperty
@@ -159,7 +159,7 @@ public class AppStack : Stack
             {
               new Behavior
               {
-                PathPattern = "/api*",
+                PathPattern = "/api/*",
                 AllowedMethods = CloudFrontAllowedMethods.ALL,
                 DefaultTtl = Duration.Seconds(0),
                 ForwardedValues = new ForwardedValuesProperty

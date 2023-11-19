@@ -2,7 +2,6 @@
 
 exports.handler = async (event, _, callback) => {
   const request = event.Records[0].cf.request;
-  console.log('REQUEST INIT', { uri: request.uri, target: request.origin.s3.domainName });
   const MATCHING_EXTENSIONS = ['.js', '.css', '.json', '.txt', '.html', '.map', '.png', '.jpg', '.svg'];
 
   if (!MATCHING_EXTENSIONS.some(path => request.uri.endsWith(path))) {
@@ -17,6 +16,5 @@ exports.handler = async (event, _, callback) => {
     request.uri = `${prefix}/index.html`;
   }
 
-  console.log('REQUEST END', { uri: request.uri });
   callback(null, request);
 };
