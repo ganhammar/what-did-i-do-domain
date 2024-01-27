@@ -3,6 +3,8 @@ name: CI-CD
 on:
   workflow_dispatch:
   push:
+    branches:
+      - main
 
 permissions:
   id-token: write
@@ -18,7 +20,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4set
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
@@ -28,11 +30,11 @@ jobs:
           role-session-name: OIDCSession
 
       - name: Setup .NET Core SDKs
-        uses: actions/setup-dotnet@v3
+        uses: actions/setup-dotnet@v4
         with:
           dotnet-version: 8.0.x
       - name: Install node
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: 18
       - name: Setup CDK
