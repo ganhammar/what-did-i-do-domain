@@ -3,6 +3,8 @@ using Amazon.CDK.AWS.CertificateManager;
 using Amazon.CDK.AWS.CloudFront;
 using Amazon.CDK.AWS.CloudFront.Experimental;
 using Amazon.CDK.AWS.DynamoDB;
+using Amazon.CDK.AWS.Events;
+using Amazon.CDK.AWS.IAM;
 using Amazon.CDK.AWS.Lambda;
 using Amazon.CDK.AWS.Logs;
 using Amazon.CDK.AWS.Route53;
@@ -23,6 +25,9 @@ public class AppStack : Stack
   {
     // DynamoDB
     CreateTable();
+
+    // EventBridge Bus
+    CreateEventBus();
 
     // CloudFront Distribution
     var cloudFrontDistribution = CreateCloudFrontWebDistribution();
@@ -71,6 +76,26 @@ public class AppStack : Stack
     });
 
     return table;
+  }
+
+  private EventBus CreateEventBus()
+  {
+    var eventBus = new EventBus(this, "DomainBus", new EventBusProps
+    {
+      EventBusName = "DomainBus",
+    });
+
+    // Grant permissions to all functions in the account to put events to the EventBridge bus
+    var accountRootPrincipal = new AccountRootPrincipal();
+    var policyStatement = new PolicyStatement(new PolicyStatementProps
+    {
+      Actions = ["events:PutEvents"],
+      Resources = [eventBus.EventBusArn],
+      Principals = [accountRootPrincipal],
+    });
+    eventBus.AddToResourcePolicy(policyStatement);
+
+    return eventBus;
   }
 
   private CloudFrontWebDistribution CreateCloudFrontWebDistribution()
