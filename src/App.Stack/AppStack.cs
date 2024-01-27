@@ -89,6 +89,7 @@ public class AppStack : Stack
     var accountRootPrincipal = new AccountRootPrincipal();
     var policyStatement = new PolicyStatement(new PolicyStatementProps
     {
+      Sid = "AllowPutEventsForAccount",
       Actions = ["events:PutEvents"],
       Resources = [eventBus.EventBusArn],
       Principals = [accountRootPrincipal],
