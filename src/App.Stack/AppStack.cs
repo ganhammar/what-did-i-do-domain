@@ -57,6 +57,7 @@ public class AppStack : Stack
       },
       PointInTimeRecovery = true,
       BillingMode = BillingMode.PAY_PER_REQUEST,
+      Stream = StreamViewType.NEW_AND_OLD_IMAGES,
     });
 
     table.AddGlobalSecondaryIndex(new GlobalSecondaryIndexProps
