@@ -76,6 +76,12 @@ public class AppStack : Stack
       ProjectionType = ProjectionType.ALL,
     });
 
+    _ = new CfnOutput(this, "ApplicationTableStreamArn", new CfnOutputProps
+    {
+      Value = table.TableStreamArn!,
+      ExportName = $"{Of(this).StackName}-ApplicationTableStreamArn",
+    });
+
     return table;
   }
 
