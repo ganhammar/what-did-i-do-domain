@@ -5,7 +5,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <AmazonCDKLibVersion>2.110.0</AmazonCDKLibVersion>
+    <AmazonCDKLibVersion>2.138.0</AmazonCDKLibVersion>
     <ConstructsVersion>10.3.0</ConstructsVersion>
   </PropertyGroup>
 
